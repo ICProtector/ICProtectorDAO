@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '/logoo.png';
 import icp from '/icp.png';
+import { useTheme } from '../contexts/ThemeContext'; 
 
 const ProposalContent = () => {
-    const [darkMode, setDarkMode] = useState(false);
+    const { darkMode, toggleTheme } = useTheme();
     const [onlyOpen, setOnlyOpen] = useState(false); // State for the "Only Open Proposal" checkbox
     const [proposals, setProposals] = useState([]); // State to hold your proposal data
 
@@ -13,34 +14,38 @@ const ProposalContent = () => {
         const proposalData = [
             {
                 id: 1,
-                title: "SET XRD Ratio",
+                title: "1SET XRD Ratio",
                 proposedDate: "April 10, 2024",
                 timeRemaining: "2 hours ago",
                 topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
                 status: "Open"
             },
             {
                 id: 2,
-                title: "SET XRD Ratio",
+                title: "2SET XRD Ratio",
                 proposedDate: "April 10, 2024",
                 timeRemaining: "2 hours ago",
                 topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
                 status: "Rejected"
             },
             {
                 id: 3,
-                title: "SET XRD Ratio",
+                title: "3SET XRD Ratio",
                 proposedDate: "April 10, 2024",
                 timeRemaining: "2 hours ago",
                 topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
                 status: "Open"
             },
             {
                 id: 4,
-                title: "SET XRD Ratio",
+                title: "4SET XRD Ratio",
                 proposedDate: "April 10, 2024",
                 timeRemaining: "2 hours ago",
                 topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
                 status: "Rejected"
             },
             {
@@ -49,6 +54,7 @@ const ProposalContent = () => {
                 proposedDate: "April 10, 2024",
                 timeRemaining: "2 hours ago",
                 topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
                 status: "Open"
             },
             {
@@ -57,6 +63,7 @@ const ProposalContent = () => {
                 proposedDate: "April 10, 2024",
                 timeRemaining: "2 hours ago",
                 topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
                 status: "Open"
             },
             {
@@ -65,6 +72,7 @@ const ProposalContent = () => {
                 proposedDate: "April 10, 2024",
                 timeRemaining: "2 hours ago",
                 topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
                 status: "Rejected"
             },
             {
@@ -73,6 +81,7 @@ const ProposalContent = () => {
                 proposedDate: "April 10, 2024",
                 timeRemaining: "2 hours ago",
                 topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
                 status: "Rejected"
             },
             // Add more proposal objects here if needed
@@ -81,21 +90,6 @@ const ProposalContent = () => {
         // Set initial proposal data
         setProposals(proposalData);
 
-        // Function to update dark mode state
-        const updateDarkMode = () => {
-            const root = window.document.documentElement;
-            const hasDarkClass = root.classList.contains('dark');
-            setDarkMode(hasDarkClass);
-        };
-
-        // Initial update
-        updateDarkMode();
-
-        // Update dark mode state every 5 seconds
-        const intervalId = setInterval(updateDarkMode, 100);
-
-        // Clear interval on component unmount
-        return () => clearInterval(intervalId);
     }, []);
 
     // Function to filter proposals based on status
@@ -185,7 +179,7 @@ const ProposalContent = () => {
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4">
-                                                <Link to={`/detail-proposals/${proposal.id}`}><button type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">View</button>
+                                                <Link to={`/detail-proposals/${proposal.id}`}><button type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">{proposal.status === 'Open' ? 'Vote' : 'View'}</button>
                                                 </Link></td>
                                         </tr>
                                     ))}

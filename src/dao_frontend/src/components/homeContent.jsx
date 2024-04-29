@@ -2,26 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '/logoo.png';
 import icp from '/icp.png';
+import { useTheme } from '../contexts/ThemeContext';
 const HomeContent = () => {
-    const [darkMode, setDarkMode] = useState(false);
-
-    useEffect(() => {
-        // Function to update dark mode state
-        const updateDarkMode = () => {
-            const root = window.document.documentElement;
-            const hasDarkClass = root.classList.contains('dark');
-            setDarkMode(hasDarkClass);
-        };
-
-        // Initial update
-        updateDarkMode();
-
-        // Update dark mode state every 5 seconds
-        const intervalId = setInterval(updateDarkMode, 100);
-
-        // Clear interval on component unmount
-        return () => clearInterval(intervalId);
-    }, []);
+    
+  const { darkMode, toggleTheme } = useTheme();
 
     const myStyle = {
         translate: 'none',

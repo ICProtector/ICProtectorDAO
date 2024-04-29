@@ -1,48 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
+import { useTheme } from '../contexts/ThemeContext'; 
 const Forms = () => {
-    const [darkMode, setDarkMode] = useState(false);
+    const { darkMode, toggleTheme } = useTheme();
     const [topicName, setTopicName] = useState('');
     const [description, setDescription] = useState('');
-    const [option, setOption] = useState('');
+    const [options, setOptions] = useState(['']); // Start with one empty option
     const [file, setFile] = useState(null);
 
     const handleSubmit = (e) => {
       e.preventDefault();
-      // Process form data here
-      console.log({ topicName, description, option, file });
+      console.log({ topicName, description, options, file }); // Log the entire options array
     };
 
-    useEffect(() => {
-        // Function to update dark mode state
-        const updateDarkMode = () => {
-            const root = window.document.documentElement;
-            const hasDarkClass = root.classList.contains('dark');
-            setDarkMode(hasDarkClass);
-        };
+   
 
-        // Initial update
-        updateDarkMode();
+    const addOption = () => {
+        setOptions([...options, '']); // Add a new empty option
+    };
 
-        // Update dark mode state every 5 seconds
-        const intervalId = setInterval(updateDarkMode, 100);
+    const removeOption = (index) => {
+        setOptions(options.filter((_, i) => i !== index)); // Remove option at given index
+    };
 
-        // Clear interval on component unmount
-        return () => clearInterval(intervalId);
-    }, []);
+    const updateOption = (value, index) => {
+        const newOptions = options.slice();
+        newOptions[index] = value;
+        setOptions(newOptions);
+    };
 
     const gradientClass = darkMode ? 'bg-gradient-to-r from-gray-950 to-gray-950' : 'bg-gradient-to-b from-orange-200 to-orange-500';
-    const cardClass = darkMode
-      ? 'bg-gray-800 text-white shadow-xl'
-      : 'bg-white text-gray-900 shadow-xl';
-
+    const cardClass = darkMode ? 'bg-gray-800 text-white shadow-xl' : 'bg-white text-gray-900 shadow-xl';
     const inputClass = 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-indigo-500';
     const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-200 text-left py-1';
     const buttonClass = 'w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600';
 
     return (
-        <div className={`min-h-screen flex items-center justify-center ${gradientClass}`}>
+        <div className={`min-h-screen flex items-center p-4 justify-center ${gradientClass}`}>
             <div className={`max-w-md w-full p-3 rounded-lg ${cardClass}`}>
                 <h2 className="text-2xl font-bold mb-4 text-center">Create Proposal</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -66,16 +60,36 @@ const Forms = () => {
                             rows="4"
                         ></textarea>
                     </div>
-                    <div>
-                        <label htmlFor="option" className={labelClass}>Options</label>
-                        <input
-                            type="text"
-                            id="option"
-                            value={option}
-                            onChange={(e) => setOption(e.target.value)}
-                            className={`${inputClass} dark:bg-gray-700 dark:text-white`}
-                        />
-                    </div>
+                    {options.map((option, index) => (
+                        <div key={index} className="flex items-center">
+                            <input
+                                type="text"
+                                id={`option-${index}`}
+                                value={option}
+                                placeholder={`Option ${index + 1}`}
+                                onChange={(e) => updateOption(e.target.value, index)}
+                                className={`${inputClass} dark:bg-gray-700 dark:text-white flex-grow`}
+                            />
+                            {options.length > 1 && (
+                                <button
+                                    type="button"
+                                    onClick={() => removeOption(index)}
+                                    className="ml-2 bg-red-500 text-white p-2 hover:text-red-800"
+                                >
+                                    &#8722; {/* This is a placeholder for a remove icon */}
+                                </button>
+                            )}
+                            {index === options.length - 1 && (
+                                <button
+                                    type="button"
+                                    onClick={addOption}
+                                    className="ml-2 bg-green-500 text-white p-2 hover:text-green-800"
+                                >
+                                    &#43; {/* This is a placeholder for an add icon */}
+                                </button>
+                            )}
+                        </div>
+                    ))}
                     <div>
                         <label htmlFor="file" className={labelClass}>Choose File</label>
                         <input
