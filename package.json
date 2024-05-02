@@ -14,5 +14,11 @@
   "type": "module",
   "workspaces": [
     "src/dao_frontend"
-  ]
+  ],
+  "dependencies": {
+    "ic0": "^0.2.8"
+  },
+  "devDependencies": {
+    "vite-plugin-copy": "^0.1.6"
+  }
 }

@@ -1,11 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import ic from 'ic0';
 
 import { useTheme } from '../contexts/ThemeContext';
 const Details = (props) => {
     const { id } = props;
-    const { darkMode, toggleTheme } = useTheme();
-    const proposalData = [
+    const { darkMode, toggleTheme } = useTheme(); // Set default or dynamic based on use case
+    const [loading, setLoading] = useState(false);
+    const [proposalData, setProposalData] = useState(null);
+    const [previousVote, setPreviousVote] = useState(null);
+
+    const backendCanisterId = 'bkyz2-fmaaa-aaaaa-qaaaq-cai'; 
+    const backend = ic.local(backendCanisterId);
+  
+    const formatCreationTime = (nsTimestamp) => {
+        const milliseconds = nsTimestamp / 1_000_000; // Convert nanoseconds to milliseconds
+        const date = new Date(milliseconds); // Create a new Date object
+        return date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
+    };
+    const fetchProposalData = async () => {
+        try {
+          setLoading(true);
+          const result = await backend.call("getProposal", "1");
+          console.log(result[0]);
+          if (result[0]) {
+              result[0].formattedCreationTime = formatCreationTime(Number(result[0].creationTime));
+          }
+          previousVote(result[0]);
+        } catch (error) {
+          console.error("Error fetching proposal data:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      const formatDate = (nsTimestamp) => {
+        const milliseconds = nsTimestamp / 1_000_000; // Convert nanoseconds to milliseconds
+        const date = new Date(milliseconds); // Create a new Date object
+        return date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
+    };
+      const fetchPreviousVote = async () => {
+        try {
+          setLoading(true);
+          const votes = await backend.call("QueryAllUserVotes");
+          console.log(votes);
+          setPreviousVote(votes);
+        } catch (error) {
+          console.error("Error fetching proposal data:", error);
+        } finally {
+          setLoading(false);
+        }
+    };
+    
+  useEffect(() => {
+    fetchProposalData();
+    //fetchPreviousVote();  // Call the function when the component mounts
+  }, []);
+    const proposalDatsa = [
         {
             id: 1,
             title: "1SET XRD Ratio",
@@ -81,95 +131,67 @@ const Details = (props) => {
         // Add more proposal objects here if needed
     ];
 
-    const selectedProposal = proposalData.find(proposal => proposal.id === parseInt(id));
+     const selectedProposal = proposalDatsa.find(proposal => proposal.id === parseInt(id));
     const gradientClass = darkMode ? 'bg-gradient-to-r from-gray-950 to-gray-950' : 'bg-gradient-to-b from-orange-200 to-orange-500';
     const buttonClass = darkMode ? 'bg-gradient-to-r from-red-600 to-red-900' : 'bg-gradient-to-r from-red-400 to-red-600';
 
 
     return (
-        <> {selectedProposal ? (
+        <>
             <div className="lg:flex pb-24 pt-10 p-4">
 
                 <div className="flex flex-col w-full gap-4 text-white">
                     {/* Proposal Section */}
-                    <h2 className="text-2xl font-bold text-left dark:text-white text-black">{selectedProposal.title}</h2>
+                    {proposalData && (
+                        <>
+                    <h2 className="text-2xl font-bold text-left dark:text-white text-black">{proposalData.topicName}</h2>
                     <div className="dark:bg-gray-950 rounded-lg p-4 border-2 border-white p-4 mt-4">
                         <div className="flex justify-between mb-4">
                             <div>
 
-                                <p className="text-sm mb-2 font-bold dark:text-white text-black">Proposal ID: {selectedProposal.id}</p>
+                                <p className="text-sm mb-2 font-bold dark:text-white text-black">Proposal ID: {proposalData.id}</p>
                             </div>
-                            <span className="text dark:text-white text-black">Posted {selectedProposal.proposedDate}</span>
+                            <span className="text dark:text-white text-black">Posted {proposalData.formattedCreationTime}</span>
                         </div>
                         <hr />
-                        <p className="text-sm mb-4 dark:text-white text-black mt-3 text-left">More Info: <br />{selectedProposal.additionalInfo}</p>
+                        <p className="text-sm mb-4 dark:text-white text-black mt-3 text-left">{proposalData.description}</p>
 
                         <hr />
                         <div className="flex mt-3 ">
                             <span className='mr-2 text-xl font-bold dark:text-white text-black'> Topic:</span>
-                            <span className="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300 p-3">{selectedProposal.topic}</span>
+                            <span className="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300 p-3">{proposalData.topicName}</span>
                         </div>
                     </div>
-
-                    {/* Voting History Section */}
+                    </> )}
+                    {loading ? (
+                <p>Loading...</p>
+            ) : (
+                previousVote && previousVote.length > 0 && (
                     <div className="dark:bg-gray-950 rounded-lg border-2 border-white p-4 mt-4">
-                        <h3 className="text-2xl mb-4 font-bold  dark:text-white text-black text-left">My Voting History</h3>
+                        <h3 className="text-2xl mb-4 font-bold dark:text-white text-black text-left">My Voting History</h3>
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-
                             <table className="w-full text-sm text-left rtl:text-right text-black dark:text-gray-400">
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-300 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3">
-                                            Stake ID
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            Date/Time
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            Vote
-                                        </th>
-
+                                        <th scope="col" className="px-6 py-3">Stake ID</th>
+                                        <th scope="col" className="px-6 py-3">Date/Time</th>
+                                        <th scope="col" className="px-6 py-3">Vote</th>
                                     </tr>
                                 </thead>
-                                <tbody className='mt-2'>
-                                    <tr className=" border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            0
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            Nov 3, 2023, 1:55 AM
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            Adopt
-                                        </td>
-                                    </tr>
-                                    <tr className=" border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            0
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            Nov 3, 2023, 1:55 AM
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            Adopt
-                                        </td>
-                                    </tr>
-                                    <tr className=" border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            0
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            Nov 3, 2023, 1:55 AM
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            Adopt
-                                        </td>
-                                    </tr>
-
+                                <tbody>
+                                    {previousVote.map((vote, index) => (
+                                        <tr key={index} className="border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                            <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{index + 1}</td>
+                                            <td className="px-6 py-4">{formatDate(vote.voteTime)}</td>
+                                            <td className="px-6 py-4">{vote.correctOption}</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                )
+            )}
                 </div>
 
                 <div className="min-w-[350px] 2xl:min-w-[430px]  rounded-3xl overflow-hidden shadow-lg">
@@ -206,9 +228,7 @@ const Details = (props) => {
 
 
 
-            </div>) : (
-            <p>No proposal found with ID {id}</p>
-        )}
+            </div>
         </>
     );
 };

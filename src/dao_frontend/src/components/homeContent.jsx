@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import ic from 'ic0';
+
 import logo from '/logoo.png';
 import icp from '/icp.png';
 import { useTheme } from '../contexts/ThemeContext';
+
 const HomeContent = () => {
-    
   const { darkMode, toggleTheme } = useTheme();
+  const [proposalId, setProposalId] = useState("1"); // Set default or dynamic based on use case
+  const [loading, setLoading] = useState(false);
+  const [proposalData, setProposalData] = useState(null);
+
+ 
+
 
     const myStyle = {
         translate: 'none',
@@ -20,6 +28,7 @@ const HomeContent = () => {
 
     return (
         <>
+        
             <section className="section7 h-[90vh]">
                 <div className="mx-auto flex h-full flex-col items-start justify-center md:w-[1120px] md:flex-row md:items-center">
 
