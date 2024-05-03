@@ -3,95 +3,47 @@ import { Link } from 'react-router-dom';
 import logo from '/logoo.png';
 import icp from '/icp.png';
 import { useTheme } from '../contexts/ThemeContext'; 
+import ic from 'ic0';
 
 const OpenProposalContent = () => {
     const { darkMode, toggleTheme } = useTheme();
+    const [loading, setLoading] = useState(false);
     const [onlyOpen, setOnlyOpen] = useState(false); // State for the "Only Open Proposal" checkbox
-    const [proposals, setProposals] = useState([]); // State to hold your proposal data
+    const [proposals, setProposals] = useState([]);
+    const [proposalData, setProposalData] = useState([]); // State to hold your proposal data
+    const backendCanisterId = 'bkyz2-fmaaa-aaaaa-qaaaq-cai';
+    const backend = ic.local(backendCanisterId);
+    const formatCreationTime = (nsTimestamp) => {
+        const milliseconds = nsTimestamp / 1_000_000; // Convert nanoseconds to milliseconds
+        const date = new Date(milliseconds); // Create a new Date object
+        return date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
+    };
+    const fetchProposalData = async () => {
+        try {
+            setLoading(true);
+            const result = await backend.call("getProposalAll");
+            console.log(result);
+            // if (result[0]) {
+            //     result[0].formattedCreationTime = formatCreationTime(Number(result[0].creationTime));
+            // }
+            setProposalData(result);
+        } catch (error) {
+            console.error("Error fetching proposal data:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        // Simulated proposal data array
-        const proposalData = [
-            {
-                id: 1,
-                title: "1SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Open"
-            },
-            {
-                id: 2,
-                title: "2SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Rejected"
-            },
-            {
-                id: 3,
-                title: "3SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Open"
-            },
-            {
-                id: 4,
-                title: "4SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Rejected"
-            },
-            {
-                id: 5,
-                title: "SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Open"
-            },
-            {
-                id: 6,
-                title: "SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Open"
-            },
-            {
-                id: 7,
-                title: "SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Rejected"
-            },
-            {
-                id: 8,
-                title: "SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Rejected"
-            },
-            // Add more proposal objects here if needed
-        ];
+        fetchProposalData();
+        
 
         // Set initial proposal data
         setProposals(proposalData);
-    }, []);
 
-    // Function to filter proposals based on status
+    }, []);// State to hold your proposal data
+
+     // Function to filter proposals based on status
     const filteredProposals = proposals.filter(proposal => proposal.status === 'Open') 
 
     const myStyle = {
@@ -117,65 +69,69 @@ const OpenProposalContent = () => {
                             </div>
                         </div>
 
-                        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                        {proposalData && proposalData.length > 0 && (
+                        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 
-                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3">
+                                        <th scope="col" class="px-6 py-3">
                                             Proposal ID
                                         </th>
-                                        <th scope="col" className="px-6 py-3">
+                                        <th scope="col" class="px-6 py-3">
                                             Title
                                         </th>
-                                        <th scope="col" className="px-6 py-3">
+                                        <th scope="col" class="px-6 py-3">
                                             Proposed
                                         </th>
-                                        <th scope="col" className="px-6 py-3">
+                                        <th scope="col" class="px-6 py-3">
                                             Time Remaining
                                         </th>
-                                        <th scope="col" className="px-6 py-3">
+                                        <th scope="col" class="px-6 py-3">
                                             Topic
                                         </th>
-                                        <th scope="col" className="px-6 py-3">
+                                        <th scope="col" class="px-6 py-3">
                                             Status
                                         </th>
-                                        <th scope="col" className="px-6 py-3">
+                                        <th scope="col" class="px-6 py-3">
                                             View
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody className='mt-2'>
-                                    {filteredProposals.map(proposal => (
-                                        <tr key={proposal.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                            <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    
+                                {proposalData.map((proposal, index) => (
+                                        <tr key={index} class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                            <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                 {proposal.id}
                                             </td>
-                                            <td className="px-6 py-4">
-                                                {proposal.title}
+                                            <td class="px-6 py-4">
+                                                {proposal.topicName}
                                             </td>
-                                            <td className="px-6 py-4">
-                                                {proposal.proposedDate}
+                                            <td class="px-6 py-4">
+                                                {formatCreationTime(Number(proposal.creationTime))}
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td class="px-6 py-4">
                                                 {proposal.timeRemaining}
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <span className="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300 p-3">{proposal.topic}</span>
+                                            <td class="px-6 py-4">
+                                                <span class="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300 p-3">
+                                                {proposal.topicName}</span>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`text-xs font-medium me-2 px-2.5 py-0.5 rounded p-3 ${proposal.status === 'Open' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'}`}>
-                                                    {proposal.status}
+                                            <td class="px-6 py-4">
+                                                <span className={`text-xs font-medium me-2 px-2.5 py-0.5 rounded p-3 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300`}>
+                                                    Open
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4">
-                                            <Link to={`/detail-proposals/${proposal.id}`}><button type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">{proposal.status === 'Open' ? 'Vote' : 'View'}</button>
-                                                </Link>   </td>
+                                            <td class="px-6 py-4">
+                                                <Link to={`/detail-proposals/${proposal.id}`}><button type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Open</button>
+                                                </Link></td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
                         </div>
+                        )}
                     </div>
 
                 </div>

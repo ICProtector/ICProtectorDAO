@@ -2,14 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '/logoo.png';
 import icp from '/icp.png';
-import { useTheme } from '../contexts/ThemeContext'; 
+import { useTheme } from '../contexts/ThemeContext';
+import ic from 'ic0';
 
 const ProposalContent = () => {
-    const { darkMode, toggleTheme } = useTheme();
+    const { darkMode, toggleTheme } = useTheme();// Set default or dynamic based on use case
+    const [loading, setLoading] = useState(false);
     const [onlyOpen, setOnlyOpen] = useState(false); // State for the "Only Open Proposal" checkbox
-    const [proposals, setProposals] = useState([]); // State to hold your proposal data
+    const [proposals, setProposals] = useState([]);
+    const [proposalData, setProposalData] = useState([]); // State to hold your proposal data
+    const backendCanisterId = 'bkyz2-fmaaa-aaaaa-qaaaq-cai';
+    const backend = ic.local(backendCanisterId);
+    const formatCreationTime = (nsTimestamp) => {
+        const milliseconds = nsTimestamp / 1_000_000; // Convert nanoseconds to milliseconds
+        const date = new Date(milliseconds); // Create a new Date object
+        return date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
+    };
+    const fetchProposalData = async () => {
+        try {
+            setLoading(true);
+            const result = await backend.call("getProposalAll");
+            console.log(result);
+            // if (result[0]) {
+            //     result[0].formattedCreationTime = formatCreationTime(Number(result[0].creationTime));
+            // }
+            setProposalData(result);
+        } catch (error) {
+            console.error("Error fetching proposal data:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
+        fetchProposalData();
         // Simulated proposal data array
         const proposalData = [
             {
@@ -126,7 +152,7 @@ const ProposalContent = () => {
                                 <label htmlFor="terms" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Only Open Proposal</label>
                             </div>
                         </div>
-
+                        {proposalData && proposalData.length > 0 && (
                         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 
                             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -156,36 +182,39 @@ const ProposalContent = () => {
                                     </tr>
                                 </thead>
                                 <tbody className='mt-2'>
-                                    {filteredProposals.map(proposal => (
-                                        <tr key={proposal.id} class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    
+                                {proposalData.map((proposal, index) => (
+                                        <tr key={index} class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                             <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                 {proposal.id}
                                             </td>
                                             <td class="px-6 py-4">
-                                                {proposal.title}
+                                                {proposal.topicName}
                                             </td>
                                             <td class="px-6 py-4">
-                                                {proposal.proposedDate}
+                                                {formatCreationTime(Number(proposal.creationTime))}
                                             </td>
                                             <td class="px-6 py-4">
                                                 {proposal.timeRemaining}
                                             </td>
                                             <td class="px-6 py-4">
-                                                <span class="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300 p-3">{proposal.topic}</span>
+                                                <span class="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300 p-3">
+                                                {proposal.topicName}</span>
                                             </td>
                                             <td class="px-6 py-4">
-                                                <span className={`text-xs font-medium me-2 px-2.5 py-0.5 rounded p-3 ${proposal.status === 'Open' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'}`}>
-                                                    {proposal.status}
+                                                <span className={`text-xs font-medium me-2 px-2.5 py-0.5 rounded p-3 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300`}>
+                                                    Open
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4">
-                                                <Link to={`/detail-proposals/${proposal.id}`}><button type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">{proposal.status === 'Open' ? 'Vote' : 'View'}</button>
+                                                <Link to={`/detail-proposals/${proposal.id}`}><button type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Open</button>
                                                 </Link></td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
                         </div>
+                        )}
                     </div>
 
                 </div>

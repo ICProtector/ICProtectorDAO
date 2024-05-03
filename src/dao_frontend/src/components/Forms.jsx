@@ -1,30 +1,117 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useTheme } from '../contexts/ThemeContext'; 
+import { useTheme } from '../contexts/ThemeContext';
+import ic from 'ic0';
+import Compressor from 'compressorjs';
+import DatePicker from 'react-datepicker';
+
 const Forms = () => {
-    const { darkMode, toggleTheme } = useTheme();
+    const { darkMode } = useTheme();
     const [topicName, setTopicName] = useState('');
     const [description, setDescription] = useState('');
-    const [options, setOptions] = useState(['']); // Start with one empty option
+    const [optionCount, setOptionCount] = useState(2); // Default to two options
+    const [options, setOptions] = useState(['Yes', 'No']); // Default to Yes and No
     const [file, setFile] = useState(null);
+    const [id, setId] = useState("");
+    const [endtime, setEndtime] = useState(new Date());
+    // const [id, setId] = useState(generateRandomId());
+    useEffect(() => {
+        setId(generateRandomId());
+    }, []);
+
+    // Function to generate a random ID
+    const generateRandomId = () => {
+        const randomNumber = Math.floor(Math.random() * 10000000000); // Generate a random number between 0 and 9999999999
+        return randomNumber.toString(); // Convert the random number to a string
+    };
+    const backendCanisterId = 'bkyz2-fmaaa-aaaaa-qaaaq-cai';
+    const backend = ic.local(backendCanisterId);
 
     const handleSubmit = (e) => {
-      e.preventDefault();
-      console.log({ topicName, description, options, file }); // Log the entire options array
+        e.preventDefault();
+        console.log({ topicName, description, options, file });
+        const timestampInMilliseconds = endtime.getTime();
+    const timestampInNanoseconds = BigInt(timestampInMilliseconds) * BigInt(1000);
+    console.log('End Time Timestamp:', timestampInNanoseconds.toString() + 'n');
+        if (file) {
+            callCreateProposal(file);
+        } else {
+            callCreateProposal('');
+        }
     };
-
-   
-
-    const addOption = () => {
-        setOptions([...options, '']); // Add a new empty option
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            new Compressor(file, {
+                quality: 0.6, // Adjust the quality as needed
+                success(compressedResult) {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(compressedResult); // This converts the image to base64
+                    reader.onload = () => {
+                        setFile(reader.result); // Sets the compressed base64 string to state
+                        console.log('Base64 Image Data:', reader.result); // Log base64 data
+                    };
+                    reader.onerror = (error) => {
+                        console.error('Error reading file:', error);
+                    };
+                },
+                error(err) {
+                    console.error('Error compressing file:', err);
+                },
+            });
+        }
     };
+    const callCreateProposal = async () => {
+        try {
+            const pollOptions = {
+                op1: "Option 1",
+                count1: 10,
+                op2: "Option 2",
+                count2: 20,
+                op3: "Option 3",
+                count3: 5,
+                op4: "Option 4",
+                count4: 7,
+                op5: "Option 5",
+                count5: 3
+            };
+            let val; // Declare val outside of the if block
+            if (optionCount === 2) {
+                val = true;
+            } else {
+                val = false;
+                for (let i = 0; i < optionCount; i++) {
+                    pollOptions[`op${i + 1}`] = options[i] || `Option ${i + 1}`; // Use input value if available, otherwise use default
+                    pollOptions[`count${i + 1}`] = 0; // Initialize count to 0
+                }
+            }
+            if (endtime === null) {
+                console.error('Please select end time');
+                return;
+            }
 
-    const removeOption = (index) => {
-        setOptions(options.filter((_, i) => i !== index)); // Remove option at given index
+           
+            const response = await backend.call("createProposal",
+                id, topicName, description, "", 0, 0, val, pollOptions)
+            console.log('Proposal Created:', response);
+        } catch (error) {
+            console.error('Error creating proposal:', error);
+        }
+    };
+    // const generateRandomId = () => {
+    //     return Math.random().toString(36).substr(2, 10);
+    // };
+
+    const updateOptionCount = (count) => {
+        setOptionCount(count);
+        if (count === 2) {
+            setOptions(['Yes', 'No']);
+        } else {
+            setOptions(Array(5).fill('')); // Create five empty strings
+        }
     };
 
     const updateOption = (value, index) => {
-        const newOptions = options.slice();
+        const newOptions = [...options];
         newOptions[index] = value;
         setOptions(newOptions);
     };
@@ -33,11 +120,10 @@ const Forms = () => {
     const cardClass = darkMode ? 'bg-gray-800 text-white shadow-xl' : 'bg-white text-gray-900 shadow-xl';
     const inputClass = 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-indigo-500';
     const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-200 text-left py-1';
-    const buttonClass = 'w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600';
 
     return (
         <div className={`min-h-screen flex items-center p-4 justify-center ${gradientClass}`}>
-            <div className={`max-w-md w-full p-3 rounded-lg ${cardClass}`}>
+            <div className={`max-w-lg w-full p-3 rounded-lg ${cardClass}`}>
                 <h2 className="text-2xl font-bold mb-4 text-center">Create Proposal</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
@@ -58,48 +144,50 @@ const Forms = () => {
                             onChange={(e) => setDescription(e.target.value)}
                             className={`${inputClass} dark:bg-gray-700 dark:text-white`}
                             rows="4"
-                        ></textarea>
+                        />
+                    </div>
+                    <div>
+                        <label className={labelClass}>Number of Options</label>
+                        <select
+                            onChange={(e) => updateOptionCount(Number(e.target.value))}
+                            className={inputClass}
+                            defaultValue={2}
+                        >
+                            <option value={2}>Two</option>
+                            <option value={5}>Five</option>
+                        </select>
                     </div>
                     {options.map((option, index) => (
                         <div key={index} className="flex items-center">
                             <input
                                 type="text"
-                                id={`option-${index}`}
                                 value={option}
                                 placeholder={`Option ${index + 1}`}
                                 onChange={(e) => updateOption(e.target.value, index)}
                                 className={`${inputClass} dark:bg-gray-700 dark:text-white flex-grow`}
                             />
-                            {options.length > 1 && (
-                                <button
-                                    type="button"
-                                    onClick={() => removeOption(index)}
-                                    className="ml-2 bg-red-500 text-white p-2 hover:text-red-800"
-                                >
-                                    &#8722; {/* This is a placeholder for a remove icon */}
-                                </button>
-                            )}
-                            {index === options.length - 1 && (
-                                <button
-                                    type="button"
-                                    onClick={addOption}
-                                    className="ml-2 bg-green-500 text-white p-2 hover:text-green-800"
-                                >
-                                    &#43; {/* This is a placeholder for an add icon */}
-                                </button>
-                            )}
                         </div>
                     ))}
+                    <div>
+                        <label htmlFor="endtime" className={labelClass}>End Time</label>
+                        <DatePicker
+                            selected={endtime}
+                            onChange={date => setEndtime(date)}
+                            showTimeSelect
+                            dateFormat="MMMM d, yyyy h:mm aa"
+                            className={`${inputClass} dark:bg-gray-700 dark:text-white`}
+                        />
+                    </div>
                     <div>
                         <label htmlFor="file" className={labelClass}>Choose File</label>
                         <input
                             type="file"
                             id="file"
-                            onChange={(e) => setFile(e.target.files[0])}
+                            onChange={handleFileChange}
                             className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-600 dark:file:text-gray-200"
                         />
                     </div>
-                    <button type="submit" className={buttonClass}>
+                    <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600">
                         Submit
                     </button>
                 </form>
