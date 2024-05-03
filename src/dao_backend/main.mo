@@ -143,7 +143,7 @@ actor ProposalManager {
     return map.get(id);
   };
 
-  public query func getProposalAll(id : Text) : async [Proposal] {
+  public query func getProposalAll() : async [Proposal] {
     return Iter.toArray(map.vals());
   };
 
