@@ -142,6 +142,11 @@ actor ProposalManager {
   public query func getProposal(id : Text) : async ?Proposal {
     return map.get(id);
   };
+
+  public query func getProposalAll(id : Text) : async [Proposal] {
+    return Iter.toArray(map.vals());
+  };
+
   public query func getWinner(id : Text) : async ?Reward {
     return rewards.get(id);
   };
