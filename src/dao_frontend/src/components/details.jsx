@@ -9,6 +9,7 @@ const Details = (props) => {
     const [loading, setLoading] = useState(false);
     const [proposalData, setProposalData] = useState(null);
     const [previousVote, setPreviousVote] = useState([]);
+    const [winner, setWinner] = useState(null);
 
     const backendCanisterId = 'bkyz2-fmaaa-aaaaa-qaaaq-cai';
     const backend = ic.local(backendCanisterId);
@@ -21,7 +22,7 @@ const Details = (props) => {
     const fetchProposalData = async () => {
         try {
             setLoading(true);
-            const result = await backend.call("getProposal", id );
+            const result = await backend.call("getProposal", id);
             const vote = await backend.call("QueryAllUserVotes");
             console.log(vote);
             console.log(result[0]);
@@ -30,6 +31,7 @@ const Details = (props) => {
             }
             setProposalData(result[0]);
             setPreviousVote(vote);
+            checkResult(result[0].endTime);
         } catch (error) {
             console.error("Error fetching proposal data:", error);
         } finally {
@@ -48,10 +50,34 @@ const Details = (props) => {
             setLoading(false);
         }
     };
+    const determineStatus = (endTime) => {
+        const currentTime = Date.now();
+        const endMilliseconds = Number(endTime) / 1_000_000;
+        return currentTime > endMilliseconds ? 'Closed' : 'Vote';
+    };
 
+    const checkResult = async (endTime) => {
+        if (determineStatus(endTime) === 'Closed') {
+            const winnerResult = await getWinner(id);
+            setWinner(winnerResult[0]); // This will update your state and trigger a re-render
+            console.log(winnerResult[0]);
+        }
+    }
+    const getWinner = async (proposalId) => {
+        try {
+            setLoading(true);
+            const winner = await backend.call("getWinner", proposalId);
+            console.log("Winner Selected:", winner);
+            return winner;
+        } catch (error) {
+            console.error("Error Selected result:", error);
+        } finally {
+            setLoading(false);
+        }
+    }
     useEffect(() => {
         fetchProposalData(); // Call the function when the component mounts
-    }, []);
+    }, [checkResult, setWinner,castVote,setPreviousVote]);
 
 
     return (
@@ -114,54 +140,86 @@ const Details = (props) => {
                                     Actions
                                 </button>
                                 <div className="flex flex-col p-4 bg-white border-2 border-white rounded-xl dark:bg-gray-950 focus:outline-none">
-                                    {proposalData.status == "true" ? (
-                                        <button className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:bg-white dark:border-white focus:outline-none">
-                                            Vote
-                                        </button>
-                                    ) : (
-                                        <button className={`text-xl font-mono italic border-2 rounded-xl py-2 px-6 mb-5 focus:outline-none ${proposalData.status === 'Rejected' ? 'bg-red-600 text-white' : 'bg-green-600 text-white'}`}>
-                                            Closed
-                                        </button>
-                                    )}
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-black dark:text-white">Proposal Status</span>
-                                        {/* <span className="text-black dark:text-white">1,241,693,625 Votes</span> */}
-                                    </div>
-                                    <div className="w-full bg-green-600 rounded-full h-2.5 dark:bg-green-500">
-                                        <div className="bg-green-500 h-2.5 rounded-full" style={{ width: '100%' }}></div>
-                                    </div>
-                                    <div className="flex justify-between mt-2">
-                                        <span className="text-green-600 dark:text-green-400 text-sm">100% Adopt</span>
-                                        <span className="text-red-600 dark:text-red-400 text-sm">0% Reject</span>
-                                    </div>
-                                    {proposalData.twoOptionType ? (
-                                        <div className="mt-4">
-                                            <h3 className="text-lg font-bold text-black dark:text-white">Options:</h3>
-                                            <div className="flex flex-col">
-                                                <button onClick={() => castVote(proposalData.id, "yes")} className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:bg-white dark:border-white focus:outline-none">
-                                                    Yes
+                                    {
+                                        determineStatus(proposalData.endTime) === 'Vote' ? (
+                                            <>
+                                                <button className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:bg-white dark:border-white focus:outline-none">
+                                                    Vote
                                                 </button>
-                                                <button onClick={() => castVote(proposalData.id, "no")} className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:bg-white dark:border-white focus:outline-none">
-                                                    No
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="mt-4">
-                                            <h3 className="text-lg font-bold text-black dark:text-white">Options:</h3>
-                                            <div className="flex flex-col">
-                                                {Object.entries(proposalData.options).map(([key, value]) => (
-                                                    key.startsWith('op') &&
-                                                    <div key={key} className="mb-3">
-                                                        <button  onClick={() => castVote(proposalData.id, value)} className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 w-full dark:bg-white dark:border-white focus:outline-none">
-                                                            {value}
-                                                        </button>
+                                                {proposalData.twoOptionType ? (
+                                                    <div className="mt-4">
+                                                        <h3 className="text-lg font-bold text-black dark:text-white">Options:</h3>
+                                                        <div className="flex flex-col">
+                                                            <button onClick={() => castVote(proposalData.id, "yes")} className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:bg-white dark:border-white focus:outline-none">
+                                                                Yes
+                                                            </button>
+                                                            <button onClick={() => castVote(proposalData.id, "no")} className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:bg-white dark:border-white focus:outline-none">
+                                                                No
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-
+                                                ) : (
+                                                    <div className="mt-4">
+                                                        <h3 className="text-lg font-bold text-black dark:text-white">Options:</h3>
+                                                        <div className="flex flex-col">
+                                                            {Object.entries(proposalData.options).map(([key, value]) => (
+                                                                key.startsWith('op') &&
+                                                                <div key={key} className="mb-3">
+                                                                    <button onClick={() => castVote(proposalData.id, value)} className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 w-full dark:bg-white dark:border-white focus:outline-none">
+                                                                        {value}
+                                                                    </button>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button className={`text-xl font-mono italic border-2 rounded-xl py-2 px-6 mb-5 focus:outline-none ${proposalData.status === 'Rejected' ? 'bg-red-600 text-white' : 'bg-green-600 text-white'}`}>
+                                                    Closed
+                                                </button>
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <span className="text-black dark:text-white">
+                                                        Proposal Result: {winner ? winner.correctOption : "Loading..."}  </span>
+                                                </div>
+                                                <div className="w-full bg-green-600 rounded-full h-2.5 dark:bg-green-500">
+                                                    <div className="bg-green-500 h-2.5 rounded-full" style={{ width: '100%' }}></div>
+                                                </div>
+                                                <div className="flex justify-between mt-2">
+                                                    <span className="text-green-600 dark:text-green-400 text-sm">100% Adopt</span>
+                                                    <span className="text-red-600 dark:text-red-400 text-sm">0% Reject</span>
+                                                </div>
+                                                {proposalData.twoOptionType ? (
+                                                    <div className="mt-4">
+                                                        <h3 className="text-lg font-bold text-black dark:text-white">Options:</h3>
+                                                        <div className="flex flex-col">
+                                                            <button className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:bg-white dark:border-white focus:outline-none">
+                                                                Yes
+                                                            </button>
+                                                            <button className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:bg-white dark:border-white focus:outline-none">
+                                                                No
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="mt-4">
+                                                        <h3 className="text-lg font-bold text-black dark:text-white">Options:</h3>
+                                                        <div className="flex flex-col">
+                                                            {Object.entries(proposalData.options).map(([key, value]) => (
+                                                                key.startsWith('op') &&
+                                                                <div key={key} className="mb-3">
+                                                                    <button className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 w-full dark:bg-white dark:border-white focus:outline-none">
+                                                                        {value}
+                                                                    </button>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )
+                                    }
                                 </div>
                             </div>
                         </div>

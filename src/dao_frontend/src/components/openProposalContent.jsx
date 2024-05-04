@@ -6,7 +6,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import ic from 'ic0';
 
 const OpenProposalContent = () => {
-    const { darkMode, toggleTheme } = useTheme();
+    const { darkMode, toggleTheme } = useTheme();// Set default or dynamic based on use case
     const [loading, setLoading] = useState(false);
     const [onlyOpen, setOnlyOpen] = useState(false); // State for the "Only Open Proposal" checkbox
     const [proposals, setProposals] = useState([]);
@@ -20,13 +20,13 @@ const OpenProposalContent = () => {
     };
     const fetchProposalData = async () => {
         try {
-            setLoading(true);
             const result = await backend.call("getProposalAll");
-            console.log(result);
-            // if (result[0]) {
-            //     result[0].formattedCreationTime = formatCreationTime(Number(result[0].creationTime));
-            // }
-            setProposalData(result);
+            const formattedProposals = result.map(proposal => ({
+                ...proposal,
+                formattedCreationTime: formatCreationTime(Number(proposal.creationTime)),
+                status: determineStatus(proposal.endTime)
+            }));
+            setProposals(formattedProposals);
         } catch (error) {
             console.error("Error fetching proposal data:", error);
         } finally {
@@ -36,29 +36,97 @@ const OpenProposalContent = () => {
 
     useEffect(() => {
         fetchProposalData();
-        
+        // Simulated proposal data array
+        const proposalData = [
+            {
+                id: 1,
+                title: "1SET XRD Ratio",
+                proposedDate: "April 10, 2024",
+                timeRemaining: "2 hours ago",
+                topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
+                status: "Open"
+            },
+            {
+                id: 2,
+                title: "2SET XRD Ratio",
+                proposedDate: "April 10, 2024",
+                timeRemaining: "2 hours ago",
+                topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
+                status: "Rejected"
+            },
+            {
+                id: 3,
+                title: "3SET XRD Ratio",
+                proposedDate: "April 10, 2024",
+                timeRemaining: "2 hours ago",
+                topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
+                status: "Open"
+            },
+            {
+                id: 4,
+                title: "4SET XRD Ratio",
+                proposedDate: "April 10, 2024",
+                timeRemaining: "2 hours ago",
+                topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
+                status: "Rejected"
+            },
+            {
+                id: 5,
+                title: "SET XRD Ratio",
+                proposedDate: "April 10, 2024",
+                timeRemaining: "2 hours ago",
+                topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
+                status: "Open"
+            },
+            {
+                id: 6,
+                title: "SET XRD Ratio",
+                proposedDate: "April 10, 2024",
+                timeRemaining: "2 hours ago",
+                topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
+                status: "Open"
+            },
+            {
+                id: 7,
+                title: "SET XRD Ratio",
+                proposedDate: "April 10, 2024",
+                timeRemaining: "2 hours ago",
+                topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
+                status: "Rejected"
+            },
+            {
+                id: 8,
+                title: "SET XRD Ratio",
+                proposedDate: "April 10, 2024",
+                timeRemaining: "2 hours ago",
+                topic: "XRD Ratio",
+                additionalInfo: "Additional data for Proposals should be added.",
+                status: "Rejected"
+            },
+            // Add more proposal objects here if needed
+        ];
 
         // Set initial proposal data
         setProposals(proposalData);
 
-    }, []);// State to hold your proposal data
-
-     // Function to filter proposals based on status
-    const filteredProposals = proposals.filter(proposal => proposal.status === 'Open') 
-
-    const myStyle = {
-        translate: 'none',
-        rotate: 'none',
-        scale: 'none',
-        opacity: 1,
-        transform: 'translate(0px, 0px)'
+    }, []);
+    const determineStatus = (endTime) => {
+        const currentTime = Date.now();
+        const endMilliseconds = Number(endTime) / 1_000_000;
+        return currentTime > endMilliseconds ? 'Closed' : 'Open';
     };
-    const gradientClass = darkMode ? 'bg-gradient-to-r from-gray-950 to-gray-950' : 'bg-gradient-to-b from-orange-200 to-orange-500';
-    const buttonClass = darkMode ? 'bg-gradient-to-r from-red-600 to-red-900' : 'bg-gradient-to-r from-red-400 to-red-600';
-
+    // Function to filter proposals based on status
+    const filteredProposals =  proposals.filter(proposal => proposal.status === 'Open');
     return (
         <>
-            <section className={`section7  ${gradientClass}`}>
+            <section className={`section7 `}>
                 <div className={`p-5`}>
                     <div className="ml-3 mr-3">
                         <div className="flex flex-row mb-3 mt-5 justify-between items-center">
@@ -69,7 +137,7 @@ const OpenProposalContent = () => {
                             </div>
                         </div>
 
-                        {proposalData && proposalData.length > 0 && (
+                        {loading ? <p>Loading proposals...</p> : filteredProposals.length > 0 ? (
                         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 
                             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -100,7 +168,7 @@ const OpenProposalContent = () => {
                                 </thead>
                                 <tbody className='mt-2'>
                                     
-                                {proposalData.map((proposal, index) => (
+                                {filteredProposals.map((proposal, index) => (
                                         <tr key={index} class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                             <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                 {proposal.id}
@@ -112,7 +180,8 @@ const OpenProposalContent = () => {
                                                 {formatCreationTime(Number(proposal.creationTime))}
                                             </td>
                                             <td class="px-6 py-4">
-                                                {proposal.timeRemaining}
+                                               
+                                            {formatCreationTime(Number(proposal.endTime))}
                                             </td>
                                             <td class="px-6 py-4">
                                                 <span class="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300 p-3">
@@ -120,18 +189,22 @@ const OpenProposalContent = () => {
                                             </td>
                                             <td class="px-6 py-4">
                                                 <span className={`text-xs font-medium me-2 px-2.5 py-0.5 rounded p-3 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300`}>
-                                                    Open
+                                                {proposal.status}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4">
-                                                <Link to={`/detail-proposals/${proposal.id}`}><button type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Open</button>
-                                                </Link></td>
+                                                <Link to={`/detail-proposals/${proposal.id}`}>
+                                                    <button type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                                    {proposal.status === "Open" ? "Vote" : "View"}
+                                                    </button>
+                                                </Link>
+                                                </td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
                         </div>
-                        )}
+                       ) : <p>No proposals to display.</p>}
                     </div>
 
                 </div>

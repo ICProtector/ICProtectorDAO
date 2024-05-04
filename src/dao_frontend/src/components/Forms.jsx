@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import ic from 'ic0';
 import Compressor from 'compressorjs';
-import DatePicker from 'react-datepicker';
 
 const Forms = () => {
     const { darkMode } = useTheme();
@@ -12,12 +11,21 @@ const Forms = () => {
     const [options, setOptions] = useState(['Yes', 'No']); // Default to Yes and No
     const [file, setFile] = useState(null);
     const [id, setId] = useState("");
-    const [endtime, setEndtime] = useState(new Date());
+    const [endtime, setEndtime] = useState(null);
+    const [date, setDate] = useState('');
+    const [time, setTime] = useState('');
     // const [id, setId] = useState(generateRandomId());
     useEffect(() => {
         setId(generateRandomId());
     }, []);
 
+    useEffect(() => {
+        // Update endtime whenever date or time changes
+        if (date && time) {
+            const combinedDateTime = new Date(`${date}T${time}`);
+            setEndtime(combinedDateTime);
+        }
+    }, [date, time]);
     // Function to generate a random ID
     const generateRandomId = () => {
         const randomNumber = Math.floor(Math.random() * 10000000000); // Generate a random number between 0 and 9999999999
@@ -28,10 +36,24 @@ const Forms = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!topicName || !description || options.some(option => !option) || !endtime) {
+            console.error('Please fill all the fields.');
+            return;
+        }
+    
+        // Check if end time is in the future
+        const currentTime = new Date();
+        if (endtime <= currentTime) {
+            console.error('Please select a future end time.');
+            return;
+        }
+    
+        // Check if all options are filled if optionCount is 5
+        if (optionCount === 5 && options.some(option => !option)) {
+            console.error('Please fill all 5 option fields.');
+            return;
+        }
         console.log({ topicName, description, options, file });
-        const timestampInMilliseconds = endtime.getTime();
-    const timestampInNanoseconds = BigInt(timestampInMilliseconds) * BigInt(1000);
-    console.log('End Time Timestamp:', timestampInNanoseconds.toString() + 'n');
         if (file) {
             callCreateProposal(file);
         } else {
@@ -88,10 +110,17 @@ const Forms = () => {
                 console.error('Please select end time');
                 return;
             }
-
-           
+            let  timestampInNanoseconds;
+            if (endtime) {
+                const timestampInMilliseconds = endtime.getTime();
+                 timestampInNanoseconds = BigInt(timestampInMilliseconds) * BigInt(1000000);  // Convert to nanoseconds
+                console.log('End Time Timestamp:', timestampInNanoseconds.toString() + 'n');
+            } else {
+                console.error('End time is not set.');
+                return;
+            }
             const response = await backend.call("createProposal",
-                id, topicName, description, "", 0, 0, val, pollOptions)
+                id, topicName, description, "", 0, timestampInNanoseconds, val, pollOptions)
             console.log('Proposal Created:', response);
         } catch (error) {
             console.error('Error creating proposal:', error);
@@ -170,13 +199,14 @@ const Forms = () => {
                     ))}
                     <div>
                         <label htmlFor="endtime" className={labelClass}>End Time</label>
-                        <DatePicker
-                            selected={endtime}
-                            onChange={date => setEndtime(date)}
-                            showTimeSelect
-                            dateFormat="MMMM d, yyyy h:mm aa"
-                            className={`${inputClass} dark:bg-gray-700 dark:text-white`}
-                        />
+                        <input
+                    type="date"
+                    onChange={(e) => setDate(e.target.value)}
+                />
+                <input
+                    type="time"
+                    onChange={(e) => setTime(e.target.value)}
+                />
                     </div>
                     <div>
                         <label htmlFor="file" className={labelClass}>Choose File</label>
