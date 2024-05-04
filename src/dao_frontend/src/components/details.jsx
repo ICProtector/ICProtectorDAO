@@ -31,6 +31,7 @@ const Details = (props) => {
             }
             setProposalData(result[0]);
             setPreviousVote(vote);
+            console.log("vote",vote);
             checkResult(result[0].endTime);
         } catch (error) {
             console.error("Error fetching proposal data:", error);
@@ -41,6 +42,12 @@ const Details = (props) => {
     const castVote = async (proposalId, option) => {
         try {
             setLoading(true);
+            const alreadyVoted = previousVote.some(vote => vote.proposalId === proposalId);
+
+            if (alreadyVoted) {
+                console.log("Already voted for this proposal");
+                return; // Exit the function, preventing further execution
+            }
             const result = await backend.call("castVote", proposalId, option);
             console.log("Vote result:", result);
             // Handle post-vote UI update or confirmation here
@@ -77,7 +84,7 @@ const Details = (props) => {
     }
     useEffect(() => {
         fetchProposalData(); // Call the function when the component mounts
-    }, [checkResult, setWinner,castVote,setPreviousVote]);
+    }, [checkResult, setWinner]);
 
 
     return (
@@ -181,7 +188,7 @@ const Details = (props) => {
                                                 </button>
                                                 <div className="flex justify-between items-center mb-2">
                                                     <span className="text-black dark:text-white">
-                                                        Proposal Result: {winner ? winner.correctOption : "Loading..."}  </span>
+                                                        Proposal Result: {winner ? winner.correctOption : "Pending result..."}  </span>
                                                 </div>
                                                 <div className="w-full bg-green-600 rounded-full h-2.5 dark:bg-green-500">
                                                     <div className="bg-green-500 h-2.5 rounded-full" style={{ width: '100%' }}></div>

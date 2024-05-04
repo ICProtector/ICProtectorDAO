@@ -69,6 +69,10 @@ const Navbar = () => {
                   <li>
                   <Link to={'/proposals'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">See previous proposals</Link>
                   </li>
+                  
+                  <li>
+                  <Link to={'/claim-reward'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Claim your reward</Link>
+                  </li>
                 </ul>
               </div>
             </li>

@@ -5,6 +5,7 @@ import Detailpage from './pages/detailPage';
 import Home from './pages/homepage';
 import PreviousProposal from './pages/previousProposal';
 import OpenProposal from './pages/openProposal';
+import ClaimReward from './pages/claimReward';
 import CreateProposal from './pages/formPage';
 import { ThemeProvider } from './contexts/ThemeContext';
 
@@ -21,6 +22,7 @@ export default function Router() {
         <Route path="/open-proposals"  element={<OpenProposal />} />
         <Route path="/create-proposal"  element={<CreateProposal />} />
         <Route path='/detail-proposals/:id'  element={<Detailpage />} />
+        <Route path='/claim-reward'  element={<ClaimReward />} />
       </Routes>
       </ThemeProvider>
     </BrowserRouter>
