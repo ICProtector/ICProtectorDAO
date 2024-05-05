@@ -13,8 +13,8 @@ const ProposalContent = () => {
     const [proposalData, setProposalData] = useState([]);
     
     const [alertInfo, setAlertInfo] = useState({ show: false, type: '', message: '' }); // State to hold your proposal data
-    const backendCanisterId = 'bkyz2-fmaaa-aaaaa-qaaaq-cai';
-    const backend = ic.local(backendCanisterId);
+    const backendCanisterId = '7wzen-oqaaa-aaaap-ahduq-cai';
+    const backend = ic(backendCanisterId);
     const formatCreationTime = (nsTimestamp) => {
         const milliseconds = nsTimestamp / 1_000_000; // Convert nanoseconds to milliseconds
         const date = new Date(milliseconds); // Create a new Date object

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ic from 'ic0';
+import { useConnect } from "@connect2ic/react"
 
 import { useTheme } from '../contexts/ThemeContext';
+import { Principal } from '@dfinity/candid/lib/cjs/idl';
 const Details = (props) => {
     const { id } = props;
     const { darkMode, toggleTheme } = useTheme(); // Set default or dynamic based on use case
@@ -12,9 +14,16 @@ const Details = (props) => {
     const [winner, setWinner] = useState(null);
     const [alertInfo, setAlertInfo] = useState({ show: false, type: '', message: '' });
 
-    const backendCanisterId = 'bkyz2-fmaaa-aaaaa-qaaaq-cai';
-    const backend = ic.local(backendCanisterId);
-
+    const backendCanisterId = '7wzen-oqaaa-aaaap-ahduq-cai';
+    const backend = ic(backendCanisterId);
+    const { isConnected, principal, activeProvider } = useConnect({
+        onConnect: () => {
+          // Signed in
+        },
+        onDisconnect: () => {
+          // Signed out
+        }
+      })
     const formatCreationTime = (nsTimestamp) => {
         const milliseconds = nsTimestamp / 1_000_000; // Convert nanoseconds to milliseconds
         const date = new Date(milliseconds); // Create a new Date object
@@ -24,7 +33,7 @@ const Details = (props) => {
         try {
             setLoading(true);
             const result = await backend.call("getProposal", id);
-            const vote = await backend.call("QueryAllUserVotes");
+            const vote = await backend.call("QueryAllUserVotes",Principal.fromText(principal));
             console.log(vote);
             console.log(result[0]);
             if (result[0]) {
@@ -52,10 +61,17 @@ const Details = (props) => {
                 console.log("Already voted for this proposal");
                 return; // Exit the function, preventing further execution
             }
-            const result = await backend.call("castVote", proposalId, option);
-            setAlertInfo({ show: true, type: 'success', message: 'You cast vote successffully' });
-            setTimeout(() => setAlertInfo(false), 5000);
-            console.log("Vote result:", result);
+            if(isConnected)
+            {
+                const result = await backend.call("castVote", proposalId, option,Principal.fromText(principal));
+                setAlertInfo({ show: true, type: 'success', message: 'You cast vote successffully' });
+                setTimeout(() => setAlertInfo(false), 5000);
+                console.log("Vote result:", result);
+            }
+            else{
+                alert("Connect your wallet")
+            }
+          
             // Handle post-vote UI update or confirmation here
         } catch (error) {
             console.error("Error casting vote:", error);

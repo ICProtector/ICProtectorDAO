@@ -115,10 +115,11 @@ actor ProposalManager {
   var rewards = Map.HashMap<Text, Reward>(0, Text.equal, Text.hash);
 
   // // Create a new proposal
-  public shared (msg) func createProposal(id : Text, topicName1 : Text, description1 : Text, arImage : Text, argStartdate : Int, argEndDate : Int, twoOptionType : Bool, argoptions : Option) : async Proposal {
+  public shared (msg) func createProposal(id : Text, topicName1 : Text, description1 : Text, arImage : Text, argStartdate : Int, argEndDate : Int, twoOptionType : Bool, argoptions : Option, principalId : Principal) : async Proposal {
     let currentTime = Time.now();
     // let proposalId = proposals.size() + 1; // Naive auto-increment, should be improved
-    let owner = msg.caller;
+    // let owner = msg.caller;
+    let owner = principalId;
     let newProposal : Proposal = {
       id = id;
       creator = owner; // Getting the caller's Principal
@@ -202,8 +203,10 @@ actor ProposalManager {
     return "success";
   };
 
-  public shared (msg) func checkClaimRewards(proposalId : Text) : async Text {
-    let owner = msg.caller;
+  public shared (msg) func checkClaimRewards(proposalId : Text, principalId : Principal) : async Text {
+    // let owner = msg.caller;
+    let owner = principalId;
+
     switch (rewards.get(proposalId)) {
       case (null) {
         return "No Reward yet";
@@ -262,8 +265,9 @@ actor ProposalManager {
     };
     return "success";
   };
-  public shared (msg) func castVote(proposalId : Text, selectedOption : Text) : async Text {
-    let owner = msg.caller;
+  public shared (msg) func castVote(proposalId : Text, selectedOption : Text, principalId : Principal) : async Text {
+    // let owner = msg.caller;
+    let owner = principalId;
     switch (map.get(proposalId)) {
       case (null) {
         return "No id";
@@ -271,7 +275,7 @@ actor ProposalManager {
       case (?proposal) {
         let currentTime = Time.now();
         let newVote = {
-          voter = msg.caller;
+          voter = owner;
           proposalId = proposalId;
           correctOption = selectedOption;
           voteTime = currentTime;
@@ -398,8 +402,8 @@ actor ProposalManager {
     };
   };
 
-  public shared (msg) func QueryAllUserVotes() : async [Vote] {
-    let owner = msg.caller;
+  public shared (msg) func QueryAllUserVotes(principalId : Principal) : async [Vote] {
+    let owner = principalId;
     switch (owners.get(owner)) {
       case (?x) {
         Debug.print(debug_show (("=>", owner)));
