@@ -10,6 +10,7 @@ const Details = (props) => {
     const [proposalData, setProposalData] = useState(null);
     const [previousVote, setPreviousVote] = useState([]);
     const [winner, setWinner] = useState(null);
+    const [alertInfo, setAlertInfo] = useState({ show: false, type: '', message: '' });
 
     const backendCanisterId = 'bkyz2-fmaaa-aaaaa-qaaaq-cai';
     const backend = ic.local(backendCanisterId);
@@ -45,14 +46,22 @@ const Details = (props) => {
             const alreadyVoted = previousVote.some(vote => vote.proposalId === proposalId);
 
             if (alreadyVoted) {
+                
+            setAlertInfo({ show: true, type: 'error', message: 'Already voted for this proposal' });
+            setTimeout(() => setAlertInfo(false), 5000);
                 console.log("Already voted for this proposal");
                 return; // Exit the function, preventing further execution
             }
             const result = await backend.call("castVote", proposalId, option);
+            setAlertInfo({ show: true, type: 'success', message: 'You cast vote successffully' });
+            setTimeout(() => setAlertInfo(false), 5000);
             console.log("Vote result:", result);
             // Handle post-vote UI update or confirmation here
         } catch (error) {
             console.error("Error casting vote:", error);
+            
+            setAlertInfo({ show: true, type: 'error', message:"Error casting vote:".error });
+            setTimeout(() => setAlertInfo(false), 5000);
         } finally {
             setLoading(false);
         }
@@ -86,6 +95,16 @@ const Details = (props) => {
         fetchProposalData(); // Call the function when the component mounts
     }, [checkResult, setWinner]);
 
+    const alertStyles = {
+        success: {
+            backgroundColor: darkMode ? '#b9fbc0' : '#d4edda', // Green background
+            color: darkMode ? '#1f7a1f' : '#155724' // Green text
+        },
+        error: {
+            backgroundColor: darkMode ? '#fdb5b5' : '#f8d7da', // Red background
+            color: darkMode ? '#971212' : '#721c24' // Red text
+        }
+    };
 
     return (
         <>
@@ -95,6 +114,20 @@ const Details = (props) => {
                     {/* Proposal Section */}
                     {proposalData && (
                         <>
+                        {alertInfo.show && (
+                        <div
+                            style={{
+                                padding: '1rem',
+                                marginBottom: '1rem',
+                                borderRadius: '0.25rem',
+                                backgroundColor: alertStyles[alertInfo.type].backgroundColor,
+                                color: alertStyles[alertInfo.type].color,
+                            }}
+                            role="alert"
+                        >
+                            {alertInfo.message}
+                        </div>
+                    )}
                             <h2 className="text-2xl font-bold text-left dark:text-white text-black">{proposalData.topicName}</h2>
                             <div className="dark:bg-gray-950 rounded-lg p-4 border-2 border-white p-4 mt-4">
                                 <div className="flex justify-between mb-4">

@@ -14,6 +14,7 @@ const Forms = () => {
     const [endtime, setEndtime] = useState(null);
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
+    const [alertInfo, setAlertInfo] = useState({ show: false, type: '', message: '' });
     // const [id, setId] = useState(generateRandomId());
     useEffect(() => {
         setId(generateRandomId());
@@ -37,19 +38,25 @@ const Forms = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!topicName || !description || options.some(option => !option) || !endtime) {
+            setAlertInfo({ show: true, type: 'error', message: 'Please fill all the fields.' });
+            setTimeout(() => setAlertInfo(false), 5000);
             console.error('Please fill all the fields.');
             return;
         }
-    
+
         // Check if end time is in the future
         const currentTime = new Date();
         if (endtime <= currentTime) {
+            setAlertInfo({ show: true, type: 'error', message: 'Please select a future end time.' });
+            setTimeout(() => setAlertInfo(false), 5000);
             console.error('Please select a future end time.');
             return;
         }
-    
+
         // Check if all options are filled if optionCount is 5
         if (optionCount === 5 && options.some(option => !option)) {
+            setAlertInfo({ show: true, type: 'error', message: 'Please fill all 5 option fields.' });
+            setTimeout(() => setAlertInfo(false), 5000);
             console.error('Please fill all 5 option fields.');
             return;
         }
@@ -110,10 +117,10 @@ const Forms = () => {
                 console.error('Please select end time');
                 return;
             }
-            let  timestampInNanoseconds;
+            let timestampInNanoseconds;
             if (endtime) {
                 const timestampInMilliseconds = endtime.getTime();
-                 timestampInNanoseconds = BigInt(timestampInMilliseconds) * BigInt(1000000);  // Convert to nanoseconds
+                timestampInNanoseconds = BigInt(timestampInMilliseconds) * BigInt(1000000);  // Convert to nanoseconds
                 console.log('End Time Timestamp:', timestampInNanoseconds.toString() + 'n');
             } else {
                 console.error('End time is not set.');
@@ -121,11 +128,28 @@ const Forms = () => {
             }
             const response = await backend.call("createProposal",
                 id, topicName, description, "", 0, timestampInNanoseconds, val, pollOptions)
+
+            setAlertInfo({ show: true, type: 'success', message: 'Proposal Created.' });
+            setTimeout(() => setAlertInfo(false), 5000);
+            clearfunction();
             console.log('Proposal Created:', response);
         } catch (error) {
+            setAlertInfo({ show: true, type: 'error', message: error });
+            setTimeout(() => setAlertInfo(false), 5000);
             console.error('Error creating proposal:', error);
         }
     };
+    const clearfunction = () => {
+        setTopicName('');
+        setDescription('');
+        setOptionCount(2);
+        setOptions(['Yes', 'No']);
+        setFile(null);
+        setId("");
+        setEndtime(null);
+        setDate('');
+        setTime('');
+    }
     // const generateRandomId = () => {
     //     return Math.random().toString(36).substr(2, 10);
     // };
@@ -149,12 +173,38 @@ const Forms = () => {
     const cardClass = darkMode ? 'bg-gray-800 text-white shadow-xl' : 'bg-white text-gray-900 shadow-xl';
     const inputClass = 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-indigo-500';
     const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-200 text-left py-1';
+    
+    const alertStyles = {
+        success: {
+            backgroundColor: darkMode ? '#b9fbc0' : '#d4edda', // Green background
+            color: darkMode ? '#1f7a1f' : '#155724' // Green text
+        },
+        error: {
+            backgroundColor: darkMode ? '#fdb5b5' : '#f8d7da', // Red background
+            color: darkMode ? '#971212' : '#721c24' // Red text
+        }
+    };
+
 
     return (
         <div className={`min-h-screen flex items-center p-4 justify-center ${gradientClass}`}>
             <div className={`max-w-lg w-full p-3 rounded-lg ${cardClass}`}>
                 <h2 className="text-2xl font-bold mb-4 text-center">Create Proposal</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    {alertInfo.show && (
+                        <div
+                            style={{
+                                padding: '1rem',
+                                marginBottom: '1rem',
+                                borderRadius: '0.25rem',
+                                backgroundColor: alertStyles[alertInfo.type].backgroundColor,
+                                color: alertStyles[alertInfo.type].color,
+                            }}
+                            role="alert"
+                        >
+                            {alertInfo.message}
+                        </div>
+                    )}
                     <div>
                         <label htmlFor="topicName" className={labelClass}>Topic Name</label>
                         <input
@@ -200,13 +250,13 @@ const Forms = () => {
                     <div>
                         <label htmlFor="endtime" className={labelClass}>End Time</label>
                         <input
-                    type="date"
-                    onChange={(e) => setDate(e.target.value)}
-                />
-                <input
-                    type="time"
-                    onChange={(e) => setTime(e.target.value)}
-                />
+                            type="date" value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                        />
+                        <input
+                            type="time" value={time} 
+                            onChange={(e) => setTime(e.target.value)}
+                        />
                     </div>
                     <div>
                         <label htmlFor="file" className={labelClass}>Choose File</label>

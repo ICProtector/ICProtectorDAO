@@ -10,7 +10,9 @@ const ProposalContent = () => {
     const [loading, setLoading] = useState(false);
     const [onlyOpen, setOnlyOpen] = useState(false); // State for the "Only Open Proposal" checkbox
     const [proposals, setProposals] = useState([]);
-    const [proposalData, setProposalData] = useState([]); // State to hold your proposal data
+    const [proposalData, setProposalData] = useState([]);
+    
+    const [alertInfo, setAlertInfo] = useState({ show: false, type: '', message: '' }); // State to hold your proposal data
     const backendCanisterId = 'bkyz2-fmaaa-aaaaa-qaaaq-cai';
     const backend = ic.local(backendCanisterId);
     const formatCreationTime = (nsTimestamp) => {
@@ -41,9 +43,13 @@ const ProposalContent = () => {
         try {
             setLoading(true);
             const result = await backend.call("winnersSelect", proposalId);
+            setAlertInfo({ show: true, type: 'success', message: 'Winner selected successfully' });
+            setTimeout(() => setAlertInfo(false), 5000);
             console.log("Winner Selected:", result);
             // Handle post-vote UI update or confirmation here
         } catch (error) {
+            setAlertInfo({ show: true, type: 'error', message: "Error Selected result:".error });
+            setTimeout(() => setAlertInfo(false), 5000);
             console.error("Error Selected result:", error);
         } finally {
             setLoading(false);
@@ -61,6 +67,16 @@ const ProposalContent = () => {
     };
     // Function to filter proposals based on status
     const filteredProposals = onlyOpen ? proposals.filter(proposal => proposal.status === 'Open') : proposals;
+    const alertStyles = {
+        success: {
+            backgroundColor: darkMode ? '#b9fbc0' : '#d4edda', // Green background
+            color: darkMode ? '#1f7a1f' : '#155724' // Green text
+        },
+        error: {
+            backgroundColor: darkMode ? '#fdb5b5' : '#f8d7da', // Red background
+            color: darkMode ? '#971212' : '#721c24' // Red text
+        }
+    };
     return (
         <>
             <section className={`section7`}>
@@ -82,6 +98,20 @@ const ProposalContent = () => {
                                 <label htmlFor="terms" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Only Open Proposal</label>
                             </div>
                         </div>
+                        {alertInfo.show && (
+                        <div
+                            style={{
+                                padding: '1rem',
+                                marginBottom: '1rem',
+                                borderRadius: '0.25rem',
+                                backgroundColor: alertStyles[alertInfo.type].backgroundColor,
+                                color: alertStyles[alertInfo.type].color,
+                            }}
+                            role="alert"
+                        >
+                            {alertInfo.message}
+                        </div>
+                    )}
                         {loading ? <p>Loading proposals...</p> : filteredProposals.length > 0 ? (
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 

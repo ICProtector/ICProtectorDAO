@@ -8,7 +8,8 @@ import ic from 'ic0';
 const ClaimRewardContent = () => {
     const { darkMode, toggleTheme } = useTheme();// Set default or dynamic based on use case
     const [loading, setLoading] = useState(false);// State for the "Only Open Proposal" checkbox
-    const [proposals, setProposals] = useState([]); // State to hold your proposal data
+    const [proposals, setProposals] = useState([]); 
+    const [alertInfo, setAlertInfo] = useState({ show: false, type: '', message: '' });// State to hold your proposal data
     const backendCanisterId = 'bkyz2-fmaaa-aaaaa-qaaaq-cai';
     const backend = ic.local(backendCanisterId);
 
@@ -54,6 +55,22 @@ const ClaimRewardContent = () => {
         try {
             setLoading(true);
             const reward = await backend.call("checkClaimRewards", proposalId);
+            if (reward === "No Reward yet") {
+                alertType = 'success'; // Change type to warning for no reward
+                alertMessage = "No Reward yet. Please try again later."; // Custom message for clarity
+            } else if (reward === "success 1") {
+                alertType = 'success'; // Change type to success for a positive reward
+                alertMessage = "Congratulations! You have successfully claimed your reward."; // Custom success message
+            } else {
+                alertType = 'success'; // Keep as info or change to another appropriate type
+                alertMessage = "Better luck next time! Keep participating."; // Encouraging message for no rewards
+            }
+            
+            // Set the alert information
+            setAlertInfo({ show: true, type: alertType, message: alertMessage });
+            setTimeout(() => setAlertInfo(false), 5000);
+            
+        fetchProposalData();
             console.log("Reward result:", reward);
             // Handle post-vote UI update or confirmation here
         } catch (error) {
@@ -65,7 +82,16 @@ const ClaimRewardContent = () => {
     useEffect(() => {
         fetchProposalData();
     }, []);
-    
+    const alertStyles = {
+        success: {
+            backgroundColor: darkMode ? '#b9fbc0' : '#d4edda', // Green background
+            color: darkMode ? '#1f7a1f' : '#155724' // Green text
+        },
+        error: {
+            backgroundColor: darkMode ? '#fdb5b5' : '#f8d7da', // Red background
+            color: darkMode ? '#971212' : '#721c24' // Red text
+        }
+    };
     // Function to filter proposals based on status
     const filteredProposals = proposals.filter(proposal => proposal.status === 'Open');
     return (
@@ -80,7 +106,20 @@ const ClaimRewardContent = () => {
                             <div className="flex items-center">
                             </div>
                         </div>
-
+                        {alertInfo.show && (
+                        <div
+                            style={{
+                                padding: '1rem',
+                                marginBottom: '1rem',
+                                borderRadius: '0.25rem',
+                                backgroundColor: alertStyles[alertInfo.type].backgroundColor,
+                                color: alertStyles[alertInfo.type].color,
+                            }}
+                            role="alert"
+                        >
+                            {alertInfo.message}
+                        </div>
+                    )}
                         {loading ? <p>Loading proposals...</p> : proposals.length > 0 ? (
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 
