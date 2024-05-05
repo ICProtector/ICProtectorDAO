@@ -51,16 +51,16 @@ const ClaimRewardContent = () => {
       return false; // Return false or perhaps 'Error' depending on how you want to handle failures
     }
   };
-
+//test pushs
   const fetchProposalData = async () => {
     setLoading(true);
-    try {
+    try {  
       console.log("myPrincipal", principal);
       if (isConnected) {
         const result = await backend.call(
           "QueryAllUserVotes",
           Principal.fromText(principal)
-        );
+        ); 
         // const result = await backend.call("QueryAllUserVotes",Principal.fromText(principal));
         const closedProposals = await Promise.all(
           result.map(async (proposal) => {
