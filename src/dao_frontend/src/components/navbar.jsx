@@ -13,6 +13,7 @@ const Navbar = () => {
   const { darkMode, toggleTheme } = useTheme();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isDropdownWelOpen, setDropdownWeOpen] = useState(false);
   const buttonClass = darkMode
     ? "bg-gradient-to-r from-red-600 to-red-900"
     : "bg-gradient-to-r from-red-400 to-red-600";
@@ -31,12 +32,12 @@ const Navbar = () => {
   return (
     <nav className={`relative  px-2 sm:px-4 ${gradientClass} py-1`}>
       <div className="container flex flex-wrap justify-between items-center mx-auto">
-        <a href="#" className="flex">
+      <Link to={'/'} className="flex">
           <img src={logo} className="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
           <span className="self-center text-lg font-semibold whitespace-nowrap dark:text-white">
             ICP PROTECTOR
           </span>
-        </a>
+          </Link>
         <div className="flex items-center">
           <button
             data-collapse-toggle="navbar-dropdown"
@@ -73,14 +74,41 @@ const Navbar = () => {
           <ul
             className={`flex flex-col p-4 mt-4 rounded-lg border border-gray-100 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0  dark:border-gray-700 `}
           >
-            <li>
-              <Link
-                to={"/"}
-                className={`block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-600 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-200 md:dark:hover:text-blue-500`}
-              >
-                Home
-              </Link>
-            </li>
+           <li className="relative" style={{ margin: 'auto' }}>
+            
+            <button
+              id="dropdownNavbarLink"
+              data-dropdown-toggle="dropdownNavbar"
+              className="flex items-center py-2 px-4 md:mx-auto rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-200 md:dark:hover:text-blue-500"
+              onClick={() => setDropdownWeOpen(!isDropdownWelOpen)}>
+              Welcome
+              <svg className="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                <path stroke="currentColor" strokeLinecapp="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+              </svg>
+            </button>
+            
+            <div
+              id="dropdownNavbar"
+              className={`${isDropdownWelOpen ? 'block' : 'hidden'} absolute z-20 font-normal bg-gray-800 divide-y divide-gray-600 rounded shadow w-44 dark:bg-gray-700`}
+              style={{ top: '100%', left: 0 }}
+            >
+              <ul className="text-sm text-gray-400" aria-labelledby="dropdownNavbarLink">
+                <li>
+                <Link to={'/all-about-icp'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">All About ICP</Link>
+                </li>
+                <li>
+                <Link to={'/whitepaper'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">White paper</Link>
+                </li>
+                <li>
+                <Link to={'/point-system'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Point System</Link>
+                </li>
+                <li>
+                <Link to={'/roadmap'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">RoadMap</Link>
+                </li>
+              </ul>
+            </div>
+          </li>
+          
             <li className="relative" style={{ margin: "auto" }}>
               <button
                 id="dropdownNavbarLink"
