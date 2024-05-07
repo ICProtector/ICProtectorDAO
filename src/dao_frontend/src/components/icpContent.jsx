@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import icpC from '/icpC.png';
-import icp from '/icp.png';
+import icpC from '../assets/icpC.png';
+import icp from '../assets/icp.png';
 import { useTheme } from '../contexts/ThemeContext';
 const IcpContent = () => {
 

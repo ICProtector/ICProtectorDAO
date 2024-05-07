@@ -2,6 +2,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import App from "./App";
 import Detailpage from './pages/detailPage';
+import IcpPage from './pages/icpPage';
+import PointSystemPage from './pages/pointSystemPage';
+import WhitePaperPage from './pages/whitePaperPage';
+import Roadmap from './pages/roadMapPage';
 import Home from './pages/homepage';
 import PreviousProposal from './pages/previousProposal';
 import OpenProposal from './pages/openProposal';
