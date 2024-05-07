@@ -52,7 +52,7 @@ const OpenProposalContent = () => {
                     <div className="ml-3 mr-3">
                         <div className="flex flex-row mb-3 mt-5 justify-between items-center">
                             <h1 className="text-3xl font-bold text-left dark:text-white">
-                                Open Proposal
+                                Open Proposals
                             </h1>
                             <div className="flex items-center">
                             </div>
