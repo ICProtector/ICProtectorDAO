@@ -18,6 +18,10 @@ export default function Router() {
         {/* Home should redirect to dashboard */}
         <Route path="/"  element={<Home />} />
         <Route path="/proposal"  element={<App />} />
+        <Route path="/all-about-icp"  element={<IcpPage />} />
+        <Route path="/whitepaper"  element={<WhitePaperPage />} />
+        <Route path="/point-system"  element={<PointSystemPage />} />
+        <Route path="/roadmap"  element={<Roadmap />} />
         <Route path="/proposals"  element={<PreviousProposal />} />
         <Route path="/open-proposals"  element={<OpenProposal />} />
         <Route path="/create-proposal"  element={<CreateProposal />} />
