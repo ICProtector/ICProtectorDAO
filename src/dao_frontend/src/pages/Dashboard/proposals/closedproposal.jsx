@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '/logoo.png';
-import icp from '/icp.png';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../../../contexts/ThemeContext';
 import ic from 'ic0';
 
-const ProposalContent = () => {
+const ClosedProposal = () => {
     const { darkMode, toggleTheme } = useTheme();// Set default or dynamic based on use case
-    const [loading, setLoading] = useState(false);
-    const [onlyOpen, setOnlyOpen] = useState(false); // State for the "Only Open Proposal" checkbox
+    const [loading, setLoading] = useState(false); // State for the "Only Open Proposal" checkbox
     const [proposals, setProposals] = useState([]);
-    const [proposalData, setProposalData] = useState([]);
     
     const [alertInfo, setAlertInfo] = useState({ show: false, type: '', message: '' }); // State to hold your proposal data
     const backendCanisterId = '7wzen-oqaaa-aaaap-ahduq-cai';
@@ -66,7 +62,7 @@ const ProposalContent = () => {
         return currentTime > endMilliseconds ? 'Closed' : 'Open';
     };
     // Function to filter proposals based on status
-    const filteredProposals = onlyOpen ? proposals.filter(proposal => proposal.status === 'Open') : proposals;
+    const filteredProposals = proposals.filter(proposal => proposal.status !== 'Open') ;
     const alertStyles = {
         success: {
             backgroundColor: darkMode ? '#b9fbc0' : '#d4edda', // Green background
@@ -79,26 +75,10 @@ const ProposalContent = () => {
     };
     return (
         <>
-            <section className={`section7`}>
-                <div className={`p-5`}>
-                    <div className="ml-3 mr-3">
-                        <div className="flex flex-row mb-3 mt-5 justify-between items-center">
-                            <h1 className="text-3xl font-bold text-left dark:text-white">
-                                Proposals
-                            </h1>
-                            <div className="flex items-center">
-                                <input
-                                    id="terms"
-                                    type="checkbox"
-                                    value=""
-                                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                                    checked={onlyOpen}
-                                    onChange={(e) => setOnlyOpen(e.target.checked)}
-                                />
-                                <label htmlFor="terms" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Only Open Proposal</label>
-                            </div>
-                        </div>
-                        {alertInfo.show && (
+            <div className="p-4 sm:ml-64 dark:bg-gray-800" style={{ minHeight: '100vh' }}>
+                <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+                    <div className="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="stats" role="tabpanel" aria-labelledby="stats-tab">
+                    {alertInfo.show && (
                         <div
                             style={{
                                 padding: '1rem',
@@ -112,7 +92,8 @@ const ProposalContent = () => {
                             {alertInfo.message}
                         </div>
                     )}
-                        {loading ? <p>Loading proposals...</p> : filteredProposals.length > 0 ? (
+                  
+                  {loading ? <p>Loading proposals...</p> : filteredProposals.length > 0 ? (
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 
                                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -168,12 +149,17 @@ const ProposalContent = () => {
                                                     </span>
                                                 </td>
                                                 <td class="px-6 py-4">
-                                                    <Link to={`/detail-proposals/${proposal.id}`}>
+                                                    <Link to={`/admin/detail-proposals/${proposal.id}`}>
                                                         <button type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-                                                            {proposal.status === "Open" ? "Vote" : "View"}
+                                                            {proposal.status === "Open" ? "View" : "View"}
                                                         </button>
                                                     </Link>
-                                                    
+                                                    {proposal.status === "Closed" &&
+                                                        <button onClick={() => winnersSelect(proposal.id)} type="button"
+                                                            className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                                            Get result
+                                                        </button>
+                                                    }
                                                 </td>
                                             </tr>
                                         ))}
@@ -184,9 +170,9 @@ const ProposalContent = () => {
                     </div>
 
                 </div>
-            </section>
+            </div>
         </>
     );
 };
 
-export default ProposalContent;
+export default ClosedProposal;

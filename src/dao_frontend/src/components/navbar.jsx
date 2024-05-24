@@ -14,6 +14,14 @@ const Navbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isDropdownWelOpen, setDropdownWeOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const toggleDropdown = (dropdown) => {
+    if (openDropdown === dropdown) {
+      setOpenDropdown(null); // Close the currently open dropdown
+    } else {
+      setOpenDropdown(dropdown); // Open the new dropdown and close others
+    }
+  };
   const buttonClass = darkMode
     ? "bg-gradient-to-r from-red-600 to-red-900"
     : "bg-gradient-to-r from-red-400 to-red-600";
@@ -80,7 +88,7 @@ const Navbar = () => {
               id="dropdownNavbarLink"
               data-dropdown-toggle="dropdownNavbar"
               className="flex items-center py-2 px-4 md:mx-auto rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-200 md:dark:hover:text-blue-500"
-              onClick={() => setDropdownWeOpen(!isDropdownWelOpen)}>
+              onClick={() => toggleDropdown('welcome')}>
               Welcome
               <svg className="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                 <path stroke="currentColor" strokeLinecapp="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
@@ -89,7 +97,7 @@ const Navbar = () => {
             
             <div
               id="dropdownNavbar"
-              className={`${isDropdownWelOpen ? 'block' : 'hidden'} absolute z-20 font-normal bg-gray-800 divide-y divide-gray-600 rounded shadow w-44 dark:bg-gray-700`}
+              className={`${openDropdown === 'welcome' ? 'block' : 'hidden'} absolute z-20 font-normal bg-gray-800 divide-y divide-gray-600 rounded shadow w-44 dark:bg-gray-700`}
               style={{ top: '100%', left: 0 }}
             >
               <ul className="text-sm text-gray-400" aria-labelledby="dropdownNavbarLink">
@@ -114,7 +122,7 @@ const Navbar = () => {
                 id="dropdownNavbarLink"
                 data-dropdown-toggle="dropdownNavbar"
                 className="flex items-center py-2 px-4 md:mx-auto rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-200 md:dark:hover:text-blue-500"
-                onClick={() => setDropdownOpen(!isDropdownOpen)}
+                onClick={() =>toggleDropdown('proposals')}
               >
                 Proposals
                 <svg
@@ -135,9 +143,7 @@ const Navbar = () => {
               </button>
               <div
                 id="dropdownNavbar"
-                className={`${
-                  isDropdownOpen ? "block" : "hidden"
-                } absolute z-20 font-normal bg-gray-800 divide-y divide-gray-600 rounded shadow w-44 dark:bg-gray-700`}
+                className={`${openDropdown === 'proposals' ? 'block' : 'hidden'} absolute z-20 font-normal bg-gray-800 divide-y divide-gray-600 rounded shadow w-44 dark:bg-gray-700`}
                 style={{ top: "100%", left: 0 }}
               >
                 <ul
@@ -180,12 +186,12 @@ const Navbar = () => {
                 </ul>
               </div>
             </li>
-            {/* <li>
-              <a href="#" className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-600 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-200 md:dark:hover:text-blue-500">
-                Contact
-              </a>
+             <li>
+              <Link style={{ margin: "auto" }} to={'/login'}  className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-600 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-200 md:dark:hover:text-blue-500">
+                Login
+              </Link>
             </li>
-            <li>
+           {/* <li>
               <a href="#" className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-600 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-200 md:dark:hover:text-blue-500">
                 Service
               </a>
@@ -219,7 +225,7 @@ const Navbar = () => {
                 )}
               </button>
             </li>
-            <li>
+            <li style={{ margin: "auto" }}>
               <ConnectButton />
               <ConnectDialog dark={false} />
             </li>

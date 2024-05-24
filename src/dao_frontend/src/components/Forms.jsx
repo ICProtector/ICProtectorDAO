@@ -292,7 +292,7 @@ const Forms = () => {
             <label className={labelClass}>Number of Options</label>
             <select
               onChange={(e) => updateOptionCount(Number(e.target.value))}
-              className={inputClass}
+              className={`${inputClass} dark:bg-gray-700 dark:text-white`}
               defaultValue={2}
             >
               <option value={2}>Two</option>
@@ -315,12 +315,12 @@ const Forms = () => {
               End Time
             </label>
             <input
-              type="date"
+              type="date" class="dark:bg-gray-700 dark:text-white"
               value={date}
               onChange={(e) => setDate(e.target.value)}
             />
             <input
-              type="time"
+              type="time" class="dark:bg-gray-700 dark:text-white"
               value={time}
               onChange={(e) => setTime(e.target.value)}
             />

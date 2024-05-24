@@ -1,0 +1,12 @@
+.dropdown-container {
+    position: relative;
+  }
+  
+  #dropdown-user {
+    position: absolute;
+    top: 100%; /* Position just below the button */
+    right: 0;
+    z-index: 1050; /* Higher than nav's z-index to overlay */
+    width: 200px; /* Set a fixed width or adjust as needed */
+  }
+  
