@@ -15,7 +15,7 @@ const IcpContent = () => {
     };
     const gradientClass = darkMode ? 'bg-gradient-to-r from-gray-950 to-gray-950' : 'bg-gradient-to-b from-orange-200 to-orange-500';
     const buttonClass = darkMode ? 'bg-gradient-to-r from-red-600 to-red-900' : 'bg-gradient-to-r from-red-400 to-red-600';
-    
+
 
     return (
         <>
@@ -32,13 +32,16 @@ const IcpContent = () => {
                     </div>
                 </div>
             </div>
-            <section className="section7 h-[90vh] p-3">
+            <section className="section7 p-3">
                 <div className="mx-auto flex h-full flex-col items-start justify-center md:w-[1120px] md:flex-row md:items-center">
 
                     <div className="section7-line mx-[15px] mt-[20px] text-center text-[#000] md:mt-0 md:w-[70%] md:pl-[40px] md:text-left" style={myStyle}>
                         <div className="mt-[20px] text-lg  dark:text-white">After noticing that there were more frequent scams and some well known ICP twitter accounts involved with promoting them, the founders of ICP Protector with their common goal of shining some light on the darkness, came together to form the ICPProtector twitter account. A group chat on Twitter & Openchat was started to track the scammers, compile evidence, and create a reports to inform the ICP Community.  Most members have been a part of ICP since or shortly after genesis and contribute to the cause on our free time to try to make a positive difference in the community. We are decentralized in the way we operate and each contributes at our own pace, so each member can post on the twitter at any time. After doing extensive research and following many of the leads, we started to put together evidence to expose some of the pump and dump or rugpull coins and NFTs being promoted on twitter. As traction was gained, we started receiving many DM’s from ICP community members appreciating what we were doing and also contributing with information and leads. ICPProtector has been steadily growing with the help of the community.</div>
                     </div> <div className="section7-img mx-auto flex items-center justify-center md:ml-0 md:w-[50%] md:justify-end" style={myStyle}>
-                        <img src={icp7} className="w-[100%] h-[100%] md:w-full" alt="" />
+                        <div className="flex items-center justify-center w-[100%] h-[100%] md:w-full">
+                            <img src={icp7} className="w-[100%] h-[100%] md:w-full" alt="" />
+                        </div>
+
                     </div>
                 </div>
             </section>

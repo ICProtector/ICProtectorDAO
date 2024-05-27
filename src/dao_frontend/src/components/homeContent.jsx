@@ -43,7 +43,10 @@ const HomeContent = () => {
             <div className="overflow-hidden py-24 sm:py-32">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
                     <div className="grid max-w-none grid-cols-1 lg:grid-cols-2">
+                    <div className="flex items-center justify-center w-[100%] h-[100%] md:w-full">
+                        
                         <img src={icpdao4} alt="DAO Image" style={{ width: '90%' }} />
+                        </div>
                         <div className="flex flex-col justify-center lg:pr-8 pt-6 lg:pt-4">
                             <div className="lg:max-w-lg">
                                 <p className="mt-2 text-3xl font-bold dark:text-white tracking-tight text-gray-900 sm:text-4xl">Why the fairest DAO?</p>
@@ -84,8 +87,10 @@ const HomeContent = () => {
                                 </ul>
                             </div>
                         </div>
+                        <div className="flex items-center justify-center w-[100%] h-[100%] md:w-full">
                         
                         <img src={reward} alt="DAO Image" style={{ width: '90%' }} className='mt-8' />
+                        </div>
                     </div>
                 </div>
             </div>

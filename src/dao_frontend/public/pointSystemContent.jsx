@@ -56,7 +56,9 @@ const PointSystemContent = () => {
                                 </ul>
                             </div>
                         </div>
-                        <img src={vote} alt="DAO Image" style={{ width: '70%' }} />
+                        <div className="flex items-center justify-center w-[100%] h-[100%] md:w-full">
+                        
+                        <img src={vote} alt="DAO Image" style={{ width: '70%' }} /></div>
                     </div>
 
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-10">
@@ -199,7 +201,8 @@ const PointSystemContent = () => {
                                 </ul>
                             </div>
                         </div>
-                        <img src={icpdao3} alt="DAO Image" style={{ width: '70%' }} />
+                        <div className="flex items-center justify-center w-[100%] h-[100%] md:w-full">                        
+                        <img src={icpdao3} alt="DAO Image" style={{ width: '70%' }} /></div>
                     </div>
 
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-10">
