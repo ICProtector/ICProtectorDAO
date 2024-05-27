@@ -3,6 +3,7 @@ import Navbar from '../components/navbar';
 import '../App.css' 
 import IcpContent from '../components/icpContent';
 import { useTheme } from '../contexts/ThemeContext';
+import Footer from '../components/footer';
 
 function IcpPage() {
   
@@ -16,6 +17,7 @@ function IcpPage() {
       <div className={`${gradientClass} dark:bg-gray-800`} style={{ minHeight:'100vh'}}>
         <IcpContent/>
       </div>
+        <Footer />
     </>
   )
 }

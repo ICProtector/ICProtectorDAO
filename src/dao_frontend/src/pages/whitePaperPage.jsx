@@ -3,6 +3,7 @@ import Navbar from '../components/navbar';
 import '../App.css' 
 import WhitePaperContent from '../components/whitePaperContent';
 import { useTheme } from '../contexts/ThemeContext';
+import Footer from '../components/footer';
 
 function WhitePaperPage() {
   
@@ -18,6 +19,7 @@ function WhitePaperPage() {
       <div className={`${gradientClass} dark:bg-gray-800`} style={{ minHeight:'100vh'}}>
         <WhitePaperContent/>
       </div>
+        <Footer />
     </>
   )
 }

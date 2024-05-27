@@ -3,6 +3,7 @@ import Navbar from '../components/navbar';
 import '../App.css' 
 import PointSystemContent from '../components/pointSystemContent';
 import { useTheme } from '../contexts/ThemeContext';
+import Footer from '../components/footer';
 
 function PointSystemPage() {
   
@@ -19,6 +20,7 @@ function PointSystemPage() {
       <div className={`${gradientClass} dark:bg-gray-800`} style={{ minHeight:'100vh'}}>
         <PointSystemContent/>
       </div>
+        <Footer />
     </>
   )
 }

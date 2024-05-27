@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import logo from "/logoo.png";
+import logo from '/Dao.png';
 import { Link } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext"; // Ensure you have this logo in your public folder or src folder.
 import {
@@ -41,7 +41,7 @@ const Navbar = () => {
     <nav className={`relative  px-2 sm:px-4 ${gradientClass} py-1`}>
       <div className="container flex flex-wrap justify-between items-center mx-auto">
       <Link to={'/'} className="flex">
-          <img src={logo} className="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
+          <img src={logo} className="mr-3 h-6 sm:h-9" alt=" ICP PROTECTOR logo" />
           <span className="self-center text-lg font-semibold whitespace-nowrap dark:text-white">
             ICP PROTECTOR
           </span>
@@ -185,11 +185,6 @@ const Navbar = () => {
                   </li>
                 </ul>
               </div>
-            </li>
-             <li>
-              <Link style={{ margin: "auto" }} to={'/login'}  className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-600 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-200 md:dark:hover:text-blue-500">
-                Login
-              </Link>
             </li>
            {/* <li>
               <a href="#" className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-600 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-200 md:dark:hover:text-blue-500">

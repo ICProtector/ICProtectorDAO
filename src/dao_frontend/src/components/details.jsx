@@ -76,7 +76,7 @@ const Details = (props) => {
       const alreadyVoted = previousVote.some(
         (vote) => vote.proposalId === proposalId
       );
-
+      window.scrollTo(0, 0);
       if (alreadyVoted) {
         setAlertInfo({
           show: true,
@@ -324,7 +324,7 @@ const Details = (props) => {
                         Closed
                       </button>
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-black dark:text-white">
+                        <span className="text-black text-xl font-bold dark:text-white">
                           Proposal Result:{" "}
                           {winner ? winner.correctOption : "Pending result..."}{" "}
                         </span>

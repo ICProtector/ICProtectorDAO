@@ -51,6 +51,8 @@ const Forms = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    window.scrollTo(0, 0);
     if (
       !topicName ||
       !description ||

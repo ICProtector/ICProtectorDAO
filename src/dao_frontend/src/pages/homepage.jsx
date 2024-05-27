@@ -3,6 +3,7 @@ import Navbar from '../components/navbar';
 import '../App.css' 
 import HomeContent from '../components/homeContent';
 import { useTheme } from '../contexts/ThemeContext';
+import Footer from '../components/footer';
 
 function HomePage() {
   
@@ -19,6 +20,7 @@ function HomePage() {
       <div className={`${gradientClass} dark:bg-gray-800`} style={{ minHeight:'100vh'}}>
         <HomeContent/>
       </div>
+        <Footer />
     </>
   )
 }

@@ -3,6 +3,7 @@ import Navbar from '../components/navbar';
 import '../App.css' 
 import ClaimRewardContent from '../components/claimRewardContent';
 import { useTheme } from '../contexts/ThemeContext'; 
+import Footer from '../components/footer';
 
 function ClaimReward() {
   const { darkMode, toggleTheme } = useTheme();
@@ -15,6 +16,7 @@ function ClaimReward() {
       <div className={`${gradientClass} dark:bg-gray-800`} style={{ minHeight:'100vh'}}>
         <ClaimRewardContent/>
       </div>
+        <Footer />
     </>
   )
 }

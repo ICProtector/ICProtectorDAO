@@ -3,6 +3,7 @@ import Navbar from '../components/navbar';
 import '../App.css' 
 import ProposalContent from '../components/proposalContent';
 import { useTheme } from '../contexts/ThemeContext'; 
+import Footer from '../components/footer';
 
 function PreviousProposal() {
   const { darkMode, toggleTheme } = useTheme();
@@ -17,6 +18,7 @@ function PreviousProposal() {
       <div className={`${gradientClass} dark:bg-gray-800`} style={{ minHeight:'100vh'}}>
         <ProposalContent/>
       </div>
+        <Footer />
     </>
   )
 }

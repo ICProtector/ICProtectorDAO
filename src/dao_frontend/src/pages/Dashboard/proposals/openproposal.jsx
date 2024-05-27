@@ -114,7 +114,7 @@ const OpenProposal = () => {
                                     ))}
                                 </tbody>
                             </table>
-                       ) : <p>No proposals to display.</p>}
+                       ) : <p className='text-black dark:text-white'>No proposals to display.</p>}
                     </div>
 
                 </div>

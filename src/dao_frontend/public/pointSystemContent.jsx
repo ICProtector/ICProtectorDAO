@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import icpdao3 from '/icpdao3.webp';
 import vote from '/vote.png';
 import { useTheme } from '../contexts/ThemeContext';

@@ -43,11 +43,13 @@ const ProposalContent = () => {
         try {
             setLoading(true);
             const result = await backend.call("winnersSelect", proposalId);
+            window.scrollTo(0, 0);
             setAlertInfo({ show: true, type: 'success', message: 'Winner selected successfully' });
             setTimeout(() => setAlertInfo(false), 5000);
             console.log("Winner Selected:", result);
             // Handle post-vote UI update or confirmation here
         } catch (error) {
+      window.scrollTo(0, 0);
             setAlertInfo({ show: true, type: 'error', message: "Error Selected result:".error });
             setTimeout(() => setAlertInfo(false), 5000);
             console.error("Error Selected result:", error);

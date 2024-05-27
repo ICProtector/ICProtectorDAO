@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import Navbar from '../components/navbar';
 import Details from '../components/details';
 import { useTheme } from '../contexts/ThemeContext'; 
+import Footer from '../components/footer';
 const Detailpage =()=>{
   const { id } = useParams();
   const { darkMode, toggleTheme } = useTheme();
@@ -14,6 +15,7 @@ return(
       <div className={`${gradientClass} dark:bg-gray-800 p-4`} style={{ minHeight:'100vh'}}>
         <Details id={id}/>
       </div>
+        <Footer />
         </>
 );
 }

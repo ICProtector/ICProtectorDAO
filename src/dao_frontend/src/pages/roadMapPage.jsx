@@ -3,6 +3,7 @@ import Navbar from '../components/navbar';
 import '../App.css' 
 import RoadmapContent from '../components/roadMapContent';
 import { useTheme } from '../contexts/ThemeContext';
+import Footer from '../components/footer';
 
 function Roadmap() {
   
@@ -19,6 +20,7 @@ function Roadmap() {
       <div className={`${gradientClass} dark:bg-gray-800`} style={{ minHeight:'100vh'}}>
         <RoadmapContent/>
       </div>
+        <Footer />
     </>
   )
 }

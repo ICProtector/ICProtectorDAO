@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/navbar';
 import '../App.css' 
+import Footer from '../components/footer';
 import Forms from '../components/Forms';
 import { useTheme } from '../contexts/ThemeContext'; 
 
@@ -16,6 +17,7 @@ function FormPage() {
      
       <div className={`${gradientClass} dark:bg-gray-800`} style={{ minHeight:'100vh'}}>
         <Forms/>
+        <Footer />
       </div>
     </>
   )
