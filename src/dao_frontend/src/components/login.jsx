@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 
 export default function Login() {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ username: '', password: '' });
   const { darkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [alertInfo, setAlertInfo] = useState({
@@ -22,7 +22,7 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.email === 'admin@gmail.com' && formData.password === 'admin123') {
+    if (formData.username === 'admin' && formData.password === 'admin123') {
       navigate('/admin');  // Redirect to the admin route if credentials match
     } else {
       setAlertInfo({
@@ -80,18 +80,18 @@ export default function Login() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="email" className="block text-sm font-medium leading-6 dark:text-white text-gray-900">
-                  Email address
+                <label htmlFor="username" className="block text-sm font-medium leading-6 dark:text-white text-gray-900">
+                  User Name
                 </label>
               </div>
               <div className="mt-2">
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
+                  id="username"
+                  name="username"
+                  type="text"
+                  autoComplete="username"
                   required
-                  value={formData.email}
+                  value={formData.username}
                   onChange={handleChange}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
