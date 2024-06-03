@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ic from "ic0";
 import { useConnect } from "@connect2ic/react";
 import { Principal } from "@dfinity/principal";
+import '../../../components/loader.css'
 
 
 import { useTheme } from '../../../contexts/ThemeContext';
@@ -42,8 +43,8 @@ const Details = (props) => {
         });
     };
     const fetchProposalData = async () => {
+        setLoading(true);
         try {
-            setLoading(true);
             if (isConnected) {
                 const result = await backend.call("getProposal", id);
                 const vote = await backend.call(
@@ -185,8 +186,14 @@ const Details = (props) => {
             <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
                 <div className="lg:flex pb-24 pt-10 p-4">
                     <div className="flex flex-col w-full gap-4 text-white">
-                        {/* Proposal Section */}
-                        {proposalData && (
+                    {loading && (
+            <div className="flex justify-center items-center">
+              <div className="loader"></div>
+            </div>
+          )}
+          {!loading && (
+            <>
+          {proposalData && (
                             <>
                                 {alertInfo.show && (
                                     <div
@@ -316,7 +323,8 @@ const Details = (props) => {
                                     </div>
                                 </div>
                             </>
-                        )}
+                        )} </>
+                    )}
                     </div>
                 </div>
             </div>

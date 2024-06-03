@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../../contexts/ThemeContext';
 import ic from 'ic0';
+import '../../../components/loader.css'
 
 const OpenProposal = () => {
     const { darkMode, toggleTheme } = useTheme();// Set default or dynamic based on use case
@@ -17,6 +18,7 @@ const OpenProposal = () => {
         return date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
     };
     const fetchProposalData = async () => {
+        setLoading(true);
         try {
             const result = await backend.call("getProposalAll");
             const formattedProposals = result.map(proposal => ({
@@ -49,7 +51,11 @@ const OpenProposal = () => {
                 <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
                     <div className="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="stats" role="tabpanel" aria-labelledby="stats-tab">
                         
-                    {loading ? <p>Loading proposals...</p> : filteredProposals.length > 0 ? (
+                    {loading ? (
+                            <div className="flex justify-center items-center">
+                                <div className="loader"></div>
+                            </div>
+                        ) : filteredProposals.length > 0 ? (
                       
                             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -114,7 +120,7 @@ const OpenProposal = () => {
                                     ))}
                                 </tbody>
                             </table>
-                       ) : <p className='text-black dark:text-white'>No proposals to display.</p>}
+                       ) : <p className="text-black dark:text-white text-lg">No proposals to display.</p>}
                     </div>
 
                 </div>

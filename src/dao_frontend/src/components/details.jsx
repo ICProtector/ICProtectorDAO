@@ -5,6 +5,7 @@ import { useConnect } from "@connect2ic/react";
 
 import { useTheme } from "../contexts/ThemeContext";
 import { Principal } from "@dfinity/principal";
+import './loader.css'
 const Details = (props) => {
   const { id } = props;
   const { darkMode, toggleTheme } = useTheme(); // Set default or dynamic based on use case
@@ -41,6 +42,7 @@ const Details = (props) => {
     });
   };
   const fetchProposalData = async () => {
+    setLoading(true);
     try {
       setLoading(true);
       if (isConnected) {
@@ -83,7 +85,7 @@ const Details = (props) => {
           type: "error",
           message: "Already voted for this proposal",
         });
-        setTimeout(() => setAlertInfo(false), 5000);
+        setTimeout(() => setAlertInfo(false), 10000);
         console.log("Already voted for this proposal");
         return; // Exit the function, preventing further execution
       }
@@ -99,7 +101,7 @@ const Details = (props) => {
           type: "success",
           message: "You cast vote successffully",
         });
-        setTimeout(() => setAlertInfo(false), 5000);
+        setTimeout(() => setAlertInfo(false), 10000);
         console.log("Vote result:", result);
       } else {
         alert("Connect your wallet");
@@ -114,7 +116,7 @@ const Details = (props) => {
         type: "error",
         message: "Error casting vote:".error,
       });
-      setTimeout(() => setAlertInfo(false), 5000);
+      setTimeout(() => setAlertInfo(false), 10000);
     } finally {
       setLoading(false);
     }
@@ -163,7 +165,13 @@ const Details = (props) => {
     <>
       <div className="lg:flex pb-24 pt-10 p-4">
         <div className="flex flex-col w-full gap-4 text-white">
-          {/* Proposal Section */}
+        {loading && (
+            <div className="flex justify-center items-center">
+              <div className="loader"></div>
+            </div>
+          )}
+          {!loading && (
+            <>
           {proposalData && (
             <>
               {alertInfo.show && (
@@ -253,6 +261,8 @@ const Details = (props) => {
               </div>
             </div>
           )}
+          </>
+            )}
         </div>
         {proposalData && (
           <div className="min-w-[350px] 2xl:min-w-[430px]  rounded-3xl overflow-hidden shadow-lg">

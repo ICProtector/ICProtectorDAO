@@ -1,5 +1,5 @@
 import React from 'react';
-import roadmap from '/roadmap.png';
+import roadmap from '/roadmap2.png';
 import { useTheme } from '../contexts/ThemeContext';
 
 const RoadmapContent = () => {
@@ -33,7 +33,7 @@ const RoadmapContent = () => {
         </ul>
         <p className='text-left mt-2 text-lg text-gray-900 dark:text-white'> And more to come… </p>
         <br />
-        <img src={roadmap} alt="" />
+        <img src={roadmap} alt="" className='w-full' />
       </div>
     </div>
 

@@ -79,7 +79,7 @@ const HomeContent = () => {
                                         With 888 Points users can start to claim Merch on Dyor.shop.
                                     </li>
                                     <li className='text-left mt-2 text-lg text-gray-900 dark:text-white'>
-                                        NFT mining = each NFT that users stake, will reward them 1 Point each day/each NFT.
+                                        NFT mining = each NFT that a user stake, will reward them 1 Point each day/each NFT.
                                     </li>
                                     <li className='text-left mt-2 text-lg text-gray-900 dark:text-white'>
                                         NFT’s, DAO website, VP & Points are 100% on-chain.
@@ -99,7 +99,7 @@ const HomeContent = () => {
                 <p className="mt-2 text-3xl font-bold dark:text-white tracking-tight text-gray-900 sm:text-4xl">NFTs</p>
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
                     <p className="mt-6 text-lg leading-8 dark:text-gray-300 text-gray-900 mb-5">
-                        Here are some example of our Genesis NFT collection that includes Voting Power & some hidden gems:
+                        Here are some of our Genesis NFT collection that includes Voting Power & some hidden gems:
                     </p>
                     {/* <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div class="grid gap-4">

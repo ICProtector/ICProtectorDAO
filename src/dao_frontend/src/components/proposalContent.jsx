@@ -4,6 +4,7 @@ import logo from '/logoo.png';
 import icp from '/icp.png';
 import { useTheme } from '../contexts/ThemeContext';
 import ic from 'ic0';
+import './loader.css'
 
 const ProposalContent = () => {
     const { darkMode, toggleTheme } = useTheme();// Set default or dynamic based on use case
@@ -21,6 +22,7 @@ const ProposalContent = () => {
         return date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
     };
     const fetchProposalData = async () => {
+        setLoading(true);
         try {
             const result = await backend.call("getProposalAll");
             const formattedProposals = result.map(proposal => ({
@@ -32,27 +34,6 @@ const ProposalContent = () => {
             setProposals(formattedProposals);
         } catch (error) {
             console.error("Error fetching proposal data:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-   
-
-    const winnersSelect = async (proposalId) => {
-        try {
-            setLoading(true);
-            const result = await backend.call("winnersSelect", proposalId);
-            window.scrollTo(0, 0);
-            setAlertInfo({ show: true, type: 'success', message: 'Winner selected successfully' });
-            setTimeout(() => setAlertInfo(false), 5000);
-            console.log("Winner Selected:", result);
-            // Handle post-vote UI update or confirmation here
-        } catch (error) {
-      window.scrollTo(0, 0);
-            setAlertInfo({ show: true, type: 'error', message: "Error Selected result:".error });
-            setTimeout(() => setAlertInfo(false), 5000);
-            console.error("Error Selected result:", error);
         } finally {
             setLoading(false);
         }
@@ -114,7 +95,11 @@ const ProposalContent = () => {
                             {alertInfo.message}
                         </div>
                     )}
-                        {loading ? <p>Loading proposals...</p> : filteredProposals.length > 0 ? (
+                       {loading ? (
+                            <div className="flex justify-center items-center">
+                                <div className="loader"></div>
+                            </div>
+                        ) : filteredProposals.length > 0 ? (
                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 
                                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -182,7 +167,7 @@ const ProposalContent = () => {
                                     </tbody>
                                 </table>
                             </div>
-                        ) : <p>No proposals to display.</p>}
+                        ) : <p className="text-black dark:text-white text-lg">No proposals to display.</p>}
                     </div>
 
                 </div>

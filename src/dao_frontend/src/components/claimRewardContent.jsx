@@ -6,6 +6,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import ic from "ic0";
 import { Principal } from "@dfinity/principal";
 import { useConnect } from "@connect2ic/react";
+import './loader.css'
 
 const ClaimRewardContent = () => {
   const { darkMode, toggleTheme } = useTheme(); // Set default or dynamic based on use case
@@ -81,8 +82,8 @@ const ClaimRewardContent = () => {
     }
   };
   const checkClaimRewards = async (proposalId) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const reward = await backend.call(
         "checkClaimRewards",
         proposalId,
@@ -120,18 +121,15 @@ const ClaimRewardContent = () => {
   }, [principal,isConnected]);
   const alertStyles = {
     success: {
-      backgroundColor: darkMode ? "#b9fbc0" : "#d4edda", // Green background
-      color: darkMode ? "#1f7a1f" : "#155724", // Green text
+      backgroundColor: darkMode ? "#b9fbc0" : "#d4edda", 
+      color: darkMode ? "#1f7a1f" : "#155724", 
     },
     error: {
-      backgroundColor: darkMode ? "#fdb5b5" : "#f8d7da", // Red background
-      color: darkMode ? "#971212" : "#721c24", // Red text
+      backgroundColor: darkMode ? "#fdb5b5" : "#f8d7da", 
+      color: darkMode ? "#971212" : "#721c24", 
     },
   };
-  // Function to filter proposals based on status
-  const filteredProposals = proposals.filter(
-    (proposal) => proposal.status === "Open"
-  );
+
   return (
     <>
       <section className={`section7 `}>
@@ -158,8 +156,10 @@ const ClaimRewardContent = () => {
               </div>
             )}
             {loading ? (
-              <p>Loading proposals...</p>
-            ) : proposals.length > 0 ? (
+                            <div className="flex justify-center items-center">
+                                <div className="loader"></div>
+                            </div>
+                        ): proposals.length > 0 ? (
               <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                   <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -226,7 +226,7 @@ const ClaimRewardContent = () => {
                 </table>
               </div>
             ) : (
-              <p>No proposals to display.</p>
+              <p className="text-black dark:text-white text-lg">No proposals to display.</p>
             )}
           </div>
         </div>

@@ -4,21 +4,23 @@ import logo from '/logoo.png';
 import icp from '/icp.png';
 import { useTheme } from '../contexts/ThemeContext'; 
 import ic from 'ic0';
+import './loader.css'
 
 const OpenProposalContent = () => {
-    const { darkMode, toggleTheme } = useTheme();// Set default or dynamic based on use case
+    const { darkMode, toggleTheme } = useTheme();
     const [loading, setLoading] = useState(false);
-    const [onlyOpen, setOnlyOpen] = useState(false); // State for the "Only Open Proposal" checkbox
+    const [onlyOpen, setOnlyOpen] = useState(false); 
     const [proposals, setProposals] = useState([]);
-    const [proposalData, setProposalData] = useState([]); // State to hold your proposal data
+    const [proposalData, setProposalData] = useState([]); 
     const backendCanisterId = '7wzen-oqaaa-aaaap-ahduq-cai';
     const backend = ic(backendCanisterId);
     const formatCreationTime = (nsTimestamp) => {
-        const milliseconds = nsTimestamp / 1_000_000; // Convert nanoseconds to milliseconds
-        const date = new Date(milliseconds); // Create a new Date object
+        const milliseconds = nsTimestamp / 1_000_000;
+        const date = new Date(milliseconds);
         return date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
     };
     const fetchProposalData = async () => {
+        setLoading(true);
         try {
             const result = await backend.call("getProposalAll");
             const formattedProposals = result.map(proposal => ({
@@ -58,7 +60,11 @@ const OpenProposalContent = () => {
                             </div>
                         </div>
 
-                        {loading ? <p>Loading proposals...</p> : filteredProposals.length > 0 ? (
+                        {loading ? (
+                            <div className="flex justify-center items-center mt-5">
+                                <div className="loader"></div>
+                            </div>
+                        ) : filteredProposals.length > 0 ? (
                         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 
                             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -125,7 +131,7 @@ const OpenProposalContent = () => {
                                 </tbody>
                             </table>
                         </div>
-                       ) : <p>No proposals to display.</p>}
+                       ) : <p className="text-black dark:text-white text-lg">No proposals to display.</p>}
                     </div>
 
                 </div>
