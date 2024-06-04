@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import reward from '/reward.jpg';
 import icpdao4 from '/icpdao4.png';
+import above_footer from '/ab_footer.png';
 import { useTheme } from '../contexts/ThemeContext';
 
 const HomeContent = () => {
@@ -71,7 +72,7 @@ const HomeContent = () => {
                                 <p className=" text-3xl font-bold dark:text-white tracking-tight text-gray-900 sm:text-4xl">What rewards? </p>
                                 <ul className="list-disc pl-5 mt-6 text-lg text-gray-900 dark:text-white">
                                     <li className='text-left mt-6 text-lg text-gray-900 dark:text-white'>1 Vote = 1 Point</li>
-                                    <li className='text-left mt-2 text-lg text-gray-900 dark:text-white'>1 Proposal = 2 Points (up to 10 points, depends on the file the user has)</li>
+                                    <li className='text-left mt-2 text-lg text-gray-900 dark:text-white'>1 Proposal = 2 Points (up to 20 points, depends on the file the user has)</li>
                                     <li className='text-left mt-2 text-lg text-gray-900 dark:text-white'>
                                         With 555 Points users can mint 1 NFT with a custom background cover.
                                     </li>
@@ -148,6 +149,12 @@ const HomeContent = () => {
                         </div>
                     </div> */}
                 </div>
+                </div>
+            </div>
+            <div className="overflow-hidden py-8">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                <div className="flex items-center justify-center w-[10%] h-[10%] md:w-full"> 
+                    <img src={above_footer} alt="" style={{ width: '50%' }} /></div>
                 </div>
             </div>
         </>

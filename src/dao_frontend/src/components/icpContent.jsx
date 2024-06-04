@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import icp7 from '/icp7.webp';
 import icpContent from '/icpContent.jpeg';
+import above_footer from '/ab_footer.png';
 import { useTheme } from '../contexts/ThemeContext';
 const IcpContent = () => {
 
@@ -58,7 +59,12 @@ const IcpContent = () => {
                     </div>
                 </div>
             </section>
-
+            <div className="overflow-hidden py-8">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                <div className="flex items-center justify-center w-[10%] h-[10%] md:w-full"> 
+                    <img src={above_footer} alt="" style={{ width: '50%' }} /></div>
+                </div>
+            </div>
         </>
     );
 };
