@@ -80,6 +80,12 @@ const ClosedProposal = () => {
             <div className="p-4 sm:ml-64 dark:bg-gray-800" style={{ minHeight: '100vh' }}>
                 <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
                     <div className="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="stats" role="tabpanel" aria-labelledby="stats-tab">
+                    <div className="flex flex-row mb-3  justify-between items-center">
+                            <h1 className="text-3xl font-bold text-left dark:text-white">
+                                Closed Proposal                            </h1>
+                            <div className="flex items-center">
+                            </div>
+                        </div>
                     {alertInfo.show && (
                         <div
                             style={{

@@ -21,15 +21,7 @@ const Details = (props) => {
     });
 
     const backendCanisterId = "7wzen-oqaaa-aaaap-ahduq-cai";
-    const backend = ic(backendCanisterId);
-    const { isConnected, principal, activeProvider } = useConnect({
-        onConnect: () => {
-            // Signed in
-        },
-        onDisconnect: () => {
-            // Signed out
-        },
-    });
+    const backend = ic(backendCanisterId);    
     const formatCreationTime = (nsTimestamp) => {
         const milliseconds = nsTimestamp / 1_000_000; // Convert nanoseconds to milliseconds
         const date = new Date(milliseconds); // Create a new Date object
@@ -45,13 +37,8 @@ const Details = (props) => {
     const fetchProposalData = async () => {
         setLoading(true);
         try {
-            if (isConnected) {
                 const result = await backend.call("getProposal", id);
-                const vote = await backend.call(
-                    "QueryAllUserVotes",
-                    Principal.fromText(principal)
-                );
-                console.log("vote", vote);
+                
                 console.log("res", result[0]);
                 if (result[0]) {
                     result[0].formattedCreationTime = formatCreationTime(
@@ -62,10 +49,8 @@ const Details = (props) => {
                 setPreviousVote(vote);
                 console.log("vote", vote);
                 checkResult(result[0].endTime);
-            }
-            else {
-                alert("Connect Wallet to Vote")
-            }
+            
+           
         } catch (error) {
             console.error("Error fetching proposal data:", error);
         } finally {
@@ -89,23 +74,14 @@ const Details = (props) => {
                 console.log("Already voted for this proposal");
                 return; // Exit the function, preventing further execution
             }
-            if (isConnected) {
-                const result = await backend.call(
-                    "castVote",
-                    proposalId,
-                    option,
-                    Principal.fromText(principal)
-                );
+                
                 setAlertInfo({
                     show: true,
                     type: "success",
                     message: "You cast vote successffully",
                 });
                 setTimeout(() => setAlertInfo(false), 5000);
-                console.log("Vote result:", result);
-            } else {
-                alert("Connect your wallet");
-            }
+                console.log("Vote result:", result);            
 
             // Handle post-vote UI update or confirmation here
         } catch (error) {

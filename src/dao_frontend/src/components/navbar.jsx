@@ -112,6 +112,9 @@ const Navbar = () => {
                 </li>
                 <li>
                 <Link to={'/roadmap'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">RoadMap</Link>
+                </li>                
+                <li>
+                <Link to={'/scam-list'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Scam List</Link>
                 </li>
               </ul>
             </div>
