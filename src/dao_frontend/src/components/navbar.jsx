@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import logo from '/Dao.png';
 import { Link } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext"; // Ensure you have this logo in your public folder or src folder.
+import ButtonLogin from "./ButtonLogin";
 import {
   ConnectButton,
   ConnectDialog,
@@ -224,8 +225,7 @@ const Navbar = () => {
               </button>
             </li>
             <li style={{ margin: "auto" }}>
-              <ConnectButton />
-              <ConnectDialog dark={false} />
+             <ButtonLogin/>
             </li>
           </ul>
         </div>

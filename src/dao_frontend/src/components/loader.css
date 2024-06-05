@@ -11,3 +11,14 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+.wallet_div {
+    width: 26px;
+    height: 26px;
+    background-color: white;
+    border-radius: 50%;
+  }
+  
+  .wallet_div {
+    height: auto;
+  }
