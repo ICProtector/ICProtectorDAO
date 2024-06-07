@@ -16,7 +16,7 @@ import {
 
 import ic from "ic0";
 import Showfund from "./Showfund";
-const ledger = ic("7wzen-oqaaa-aaaap-ahduq-cai");
+const ledger = ic("ryjl3-tyaaa-aaaaa-aaaba-cai");
 
 function ButtonLogin({ className, ...props }) {
   const { setShowWalletPopup } = useWalletPopup();
@@ -41,8 +41,6 @@ function ButtonLogin({ className, ...props }) {
             subaccount: [],
           });
           setBalance(Number(Number(store3) / 100000000));
-          setPoints(Number(Number(store3) / 100000000));
-
         } catch (error) {
           console.error("Error fetching balance:", error);
         }

@@ -334,6 +334,7 @@ actor ProposalManager {
             let updatedListing = {
               proposal with
               twoOptionOptions = updatedOptions;
+              voters = updatedVoters;
             };
             Debug.print(debug_show (("=>", updatedOptions)));
 
@@ -497,7 +498,7 @@ actor ProposalManager {
 
   };
 
-  // // Upgrade handlers for stable storage
+  // Upgrade handlers for stable storage
   system func preupgrade() {
     mapEntries := Iter.toArray(map.entries());
     rewardEntries := Iter.toArray(rewards.entries());
