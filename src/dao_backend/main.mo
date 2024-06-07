@@ -108,6 +108,8 @@ actor ProposalManager {
   private stable var mapEntries : [(Text, Proposal)] = [];
   var map = Map.HashMap<Text, Proposal>(0, Text.equal, Text.hash);
 
+  //=================================================
+
   // private stable var ownerEntries : [(Principal, Vote)] = [];
   // var owners = Map.HashMap<Principal, Vote>(0, Principal.equal, Principal.hash);
   private stable var ownerEntries : [(Principal, [Vote])] = [];
@@ -411,6 +413,7 @@ actor ProposalManager {
           let updatedListing = {
             proposal with
             options = updatedOptions;
+            voters = updatedVoters;
           };
           // Save the updated proposal
           Debug.print(debug_show (("=>", updatedOptions)));
@@ -453,6 +456,43 @@ actor ProposalManager {
 
   };
 
+  type ScamEntry = {
+    id : Nat; // Unique identifier for each entry
+    title : Text;
+    description : Text;
+    url : Text;
+  };
+  private stable var scamEntries : [(Int, ScamEntry)] = [];
+
+  var scamMap : HashMap.HashMap<Int, ScamEntry> = HashMap.HashMap<Int, ScamEntry>(0, Int.equal, Int.hash);
+  private var nextScamId : Nat = 0; // Counter for generating unique IDs
+
+  public shared ({ caller }) func addScamEntry(title : Text, description : Text, url : Text) : async Nat {
+    Debug.print(debug_show (("=>", caller)));
+    let id = nextScamId;
+    nextScamId += 1;
+    let entry = {
+      id = id;
+      title = title;
+      description = description;
+      url = url;
+    };
+    scamMap.put(id, entry);
+    return id; // Return the ID of the newly added scam entry
+  };
+
+  public shared ({ caller }) func removeScamEntry(id : Nat) : async Bool {
+    switch (scamMap.remove(id)) {
+      case (null) { false }; // No entry was found to remove
+      case (_) { true }; // Entry was successfully removed
+    };
+  };
+
+  public query func listScamEntries() : async [ScamEntry] {
+    return Iter.toArray(scamMap.vals());
+
+  };
+
   // // Upgrade handlers for stable storage
   system func preupgrade() {
     mapEntries := Iter.toArray(map.entries());
@@ -477,6 +517,10 @@ actor ProposalManager {
       data1.put(x1.0, Buffer.toArray<Int>(x1.1));
     };
     proposalTimestampsEntries := Iter.toArray(data1.entries());
+
+    //======================================================
+    scamEntries := Iter.toArray(scamMap.entries());
+
   };
 
   system func postupgrade() {
@@ -496,5 +540,8 @@ actor ProposalManager {
     };
 
     // Reconstruct in-memory maps from stable storage after upgrade
+
+    scamMap := HashMap.fromIter<Int,ScamEntry >(scamEntries.vals(), 1, Int.equal, Int.hash);
+
   };
 };
