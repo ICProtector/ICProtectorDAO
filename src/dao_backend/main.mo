@@ -27,6 +27,8 @@ actor ProposalManager {
     twoOptionType : Bool;
     twoOptionOptions : OptionTwoStatus;
     options : Option;
+    voters : [Principal]; // Add this to track voters
+
   };
   type Option = {
     op1 : Text;
@@ -114,12 +116,38 @@ actor ProposalManager {
   private stable var rewardEntries : [(Text, Reward)] = [];
   var rewards = Map.HashMap<Text, Reward>(0, Text.equal, Text.hash);
 
+  //===============================================================================//
+  private stable var proposalTimestampsEntries : [(Principal, [Int])] = [];
+  var proposalTimestamps = HashMap.HashMap<Principal, Buffer.Buffer<Int>>(0, Principal.equal, Principal.hash);
+
   // // Create a new proposal
-  public shared (msg) func createProposal(id : Text, topicName1 : Text, description1 : Text, arImage : Text, argStartdate : Int, argEndDate : Int, twoOptionType : Bool, argoptions : Option, principalId : Principal) : async Proposal {
+  public shared (msg) func createProposal(id : Text, topicName1 : Text, description1 : Text, arImage : Text, argStartdate : Int, argEndDate : Int, twoOptionType : Bool, argoptions : Option, principalId : Principal) : async ?Proposal {
     let currentTime = Time.now();
     // let proposalId = proposals.size() + 1; // Naive auto-increment, should be improved
     // let owner = msg.caller;
     let owner = principalId;
+    let dayAgo = currentTime - 86_400_000_000_000; // 86400 seconds in a day
+
+    // Initialize the timestamp buffer if not already initialized
+
+    let timestamps = switch (proposalTimestamps.get(owner)) {
+      case (?ts) ts;
+      case (null) {
+        let newBuffer = Buffer.Buffer<Int>(0);
+        proposalTimestamps.put(owner, newBuffer);
+        newBuffer;
+      };
+    };
+
+    // Manually filter timestamps and count those within the last day
+    let validTimestamps = Buffer.fromArray<Int>(Array.filter(Buffer.toArray(timestamps), func(t : Int) : Bool { t >= dayAgo }));
+    if (Array.size(Buffer.toArray(validTimestamps)) >= 5) {
+      return null;
+      // return "abc";
+      // throw #Error("You can only create up to 5 proposals per day.");
+    };
+    timestamps.add(currentTime);
+
     let newProposal : Proposal = {
       id = id;
       creator = owner; // Getting the caller's Principal
@@ -135,9 +163,10 @@ actor ProposalManager {
         noVotes = 0;
       };
       options = argoptions;
+      voters = [];
     };
     map.put(id, newProposal);
-    return newProposal;
+    return ?newProposal;
   };
 
   public query func getProposal(id : Text) : async ?Proposal {
@@ -273,6 +302,10 @@ actor ProposalManager {
         return "No id";
       };
       case (?proposal) {
+        let hasVoted = Array.find(proposal.voters, func(v : Principal) : Bool { v == owner }) != null;
+        if (hasVoted) {
+          return "You have already voted on this proposal.";
+        };
         let currentTime = Time.now();
         let newVote = {
           voter = owner;
@@ -282,6 +315,8 @@ actor ProposalManager {
           claimed = false;
           voteWeight = 1;
         };
+        let updatedVoters = Array.append(proposal.voters, [owner]);
+
         if (proposal.twoOptionType == true) {
 
           let store = proposal.twoOptionOptions.yesVotes +1;
@@ -318,6 +353,7 @@ actor ProposalManager {
             let updatedListing = {
               proposal with
               twoOptionOptions = updatedOptions;
+              voters = updatedVoters;
             };
             Debug.print(debug_show (("=>", updatedOptions)));
 
@@ -421,6 +457,8 @@ actor ProposalManager {
   system func preupgrade() {
     mapEntries := Iter.toArray(map.entries());
     rewardEntries := Iter.toArray(rewards.entries());
+    // proposalTimestampsEntries := Iter.toArray(proposalTimestamps.entries());
+    // var proposalTimestamps = HashMap.HashMap<Principal, Buffer.Buffer<Int>>(0, Principal.equal, Principal.hash);
 
     let Entries = Iter.toArray(owners.entries());
     var data = Map.HashMap<Principal, [Vote]>(0, Principal.equal, Principal.hash);
@@ -429,6 +467,16 @@ actor ProposalManager {
       data.put(x.0, Buffer.toArray<Vote>(x.1));
     };
     ownerEntries := Iter.toArray(data.entries());
+
+    //=================================================
+
+    let Entries1 = Iter.toArray(proposalTimestamps.entries());
+    var data1 = HashMap.HashMap<Principal, [Int]>(0, Principal.equal, Principal.hash);
+
+    for (x1 in Iter.fromArray(Entries1)) {
+      data1.put(x1.0, Buffer.toArray<Int>(x1.1));
+    };
+    proposalTimestampsEntries := Iter.toArray(data1.entries());
   };
 
   system func postupgrade() {
@@ -438,6 +486,13 @@ actor ProposalManager {
     let Entries = Iter.toArray(his.entries());
     for (x in Iter.fromArray(Entries)) {
       owners.put(x.0, Buffer.fromArray<Vote>(x.1));
+    };
+
+    //==========================================================
+    let his1 = HashMap.fromIter<Principal, [Int]>(proposalTimestampsEntries.vals(), 1, Principal.equal, Principal.hash);
+    let Entries1 = Iter.toArray(his1.entries());
+    for (x1 in Iter.fromArray(Entries1)) {
+      proposalTimestamps.put(x1.0, Buffer.fromArray<Int>(x1.1));
     };
 
     // Reconstruct in-memory maps from stable storage after upgrade
