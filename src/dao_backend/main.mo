@@ -258,28 +258,29 @@ actor ProposalManager {
               // Use Iter.fromArray to iterate over votes
               var i = 0;
               for (vote in Iter.fromArray(votes)) {
-                if (vote.correctOption == reward.correctOption and vote.proposalId == proposalId) {
+                if (vote.correctOption == reward.correctOption and vote.proposalId == proposalId and vote.claimed == false) {
                   let updatedListing = {
                     vote with
                     claimed = true;
                   };
 
-                  // let cowsay = actor ("eoxkn-6qaaa-aaaap-ab3ta-cai") : actor {
-                  //   icrc1_transfer : (TransferType) -> async Result<TxIndex, TransferError>;
-                  // };
-                  // let mydata : TransferType = {
-                  //   to = {
-                  //     owner = Principal.fromText("xsvih-nzaqn-q3edk-ijqkq-3qymg-qxf4z-pqou7-g5t2r-36ukb-ioiqc-7qe");
-                  //     subaccount = null;
-                  //   };
-                  //   amount = 10 * 100000000;
-                  //   fee = ?50;
-                  //   memo = null;
-                  //   from_subaccount = null;
-                  //   created_at_time = null;
-                  // };
-                  // // Assuming `cowsay.icrc1_transfer(mydata)` is an asynchronous call you're making
-                  // let datastore = await cowsay.icrc1_transfer(mydata);
+                  let cowsay = actor ("eoxkn-6qaaa-aaaap-ab3ta-cai") : actor {
+                    icrc1_transfer : (TransferType) -> async Result<TxIndex, TransferError>;
+                  };
+                  let mydata : TransferType = {
+                    to = {
+                      // owner = Principal.fromText("xsvih-nzaqn-q3edk-ijqkq-3qymg-qxf4z-pqou7-g5t2r-36ukb-ioiqc-7qe");
+                      owner = vote.voter;
+                      subaccount = null;
+                    };
+                    amount = 100000050;
+                    fee = ?50;
+                    memo = null;
+                    from_subaccount = null;
+                    created_at_time = null;
+                  };
+                  // Assuming `cowsay.icrc1_transfer(mydata)` is an asynchronous call you're making
+                  let datastore = await cowsay.icrc1_transfer(mydata);
 
                   resultOwner.put(i, updatedListing);
                   return "success 1";
@@ -541,7 +542,7 @@ actor ProposalManager {
 
     // Reconstruct in-memory maps from stable storage after upgrade
 
-    scamMap := HashMap.fromIter<Int,ScamEntry >(scamEntries.vals(), 1, Int.equal, Int.hash);
+    scamMap := HashMap.fromIter<Int, ScamEntry>(scamEntries.vals(), 1, Int.equal, Int.hash);
 
   };
 };
