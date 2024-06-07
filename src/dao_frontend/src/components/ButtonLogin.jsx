@@ -41,6 +41,8 @@ function ButtonLogin({ className, ...props }) {
             subaccount: [],
           });
           setBalance(Number(Number(store3) / 100000000));
+          setPoints(Number(Number(store3) / 100000000));
+
         } catch (error) {
           console.error("Error fetching balance:", error);
         }
@@ -90,9 +92,9 @@ function ButtonLogin({ className, ...props }) {
             {/* <IoWalletOutline /> */}
            
             <div className="font-bold">Connect</div>
-            <span className="wallet_div">
+            {/* <span className="wallet_div">
               <img src="./wallet_img.svg" alt="wallet_img" />
-            </span>
+            </span> */}
           </button>
           <div style={{ position: "fixed", zIndex: 9999 }}>
             <ConnectDialog dark={false} />
@@ -115,10 +117,10 @@ function ButtonLogin({ className, ...props }) {
           >
             {/* <ChipInfinity /> */}
             
-            <div className="font-bold whitespace-nowrap">Points</div>
-            <span className="wallet_div">
+            <div className="font-bold whitespace-nowrap">User Info</div>
+            {/* <span className="wallet_div">
               <img src="./wallet_img.svg" alt="wallet_img" />
-            </span>
+            </span> */}
           </button>
         </>
       )}

@@ -5,10 +5,21 @@ import {
   useConnect,
 } from "@connect2ic/react";
 import './loader.css'
+import { Principal } from "@dfinity/principal";
+import {
+  ConnectButton,
+  ConnectDialog,
+  Connect2ICProvider,
+  useConnect,
+} from "@connect2ic/react";
+import ic from "ic0";
+const ledger = ic("eoxkn-6qaaa-aaaap-ab3ta-cai");
 
 function Showfund() {
   const { Id, balance, ShowFund, setShowFund } = useWalletAuth();
   const [copySuccess, setCopySuccess] = useState("");
+  const [points, setPoints] = setPoints(0);
+
   const { isConnected, principal, activeProvider, disconnect } = useConnect({
     onConnect: () => {
       // Signed in
@@ -35,6 +46,24 @@ function Showfund() {
     disconnect();
     setShowFund(false);
   }
+  useEffect(() => {
+    async function fetchBalance() {
+      if (principal) {
+        try {
+          const store3 = await ledger.call("icrc1_balance_of", {
+            owner: Principal.fromText(principal),
+            subaccount: [],
+          });
+          setPoints(Number(Number(store3) / 100000000)+1);
+        } catch (error) {
+          console.error("Error fetching balance:", error);
+        }
+      }
+    }
+
+    fetchBalance();
+  }, [ points]);
+
   return (
     <>
       {ShowFund && (
@@ -71,7 +100,7 @@ function Showfund() {
               <div className="column data_div">
                 <div className="column second_section">
                   <span className="text-[20px] flex text-start">
-                   Your  points 
+                   Your  points : {points}
                   </span>
                 </div>
               </div>
