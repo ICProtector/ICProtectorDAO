@@ -254,40 +254,43 @@ actor ProposalManager {
             // Use Iter.fromArray to create an iterable from the array
             for ((principal, votesBuffer) in Iter.fromArray(entries)) {
               // Iterate over all votes for the current principal
-              let votes = Buffer.toArray<Vote>(votesBuffer);
-              // Use Iter.fromArray to iterate over votes
-              var i = 0;
-              for (vote in Iter.fromArray(votes)) {
-                if (vote.correctOption == reward.correctOption and vote.proposalId == proposalId and vote.claimed == false) {
-                  let updatedListing = {
-                    vote with
-                    claimed = true;
-                  };
+              if (principal == owner) {
 
-                  let cowsay = actor ("eoxkn-6qaaa-aaaap-ab3ta-cai") : actor {
-                    icrc1_transfer : (TransferType) -> async Result<TxIndex, TransferError>;
-                  };
-                  let mydata : TransferType = {
-                    to = {
-                      // owner = Principal.fromText("xsvih-nzaqn-q3edk-ijqkq-3qymg-qxf4z-pqou7-g5t2r-36ukb-ioiqc-7qe");
-                      owner = vote.voter;
-                      subaccount = null;
+                let votes = Buffer.toArray<Vote>(votesBuffer);
+                // Use Iter.fromArray to iterate over votes
+                var i = 0;
+                for (vote in Iter.fromArray(votes)) {
+                  if (vote.proposalId == proposalId and vote.claimed == false) {
+                    let updatedListing = {
+                      vote with
+                      claimed = true;
                     };
-                    amount = 100000050;
-                    fee = ?50;
-                    memo = null;
-                    from_subaccount = null;
-                    created_at_time = null;
-                  };
-                  // Assuming `cowsay.icrc1_transfer(mydata)` is an asynchronous call you're making
-                  let datastore = await cowsay.icrc1_transfer(mydata);
 
-                  resultOwner.put(i, updatedListing);
-                  return "success 1";
+                    let cowsay = actor ("eoxkn-6qaaa-aaaap-ab3ta-cai") : actor {
+                      icrc1_transfer : (TransferType) -> async Result<TxIndex, TransferError>;
+                    };
+                    let mydata : TransferType = {
+                      to = {
+                        // owner = Principal.fromText("xsvih-nzaqn-q3edk-ijqkq-3qymg-qxf4z-pqou7-g5t2r-36ukb-ioiqc-7qe");
+                        owner = owner;
+                        subaccount = null;
+                      };
+                      amount = 100005000;
+                      fee = ?5000;
+                      memo = null;
+                      from_subaccount = null;
+                      created_at_time = null;
+                    };
+                    // Assuming `cowsay.icrc1_transfer(mydata)` is an asynchronous call you're making
+                    let datastore = await cowsay.icrc1_transfer(mydata);
+
+                    resultOwner.put(i, updatedListing);
+                    return "success 1";
+                  };
+                  i += 1;
                 };
-                i += 1;
+                return "failed";
               };
-              return "failed";
             };
             // Return null if no matching vote is found
           };
