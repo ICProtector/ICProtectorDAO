@@ -1,9 +1,6 @@
 import useWalletAuth from "../zustand/wallet_auth";
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
-import {
-  useConnect,
-} from "@connect2ic/react";
 import './loader.css'
 import { Principal } from "@dfinity/principal";
 import {
