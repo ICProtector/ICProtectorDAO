@@ -260,7 +260,7 @@ actor ProposalManager {
                 // Use Iter.fromArray to iterate over votes
                 var i = 0;
                 for (vote in Iter.fromArray(votes)) {
-                  if (vote.proposalId == proposalId and vote.claimed == false) {
+                  if (vote.proposalId == proposalId and vote.claimed == false and vote.correctOption == reward.correctOption) {
                     let updatedListing = {
                       vote with
                       claimed = true;
