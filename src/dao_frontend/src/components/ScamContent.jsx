@@ -2,49 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '/logoo.png';
 import icp from '/icp.png';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../contexts/ThemeContext'; 
+import ic from 'ic0';
+import './loader.css'
 
 const ScamContent = () => {
     const { darkMode, toggleTheme } = useTheme();
     const [proposals, setProposals] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const backendCanisterId = '7wzen-oqaaa-aaaap-ahduq-cai';
+    const backend = ic(backendCanisterId);
 
+    const fetchScamList = async () => {
+        setLoading(true);
+        try {
+            const result = await backend.call("listScamEntries");
+            console.log(result);
+            setProposals(result);
+        } catch (error) {
+            console.error("Error fetching proposal data:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+  
     useEffect(() => {
-        // Simulated proposal data array
-        const proposals = [
-            {
-                id: 1,
-                title: "Upgrade Consensus",
-                description: "Proposal to upgrade the consensus algorithm to improve transaction speeds and reliability.",
-                url: "https://example.com/proposals/upgrade-consensus"
-            },
-            {
-                id: 2,
-                title: "Increase Node Count",
-                description: "Increase the number of nodes to enhance the decentralization and security of the network.",
-                url: "https://example.com/proposals/increase-node-count"
-            },
-            {
-                id: 3,
-                title: "Data Privacy Regulation Compliance",
-                description: "Adjust network protocols to ensure compliance with global data privacy regulations.",
-                url: "https://example.com/proposals/data-privacy"
-            },
-            {
-                id: 4,
-                title: "Ecosystem Grant Allocation",
-                description: "Proposal for the allocation of grants to support development of apps on the Internet Computer.",
-                url: "https://example.com/proposals/ecosystem-grant"
-            },
-            {
-                id: 5,
-                title: "Network Economic Model",
-                description: "Redefine the economic model of the network to better reward participants and secure the network's future.",
-                url: "https://example.com/proposals/economic-model"
-            }
-        ];
-
-        // Set initial proposal data
-        setProposals(proposals);
+        fetchScamList();
     }, []);
 
     // Function to filter proposals based on status
@@ -73,7 +57,11 @@ const ScamContent = () => {
                         </div>
 
                         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-
+                        {loading ? (
+                            <div className="flex justify-center items-center">
+                                <div className="loader"></div>
+                            </div>
+                        ) : proposals.length > 0 ? (
                             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
@@ -92,10 +80,10 @@ const ScamContent = () => {
                                     </tr>
                                 </thead>
                                 <tbody className='mt-2'>
-                                    {proposals.map(proposal => (
-                                        <tr key={proposal.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                {proposals.map((proposal, index) => (
+                                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                             <td scope="row" className=" text-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white w-1">
-                                                {proposal.id}
+                                                {index+1}
                                             </td>
                                             <td className="text-center px-6 py-4 w-1/6">
                                                 {proposal.title}
@@ -111,7 +99,8 @@ const ScamContent = () => {
                                         </tr>
                                     ))}
                                 </tbody>
-                            </table>
+                            </table>                            
+                        ) : <p className="text-black dark:text-white text-lg">No Scam to display.</p>}
                         </div>
                     </div>
 

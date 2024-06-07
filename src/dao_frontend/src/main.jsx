@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
 import Router from "./router";
+import ShowFund from "./components/Showfund";
 import { defaultProviders } from "@connect2ic/core/providers";
 import { createClient } from "@connect2ic/core";
 import { Connect2ICProvider } from "@connect2ic/react";
@@ -13,7 +14,8 @@ const client = createClient({
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Connect2ICProvider client={client}>
-      <Router />
+      <Router />      
+      <ShowFund />
     </Connect2ICProvider>
   </React.StrictMode>
 );

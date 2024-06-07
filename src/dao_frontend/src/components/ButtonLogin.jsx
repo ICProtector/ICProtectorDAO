@@ -15,6 +15,7 @@ import {
 } from "@connect2ic/react";
 
 import ic from "ic0";
+import Showfund from "./Showfund";
 const ledger = ic("7wzen-oqaaa-aaaap-ahduq-cai");
 
 function ButtonLogin({ className, ...props }) {
@@ -87,10 +88,11 @@ function ButtonLogin({ className, ...props }) {
             )}`}
           >
             {/* <IoWalletOutline /> */}
+           
+            <div className="font-bold">Connect</div>
             <span className="wallet_div">
               <img src="./wallet_img.svg" alt="wallet_img" />
             </span>
-            <div className="font-bold">Login</div>
           </button>
           <div style={{ position: "fixed", zIndex: 9999 }}>
             <ConnectDialog dark={false} />
@@ -102,6 +104,7 @@ function ButtonLogin({ className, ...props }) {
         //   <ConnectDialog dark={false} />
         // </>
         <>
+          <Showfund/>
           <button
             onClick={handleShowPopup}
             {...props}
@@ -111,10 +114,11 @@ function ButtonLogin({ className, ...props }) {
             )}`}
           >
             {/* <ChipInfinity /> */}
+            
+            <div className="font-bold whitespace-nowrap">Points</div>
             <span className="wallet_div">
               <img src="./wallet_img.svg" alt="wallet_img" />
             </span>
-            <div className="font-bold whitespace-nowrap">{balanceICP} ICP</div>
           </button>
         </>
       )}

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useTheme } from '../../../contexts/ThemeContext';
+import ic from 'ic0';
+import '../../../components/loader.css'
 
-const ScamForm = () => {
+const ScamForm = () => {    
     const { darkMode } = useTheme();
     const [topicName, setTopicName] = useState('');
     const [siteUrl, setSiteUrl] = useState('');
@@ -12,10 +14,12 @@ const ScamForm = () => {
         message: "",
     });
 
+    const backendCanisterId = "7wzen-oqaaa-aaaap-ahduq-cai";
+    const backend = ic(backendCanisterId);
+  
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log({ topicName, siteUrl, description });
-
+        callCreateScam();
         window.scrollTo(0, 0);
         setAlertInfo({
             show: true,
@@ -25,6 +29,27 @@ const ScamForm = () => {
         setTimeout(() => setAlertInfo({ ...alertInfo, show: false }), 5000);
     };
 
+  const callCreateScam = async () => {
+    try {
+        const response = await backend.call(
+          "addScamEntry",
+          topicName,
+          description,
+          siteUrl
+        );
+        setAlertInfo({
+          show: true,
+          type: "success",
+          message: "Scam Added Successfully.",
+        });
+        setTimeout(() => setAlertInfo(false), 5000);
+        console.log("Scam Added Successfully", response);
+    } catch (error) {
+      setAlertInfo({ show: true, type: "error", message: error });
+      setTimeout(() => setAlertInfo(false), 5000);
+      console.error("Error adding scamm:", error);
+    }
+  };
     const cardClass = darkMode ? 'bg-gray-800 text-white shadow-xl' : 'bg-white text-gray-900 shadow-xl';
     const inputClass = 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-indigo-500';
     const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-200 text-left py-1';

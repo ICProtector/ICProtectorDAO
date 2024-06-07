@@ -22,3 +22,112 @@
   .wallet_div {
     height: auto;
   }
+
+  
+.main_div {
+  width: 100%;
+  height: 100%;
+  background-color: #0000004d;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 999;
+}
+
+.card_div {
+  background-color: white;
+  width: 32em;
+  height: auto;
+  margin: 0 auto;
+  padding: 35px;
+  border-radius: 10px;
+  gap: 40px;
+  max-width: 100%;
+}
+
+.card1_div {
+  background-color: white;
+  width: 32em;
+  height: auto;
+  margin: 0 auto;
+  padding: 20px 38px;
+  border-radius: 10px;
+  gap: 15px;
+  max-width: 100%;
+}
+
+.cancel_main {
+  justify-content: end;
+}
+
+.cancel_div {
+  display: flex;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #F3F5F9;
+}
+
+.cancel {
+  color: #000;
+  text-align: center;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.data_div {
+  gap: 20px;
+}
+
+.first_section {
+  justify-content: space-between;
+}
+
+.second_section {
+  gap: 5px;
+}
+
+.wallet_div {
+  width: 26px;
+  height: 26px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.wallet_div {
+  height: auto;
+}
+
+.submit_btn_div {
+  height: 45px !important;
+}
+
+.justify-content-around {
+  justify-content: space-around !important;
+}
+
+.border-dotted {
+  border: 2px dotted;
+}
+.logout_btn_style {
+  color: #0082E6;
+  font-family: "Baloo 2";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin-bottom: 15px;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
