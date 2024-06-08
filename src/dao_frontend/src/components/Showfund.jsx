@@ -57,7 +57,7 @@ function Showfund() {
     }
 
     fetchBalance();
-  }, [balanceICP]); // Dependency on principal, not balanceICP
+  }, [principal]); // Dependency on principal, not balanceICP
   return (
     <>
       {ShowFund && (
