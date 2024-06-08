@@ -22,7 +22,7 @@ const OpenProposalContent = () => {
     const fetchProposalData = async () => {
         setLoading(true);
         try {
-            const result = await backend.call("getProposalAll");
+            const result = await backend.call("getProposalAllApproved");
             const formattedProposals = result.map(proposal => ({
                 ...proposal,
                 formattedCreationTime: formatCreationTime(Number(proposal.creationTime)),

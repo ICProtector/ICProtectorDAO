@@ -1,116 +1,84 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../../contexts/ThemeContext';
+import '../../../components/loader.css';
+import ic from 'ic0';
 
 const PendingProposal = () => {
     const { darkMode, toggleTheme } = useTheme();
     const [onlyOpen, setOnlyOpen] = useState(false); // State for the "Only Open Proposal" checkbox
-    const [proposals, setProposals] = useState([]); // State to hold your proposal data
+    const [proposals, setProposals] = useState([]);
+    const [loading, setLoading] = useState(false); 
+    const backendCanisterId = '7wzen-oqaaa-aaaap-ahduq-cai';
+    const backend = ic(backendCanisterId);
+    const formatCreationTime = (nsTimestamp) => {
+        const milliseconds = nsTimestamp / 1_000_000; // Convert nanoseconds to milliseconds
+        const date = new Date(milliseconds); // Create a new Date object
+        return date.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
+    };
     const [alertInfo, setAlertInfo] = useState({
         show: false,
         type: "",
         message: "",
     });
-    const Approved = () => {
-        setAlertInfo({
+    const ApprovedProposal = async (proposalId, option) => {
+        try {
+          setLoading(true);
+            const result = await backend.call(
+              "approveProposal",
+              proposalId,
+              option
+            );
+            console.log(result);            
+            fetchPendingProposalData();
+            setAlertInfo({
+                show: true,
+                type: "success",
+                message: "Proposal " + option +" Successfully",
+              });
+            setTimeout(() => setAlertInfo(false), 5000);
+          // Handle post-vote UI update or confirmation here
+        } catch (error) {
+          console.error("Error casting vote:", error);
+    
+          setAlertInfo({
             show: true,
-            type: "success",
-            message: "Proposal Approved.",
-        });
-        setTimeout(() => setAlertInfo(false), 5000);
+            type: "error",
+            message: "Error approvind proposal:".error,
+          });
+          setTimeout(() => setAlertInfo(false), 5000);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+    const fetchPendingProposalData = async () => {
+        setLoading(true);
+        try {
+            const result = await backend.call("getProposalAllPending");
+            console.log(result);
+            const formattedProposals = result.map(proposal => ({
+                ...proposal,
+                formattedCreationTime: formatCreationTime(Number(proposal.creationTime)),
+                status: determineStatus(proposal.endTime)
+            }));
+            setProposals(formattedProposals);
+        } catch (error) {
+            console.error("Error fetching proposal data:", error);
+        } finally {
+            setLoading(false);
+        }
     };
-    const Disapproved = () => {
-        setAlertInfo({
-            show: true,
-            type: "success",
-            message: "Proposal Rejected.",
-        });
-        setTimeout(() => setAlertInfo(false), 5000);
+
+    const determineStatus = (endTime) => {
+        const currentTime = Date.now();
+        const endMilliseconds = Number(endTime) / 1_000_000;
+        return currentTime > endMilliseconds ? 'Closed' : 'Open';
     };
     useEffect(() => {
-        // Simulated proposal data array
-        const proposalData = [
-            {
-                id: 1,
-                title: "1SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Pending"
-            },
-            {
-                id: 2,
-                title: "2SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Rejected"
-            },
-            {
-                id: 3,
-                title: "3SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Pending"
-            },
-            {
-                id: 4,
-                title: "4SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Rejected"
-            },
-            {
-                id: 5,
-                title: "SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Pending"
-            },
-            {
-                id: 6,
-                title: "SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Pending"
-            },
-            {
-                id: 7,
-                title: "SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Rejected"
-            },
-            {
-                id: 8,
-                title: "SET XRD Ratio",
-                proposedDate: "April 10, 2024",
-                timeRemaining: "2 hours ago",
-                topic: "XRD Ratio",
-                additionalInfo: "Additional data for Proposals should be added.",
-                status: "Rejected"
-            },
-            // Add more proposal objects here if needed
-        ];
-
-        // Set initial proposal data
-        setProposals(proposalData);
+        fetchPendingProposalData();
     }, []);
 
-    // Function to filter proposals based on status
-    const filteredProposals = proposals.filter(proposal => proposal.status === 'Pending')
 
     const alertStyles = {
         success: {
@@ -122,9 +90,6 @@ const PendingProposal = () => {
             color: darkMode ? "#971212" : "#721c24", // Red text
         },
     };
-    const gradientClass = darkMode ? 'bg-gradient-to-r from-gray-950 to-gray-950' : 'bg-gradient-to-b from-orange-200 to-orange-500';
-    const buttonClass = darkMode ? 'bg-gradient-to-r from-red-600 to-red-900' : 'bg-gradient-to-r from-red-400 to-red-600';
-
     return (
         <>
             <div className="p-4 sm:ml-64 dark:bg-gray-800" style={{ minHeight: '100vh' }}>
@@ -150,6 +115,11 @@ const PendingProposal = () => {
                                 {alertInfo.message}
                             </div>
                         )}
+                        {loading ? (
+                            <div className="flex justify-center items-center">
+                                <div className="loader"></div>
+                            </div>
+                        ) : proposals.length > 0 ? (
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
@@ -168,59 +138,52 @@ const PendingProposal = () => {
                                     <th scope="col" className="px-6 py-3">
                                         Topic
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Status
-                                    </th>
                                     <th scope="col" className="px-6 py-3 text-center">
                                         Action
                                     </th>
                                 </tr>
                             </thead>
                             <tbody className='mt-2'>
-                                {filteredProposals.map(proposal => (
+                                {proposals.map(proposal => (
                                     <tr key={proposal.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            {proposal.id}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {proposal.title}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {proposal.proposedDate}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {proposal.timeRemaining}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300 p-3">{proposal.topic}</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`text-xs font-medium me-2 px-2.5 py-0.5 rounded p-3 ${proposal.status === 'Pending' ? 'bg-amber-300 text-amber-600 dark:bg-amber-300 dark:text-amber-600' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'}`}>
-                                                {proposal.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-2 py-4">
+                                       <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                {proposal.id}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                {proposal.topicName}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                {formatCreationTime(Number(proposal.creationTime))}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                               
+                                            {formatCreationTime(Number(proposal.endTime))}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300 p-3">
+                                                {proposal.topicName}</span>
+                                            </td>
+                                                                                    <td className="px-2 py-4">
                                             <button
-                                                onClick={() => Approved()}
+                                                onClick={() => ApprovedProposal(proposal.id, "approved")}
                                                 type="button"
-                                                className={`text-white font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none focus:ring-4 ${proposal.status === 'Pending' ? 'bg-green-500 hover:bg-green-600 border-green-600 focus:ring-green-300' : 'bg-white border-gray-300 hover:bg-gray-100 focus:ring-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 dark:text-white'
-                                                    }`}
+                                                className={`text-white font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none focus:ring-4 bg-green-500 hover:bg-green-600 border-green-600 focus:ring-green-300`}
                                             >
-                                                {proposal.status === 'Pending' ? 'Approve' : 'View'}
+                                                Approve
                                             </button>
 
                                             <button
-                                                onClick={() => Disapproved()}
+                                                onClick={() => ApprovedProposal(proposal.id, "rejected")}
                                                 type="button"
-                                                className={`text-white font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none focus:ring-4 ${proposal.status === 'Pending' ? 'bg-red-500 hover:bg-red-600 border-red-600 focus:ring-red-300' : 'bg-white border-gray-300 hover:bg-gray-100 focus:ring-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 dark:text-white'
-                                                    }`}
+                                                className={`text-white font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none focus:ring-4 bg-red-500 hover:bg-red-600 border-red-600 focus:ring-red-300`}
                                             >
-                                                {proposal.status === 'Pending' ? 'Disapprove' : 'View'}
+                                               Disapprove
                                             </button> </td>
                                     </tr>
                                 ))}
                             </tbody>
-                        </table>
+                        </table>                        
+                       ) : <p className="text-black dark:text-white text-lg">No pending proposals to display.</p>}
                     </div>
 
                 </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../../contexts/ThemeContext';
 import ic from 'ic0';
-import '../../../components/loader.css'
+import '../../../components/loader.css';
 
 const OpenProposal = () => {
     const { darkMode, toggleTheme } = useTheme();// Set default or dynamic based on use case
@@ -20,7 +20,7 @@ const OpenProposal = () => {
     const fetchProposalData = async () => {
         setLoading(true);
         try {
-            const result = await backend.call("getProposalAll");
+            const result = await backend.call("getProposalAllApproved");
             const formattedProposals = result.map(proposal => ({
                 ...proposal,
                 formattedCreationTime: formatCreationTime(Number(proposal.creationTime)),
