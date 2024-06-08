@@ -28,6 +28,7 @@ actor ProposalManager {
     twoOptionOptions : OptionTwoStatus;
     options : Option;
     voters : [Principal]; // Add this to track voters
+    approval : Text;
 
   };
   type Option = {
@@ -166,6 +167,7 @@ actor ProposalManager {
       };
       options = argoptions;
       voters = [];
+      approval = "pending";
     };
     map.put(id, newProposal);
     return ?newProposal;
@@ -177,6 +179,61 @@ actor ProposalManager {
 
   public query func getProposalAll() : async [Proposal] {
     return Iter.toArray(map.vals());
+  };
+
+  public query func getProposalAllPending() : async [Proposal] {
+    return Iter.toArray(
+      Iter.filter(
+        map.vals(),
+        func(p : Proposal) : Bool {
+          p.approval == "pending";
+        },
+      )
+    );
+  };
+
+  public query func getProposalAllApproved() : async [Proposal] {
+    return Iter.toArray(
+      Iter.filter(
+        map.vals(),
+        func(p : Proposal) : Bool {
+          p.approval == "approved";
+        },
+      )
+    );
+  };
+
+  public shared (msg) func approveProposal(proposalId : Text, selectedOption : Text) : async Text {
+    // let owner = msg.caller;
+    // let owner = principalId;
+    switch (map.get(proposalId)) {
+      case (null) {
+        return "No id";
+      };
+      case (?proposal) {
+
+        let status = selectedOption;
+        let updatedListing = {
+          proposal with
+          approval = status;
+        };
+        map.put(proposalId, updatedListing);
+      };
+
+    };
+
+    return "success";
+  };
+
+  public query func getProposalAllRejected() : async [Proposal] {
+    return Iter.toArray(
+      Iter.filter(
+        map.vals(),
+        func(p : Proposal) : Bool {
+          p.approval == "rejected";
+        },
+      )
+    );
   };
 
   public query func getWinner(id : Text) : async ?Reward {
