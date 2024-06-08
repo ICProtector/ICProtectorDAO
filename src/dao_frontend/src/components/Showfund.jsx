@@ -61,7 +61,7 @@ function Showfund() {
   return (
     <>
       {ShowFund && (
-        <div className="main_div column">
+        <div className="dialog-styles column">
           <div className="card_div column">
             <div className="row cancel_main">
               <button onClick={() => setShowFund(false)} className="cancel_div">

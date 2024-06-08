@@ -176,14 +176,24 @@ const Forms = () => {
           pollOptions,
           Principal.fromText(principal)
         );
-        setAlertInfo({
-          show: true,
-          type: "success",
-          message: "Proposal Created.",
+        if (response.length === 0) {
+          setAlertInfo({
+            show: true,
+            type: "error",
+            message: "A user can create five proposal a day.",
         });
         setTimeout(() => setAlertInfo(false), 5000);
         clearfunction();
-        console.log("Proposal Created:", response);
+      } else {
+          setAlertInfo({
+              show: true,
+              type: "success",
+              message: "Proposal Created.",
+          });
+          setTimeout(() => setAlertInfo(false), 5000);
+          clearfunction();
+          console.log("Proposal Created:", response);
+      }
       } else {
         alert("Connect your wallet");
       }
