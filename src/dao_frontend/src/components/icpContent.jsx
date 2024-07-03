@@ -61,8 +61,8 @@ const IcpContent = () => {
             </section>
             <div className="overflow-hidden py-8">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                <div className="flex items-center justify-center w-[10%] h-[10%] md:w-full"> 
-                    <img src={above_footer} alt="" style={{ width: '50%' }} /></div>
+                <div className="flex items-center justify-center w-[20%] h-[20%] sm:w-full"> 
+                    <img src={above_footer} alt="" style={{ width: '60%' }} /></div>
                 </div>
             </div>
         </>

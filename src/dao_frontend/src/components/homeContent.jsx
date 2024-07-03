@@ -33,8 +33,7 @@ const HomeContent = () => {
                         <div className="text-center">
                             <h1 className="text-4xl font-bold tracking-tight dark:text-white text-gray-900 sm:text-6xl">ICP Protector DAO</h1>
                             <p className="mt-6 text-lg leading-8 dark:text-gray-300 text-gray-900">
-                                This DAO will be the first 100% on-Chain DAO without investing, but with rewards.
-                                ICP Protector DAO will be the place where YOU can propose a potential scam &/or vote on a potential scam.
+                            The first  100% on-chain DAO, without investing but with RWA rewards. Help us to protect your friends & the community, by reporting and voting of potential Scams.
                             </p>
                         </div>
                     </div>
@@ -153,8 +152,8 @@ const HomeContent = () => {
             </div>
             <div className="overflow-hidden py-8">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                <div className="flex items-center justify-center w-[10%] h-[10%] md:w-full"> 
-                    <img src={above_footer} alt="" style={{ width: '50%' }} /></div>
+                <div className="flex items-center justify-center w-[20%] h-[20%] sm:w-full"> 
+                    <img src={above_footer} alt="" style={{ width: '60%' }} /></div>
                 </div>
             </div>
         </>
