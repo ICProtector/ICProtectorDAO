@@ -14,8 +14,6 @@ const Forms = () => {
   const [file, setFile] = useState(null);
   const [id, setId] = useState("");
   const [endtime, setEndtime] = useState(null);
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
   const [alertInfo, setAlertInfo] = useState({
     show: false,
     type: "",
@@ -29,25 +27,23 @@ const Forms = () => {
       // Signed out
     },
   });
-  // const [id, setId] = useState(generateRandomId());
+  
   useEffect(() => {
     setId(generateRandomId());
+    // Set end time to three days from the current time
+    const currentTime = new Date();
+    const endTime = new Date(currentTime.getTime() + 3 * 24 * 60 * 60 * 1000); // Add three days in milliseconds
+    setEndtime(endTime);
   }, []);
-
-  useEffect(() => {
-    // Update endtime whenever date or time changes
-    if (date && time) {
-      const combinedDateTime = new Date(`${date}T${time}`);
-      setEndtime(combinedDateTime);
-    }
-  }, [date, time]);
+  
   // Function to generate a random ID
   const generateRandomId = () => {
     const randomNumber = Math.floor(Math.random() * 10000000000); // Generate a random number between 0 and 9999999999
     return randomNumber.toString(); // Convert the random number to a string
   };
+
   const backendCanisterId = "7wzen-oqaaa-aaaap-ahduq-cai";
-  const backend = ic(backendCanisterId);
+  const backend = ic.local(backendCanisterId);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -57,7 +53,8 @@ const Forms = () => {
       !topicName ||
       !description ||
       options.some((option) => !option) ||
-      !endtime
+      !endtime||
+      !file
     ) {
       setAlertInfo({
         show: true,
@@ -75,10 +72,10 @@ const Forms = () => {
       setAlertInfo({
         show: true,
         type: "error",
-        message: "Please select a future end time.",
+        message: "End time must be in the future.",
       });
       setTimeout(() => setAlertInfo(false), 5000);
-      console.error("Please select a future end time.");
+      console.error("End time must be in the future.");
       return;
     }
 
@@ -100,6 +97,7 @@ const Forms = () => {
       callCreateProposal("");
     }
   };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -122,6 +120,7 @@ const Forms = () => {
       });
     }
   };
+
   const callCreateProposal = async () => {
     try {
       const pollOptions = {
@@ -147,29 +146,23 @@ const Forms = () => {
         }
       }
       if (endtime === null) {
-        console.error("Please select end time");
-        return;
-      }
-      let timestampInNanoseconds;
-      if (endtime) {
-        const timestampInMilliseconds = endtime.getTime();
-        timestampInNanoseconds =
-          BigInt(timestampInMilliseconds) * BigInt(1000000); // Convert to nanoseconds
-        console.log(
-          "End Time Timestamp:",
-          timestampInNanoseconds.toString() + "n"
-        );
-      } else {
         console.error("End time is not set.");
         return;
       }
+      const timestampInMilliseconds = endtime.getTime();
+      const timestampInNanoseconds =
+        BigInt(timestampInMilliseconds) * BigInt(1000000); // Convert to nanoseconds
+      console.log(
+        "End Time Timestamp:",
+        timestampInNanoseconds.toString() + "n"
+      );
       if (isConnected) {
         const response = await backend.call(
           "createProposal",
           id,
           topicName,
           description,
-          "",
+          file,
           0,
           timestampInNanoseconds,
           val,
@@ -180,43 +173,42 @@ const Forms = () => {
           setAlertInfo({
             show: true,
             type: "error",
-            message: "A user can create five proposal a day.",
-        });
-        setTimeout(() => setAlertInfo(false), 5000);
-        clearfunction();
-      } else {
+            message: "A user can create five proposals a day.",
+          });
+          setTimeout(() => setAlertInfo(false), 5000);
+          clearfunction();
+        } else {
           setAlertInfo({
-              show: true,
-              type: "success",
-              message: "Proposal Created.",
+            show: true,
+            type: "success",
+            message: "Proposal Created.",
           });
           setTimeout(() => setAlertInfo(false), 5000);
           clearfunction();
           console.log("Proposal Created:", response);
-      }
+        }
       } else {
         alert("Connect your wallet");
       }
     } catch (error) {
-      setAlertInfo({ show: true, type: "error", message: error });
+      setAlertInfo({ show: true, type: "error", message: error.message });
       setTimeout(() => setAlertInfo(false), 5000);
       console.error("Error creating proposal:", error);
     }
   };
+
   const clearfunction = () => {
     setTopicName("");
     setDescription("");
     setOptionCount(2);
     setOptions(["Yes", "No"]);
     setFile(null);
-    setId("");
-    setEndtime(null);
-    setDate("");
-    setTime("");
+    setId(generateRandomId());
+    // Reset end time to three days from the current time
+    const currentTime = new Date();
+    const endTime = new Date(currentTime.getTime() + 3 * 24 * 60 * 60 * 1000);
+    setEndtime(endTime);
   };
-  // const generateRandomId = () => {
-  //     return Math.random().toString(36).substr(2, 10);
-  // };
 
   const updateOptionCount = (count) => {
     setOptionCount(count);
@@ -322,21 +314,6 @@ const Forms = () => {
               />
             </div>
           ))}
-          <div>
-            <label htmlFor="endtime" className={labelClass}>
-              End Time
-            </label>
-            <input
-              type="date" class="dark:bg-gray-700 dark:text-white"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-            <input
-              type="time" class="dark:bg-gray-700 dark:text-white"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-            />
-          </div>
           <div>
             <label htmlFor="file" className={labelClass}>
               Choose File

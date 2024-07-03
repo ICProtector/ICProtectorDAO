@@ -164,11 +164,11 @@ const Details = (props) => {
 
   return (
     <>
-    {loading && (
-          <div className="flex justify-center items-center">
-            <div className="loader"></div>
-          </div>
-        )}
+      {loading && (
+        <div className="flex justify-center items-center">
+          <div className="loader"></div>
+        </div>
+      )}
       <div className="lg:flex pb-24 pt-10 p-4">
         {alertInfo.show && (
           <div className="dialog-styles column">
@@ -182,7 +182,7 @@ const Details = (props) => {
             </div>
           </div>
         )}
-        
+
         {!loading && (
           <>
             <div className="flex flex-col w-full gap-4 text-white">
@@ -220,6 +220,17 @@ const Details = (props) => {
                         {proposalData.topicName}
                       </span>
                     </div>
+                    {proposalData.image ? (
+                      <div className="flex mt-3 ">
+
+                        <img src={proposalData.image} alt="" style={{
+                          width: "150px",
+                          margin: "auto"
+                        }} />
+                      </div>
+                    ) : (
+                      <div ></div>
+                    )}
                   </div>
                 </>
               )}
@@ -326,8 +337,8 @@ const Details = (props) => {
                         <>
                           <button
                             className={`text-xl font-mono italic border-2 rounded-xl py-2 px-6 mb-5 focus:outline-none ${proposalData.status === "Rejected"
-                                ? "bg-red-600 text-white"
-                                : "bg-green-600 text-white"
+                              ? "bg-red-600 text-white"
+                              : "bg-green-600 text-white"
                               }`}
                           >
                             Closed

@@ -22,7 +22,7 @@ import AdminDetailPage from "./pages/Dashboard/detailpage";
 import AdminScam from './pages/Dashboard/ScamPage';
 import AdminScamFormPage from './pages/Dashboard/ScamFormPage';
 import { ThemeProvider } from './contexts/ThemeContext';
-
+import AdminPendingDetailPage from './pages/Dashboard/pendingdetailpage'
 export default function Router() {
   return (
     <BrowserRouter>
@@ -49,6 +49,7 @@ export default function Router() {
         <Route path="/admin/pending-proposal"  element={<AdminPendingProposal />} />
         <Route path="/admin/rejected-proposal"  element={<AdminRejectedProposal />} />
         <Route path='/admin/detail-proposals/:id'  element={<AdminDetailPage />} />
+        <Route path='/admin/pending-detail-proposals/:id'  element={<AdminPendingDetailPage />} />
         <Route path='/admin/scam-list'  element={<AdminScam />} />
         <Route path='/admin/add-scams'  element={<AdminScamFormPage />} />
       </Routes>
