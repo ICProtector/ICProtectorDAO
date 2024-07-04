@@ -119,6 +119,9 @@ actor ProposalManager {
   private stable var rewardEntries : [(Text, Reward)] = [];
   var rewards = Map.HashMap<Text, Reward>(0, Text.equal, Text.hash);
 
+  private stable var proposalRewardEntries : [(Text, Bool)] = [];
+  var proposalRewards = Map.HashMap<Text, Bool>(0, Text.equal, Text.hash);
+
   //===============================================================================//
   private stable var proposalTimestampsEntries : [(Principal, [Int])] = [];
   var proposalTimestamps = HashMap.HashMap<Principal, Buffer.Buffer<Int>>(0, Principal.equal, Principal.hash);
@@ -357,6 +360,48 @@ actor ProposalManager {
     };
     return "success";
   };
+
+  public shared (msg) func givePointsForProposalByAdmin(proposalId : Text, principalId : Principal, points : Nat) : async Text {
+    let owner = principalId;
+    switch (map.get(proposalId)) {
+      case (null) {
+        return "No proposal Exsist";
+      };
+      case (?reward) {
+        switch (proposalRewards.get(proposalId)) {
+          case (null) {
+            let cowsay = actor ("eoxkn-6qaaa-aaaap-ab3ta-cai") : actor {
+              icrc1_transfer : (TransferType) -> async Result<TxIndex, TransferError>;
+            };
+            let mydata : TransferType = {
+              to = {
+                // owner = Principal.fromText("xsvih-nzaqn-q3edk-ijqkq-3qymg-qxf4z-pqou7-g5t2r-36ukb-ioiqc-7qe");
+                owner = owner;
+                subaccount = null;
+              };
+              amount = points * 100005000;
+              fee = ?5000;
+              memo = null;
+              from_subaccount = null;
+              created_at_time = null;
+            };
+            // Assuming `cowsay.icrc1_transfer(mydata)` is an asynchronous call you're making
+            let datastore = await cowsay.icrc1_transfer(mydata);
+            proposalRewards.put(proposalId, true);
+            return "success";
+          };
+          case (?result) {
+            return "Already Funded";
+          };
+        };
+
+      };
+    };
+  };
+  public query func getProposalReward(proposalId : Text) : async ?Bool {
+    return proposalRewards.get(proposalId);
+  };
+
   public shared (msg) func castVote(proposalId : Text, selectedOption : Text, principalId : Principal) : async Text {
     // let owner = msg.caller;
     let owner = principalId;
@@ -582,6 +627,7 @@ actor ProposalManager {
 
     //======================================================
     scamEntries := Iter.toArray(scamMap.entries());
+    proposalRewardEntries := Iter.toArray(proposalRewards.entries());
 
   };
 
@@ -604,6 +650,7 @@ actor ProposalManager {
     // Reconstruct in-memory maps from stable storage after upgrade
 
     scamMap := HashMap.fromIter<Int, ScamEntry>(scamEntries.vals(), 1, Int.equal, Int.hash);
+    proposalRewards := HashMap.fromIter<Text, Bool>(proposalRewardEntries.vals(), 1, Text.equal, Text.hash);
 
   };
 };
