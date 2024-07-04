@@ -15,6 +15,8 @@ const Forms = () => {
   const [imageURL, setImageURL] = useState("");
   const [id, setId] = useState("");
   const [endtime, setEndtime] = useState(null);
+  const [imageSource, setImageSource] = useState("file"); // 'file' or 'url'
+
   const [alertInfo, setAlertInfo] = useState({
     show: false,
     type: "",
@@ -28,7 +30,7 @@ const Forms = () => {
       // Signed out
     },
   });
-  
+
   useEffect(() => {
     setId(generateRandomId());
     // Set end time to three days from the current time
@@ -36,7 +38,7 @@ const Forms = () => {
     const endTime = new Date(currentTime.getTime() + 3 * 24 * 60 * 60 * 1000); // Add three days in milliseconds
     setEndtime(endTime);
   }, []);
-  
+
   // Function to generate a random ID
   const generateRandomId = () => {
     const randomNumber = Math.floor(Math.random() * 10000000000); // Generate a random number between 0 and 9999999999
@@ -48,13 +50,13 @@ const Forms = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     window.scrollTo(0, 0);
     if (
       !topicName ||
       !description ||
       options.some((option) => !option) ||
-      !endtime||
+      !endtime ||
       (!file && !imageURL)
     ) {
       setAlertInfo({
@@ -97,7 +99,7 @@ const Forms = () => {
     } else {
       callCreateProposal("");
     }
-    console.log({ topicName, description, options, file,imageData });
+    console.log({ topicName, description, options, file, imageData });
   };
 
   const handleFileChange = (e) => {
@@ -316,7 +318,8 @@ const Forms = () => {
               />
             </div>
           ))}
-          <div>
+          <div>Choose a file or enter image url</div>
+          {/* <div>
             <label htmlFor="file" className={labelClass}>
               Choose File
             </label>
@@ -338,6 +341,57 @@ const Forms = () => {
               onChange={(e) => setImageURL(e.target.value)}
               className={`${inputClass} dark:bg-gray-700 dark:text-white`}
             />
+          </div> */}
+          <div>
+            <div className="mb-4">
+              <label>
+                <input
+                  type="radio"
+                  name="imageSource"
+                  value="file"
+                  checked={imageSource === "file"}
+                  onChange={() => setImageSource("file")}
+                />{" "}
+                Upload File
+              </label>
+              <label className="ml-4">
+                <input
+                  type="radio"
+                  name="imageSource"
+                  value="url"
+                  checked={imageSource === "url"}
+                  onChange={() => setImageSource("url")}
+                />{" "}
+                Enter URL
+              </label>
+            </div>
+
+            {imageSource === "file" ? (
+              <div>
+                <label htmlFor="file" className={labelClass}>
+                  Choose File
+                </label>
+                <input
+                  type="file"
+                  id="file"
+                  onChange={handleFileChange}
+                  className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-600 dark:file:text-gray-200"
+                />
+              </div>
+            ) : (
+              <div>
+                <label htmlFor="imageURL" className={labelClass}>
+                  Image URL
+                </label>
+                <input
+                  type="text"
+                  id="imageURL"
+                  value={imageURL}
+                  onChange={(e) => setImageURL(e.target.value)}
+                  className={`${inputClass} dark:bg-gray-700 dark:text-white`}
+                />
+              </div>
+            )}
           </div>
           <button
             type="submit"
