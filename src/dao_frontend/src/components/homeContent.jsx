@@ -3,6 +3,15 @@ import reward from '/reward.jpg';
 import icpdao4 from '/icpdao4.png';
 import above_footer from '/ab_footer.png';
 import { useTheme } from '../contexts/ThemeContext';
+import nft1 from '/nfts/nft1.jpg'
+import nft2 from '/nfts/nft2.jpg'
+import nft3 from '/nfts/nft3.jpg'
+import nft4 from '/nfts/nft4.jpg'
+import nft5 from '/nfts/nft5.jpg'
+import nft6 from '/nfts/nft6.jpg'
+import nft7 from '/nfts/nft7.jpg'
+import nft8 from '/nfts/nft8.jpg'
+import nft9 from '/nfts/nft9.jpg'
 
 const HomeContent = () => {
   const { darkMode, toggleTheme } = useTheme();
@@ -101,52 +110,35 @@ const HomeContent = () => {
                     <p className="mt-6 text-lg leading-8 dark:text-gray-300 text-gray-900 mb-5">
                         Here are some of our Genesis NFT collection that includes Voting Power & some hidden gems:
                     </p>
-                    {/* <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="grid gap-4">
-                            <div>
-                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image.jpg" alt="" />
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="aspect-w-1 aspect-h-1">
+                                <img class="object-cover w-full h-full rounded-lg" src={nft1} alt="Image 1" />
                             </div>
-                            <div>
-                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-1.jpg" alt="" />
+                            <div class="aspect-w-1 aspect-h-1">
+                                <img class="object-cover w-full h-full rounded-lg" src={nft2} alt="Image 2" />
                             </div>
-                            <div>
-                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-2.jpg" alt="" />
+                            <div class="aspect-w-1 aspect-h-1">
+                                <img class="object-cover w-full h-full rounded-lg" src={nft3} alt="Image 3" />
                             </div>
-                        </div>
-                        <div class="grid gap-4">
-                            <div>
-                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-3.jpg" alt="" />
+                            <div class="aspect-w-1 aspect-h-1">
+                                <img class="object-cover w-full h-full rounded-lg" src={nft4} alt="Image 4" />
                             </div>
-                            <div>
-                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-4.jpg" alt="" />
+                            <div class="aspect-w-1 aspect-h-1">
+                                <img class="object-cover w-full h-full rounded-lg" src={nft5} alt="Image 5" />
                             </div>
-                            <div>
-                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-5.jpg" alt="" />
+                            <div class="aspect-w-1 aspect-h-1">
+                                <img class="object-cover w-full h-full rounded-lg" src={nft6} alt="Image 6" />
                             </div>
-                        </div>
-                        <div class="grid gap-4">
-                            <div>
-                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-6.jpg" alt="" />
+                            <div class="aspect-w-1 aspect-h-1">
+                                <img class="object-cover w-full h-full rounded-lg" src={nft7} alt="Image 7" />
                             </div>
-                            <div>
-                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-7.jpg" alt="" />
+                            <div class="aspect-w-1 aspect-h-1">
+                                <img class="object-cover w-full h-full rounded-lg" src={nft8} alt="Image 8" />
                             </div>
-                            <div>
-                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-8.jpg" alt="" />
+                            <div class="aspect-w-1 aspect-h-1">
+                                <img class="object-cover w-full h-full rounded-lg" src={nft9} alt="Image 9" />
                             </div>
                         </div>
-                        <div class="grid gap-4">
-                            <div>
-                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-9.jpg" alt="" />
-                            </div>
-                            <div>
-                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-10.jpg" alt="" />
-                            </div>
-                            <div>
-                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-11.jpg" alt="" />
-                            </div>
-                        </div>
-                    </div> */}
                 </div>
                 </div>
             </div>

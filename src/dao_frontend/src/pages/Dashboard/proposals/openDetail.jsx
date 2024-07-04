@@ -4,23 +4,31 @@ import ic from "ic0";
 import { useConnect } from "@connect2ic/react";
 import { Principal } from "@dfinity/principal";
 import '../../../components/loader.css'
+import './modal.css';
 
 
 import { useTheme } from '../../../contexts/ThemeContext';
-const Details = (props) => {
+const OpenDetails = (props) => {
     const { id } = props;
     const { darkMode, toggleTheme } = useTheme(); // Set default or dynamic based on use case
     const [loading, setLoading] = useState(false);
     const [proposalData, setProposalData] = useState(null);
-    const [previousVote, setPreviousVote] = useState([]);
-    const [winner, setWinner] = useState(null);
+    const [creator, setCreator] = useState("");
+    const [points, setPoints] = useState(0);
+    const [checkReward, setCheckReward] = useState(false);
+    const [isSubmitting, setSubmiting] = useState(false);
+    const [pointResult, setPointResult] = useState(null);
+    const [isModalVisible, setModalVisible] = useState(false);
     const [alertInfo, setAlertInfo] = useState({
         show: false,
         type: "",
         message: "",
     });
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
 
-    const backendCanisterId = "7wzen-oqaaa-aaaap-ahduq-cai";
+    };
+    const backendCanisterId = '7wzen-oqaaa-aaaap-ahduq-cai';
     const backend = ic(backendCanisterId);
     const formatCreationTime = (nsTimestamp) => {
         const milliseconds = nsTimestamp / 1_000_000; // Convert nanoseconds to milliseconds
@@ -44,12 +52,16 @@ const Details = (props) => {
                 result[0].formattedCreationTime = formatCreationTime(
                     Number(result[0].creationTime)
                 );
+                const creatorid = result[0].creator.toText();
+                setCreator(creatorid)
             }
             setProposalData(result[0]);
-            setPreviousVote(vote);
-            console.log("vote", vote);
-            checkResult(result[0].endTime);
-
+            const check = await backend.call("getProposalReward", id);
+            if (!check || check.length === 0) {
+                setCheckReward(false);
+            } else {
+                setCheckReward(true);
+            }
 
         } catch (error) {
             console.error("Error fetching proposal data:", error);
@@ -57,74 +69,35 @@ const Details = (props) => {
             setLoading(false);
         }
     };
-    const castVote = async (proposalId, option) => {
+    useEffect(() => {
+        fetchProposalData(); // Call the function when the component mounts
+    }, [pointResult]);
+    const handleChange = (e) => {
+        const value = e.target.value;
+
+        setPoints(Number(value));
+    };
+    const GivePoint = async (e) => {
+        e.preventDefault();
         try {
-            setLoading(true);
-            const alreadyVoted = previousVote.some(
-                (vote) => vote.proposalId === proposalId
+            setSubmiting(true);
+            const result = await backend.call(
+                "givePointsForProposalByAdmin",
+                id,
+                Principal.fromText(creator),
+                points
             );
-
-            if (alreadyVoted) {
-                setAlertInfo({
-                    show: true,
-                    type: "error",
-                    message: "Already voted for this proposal",
-                });
-                setTimeout(() => setAlertInfo(false), 5000);
-                console.log("Already voted for this proposal");
-                return; // Exit the function, preventing further execution
-            }
-
-            setAlertInfo({
-                show: true,
-                type: "success",
-                message: "You cast vote successffully",
-            });
-            setTimeout(() => setAlertInfo(false), 5000);
-            console.log("Vote result:", result);
-
+            setPointResult(result);
+            alert("Points given fpr this proposal ");
             // Handle post-vote UI update or confirmation here
         } catch (error) {
             console.error("Error casting vote:", error);
-
-            setAlertInfo({
-                show: true,
-                type: "error",
-                message: "Error casting vote:".error,
-            });
-            setTimeout(() => setAlertInfo(false), 5000);
+            alert("Error casting vote:", error);
         } finally {
-            setLoading(false);
-        }
-    };
-    const determineStatus = (endTime) => {
-        const currentTime = Date.now();
-        const endMilliseconds = Number(endTime) / 1_000_000;
-        return currentTime > endMilliseconds ? "Closed" : "Vote";
-    };
+            setSubmiting(false);
 
-    const checkResult = async (endTime) => {
-        if (determineStatus(endTime) === "Closed") {
-            const winnerResult = await getWinner(id);
-            setWinner(winnerResult[0]); // This will update your state and trigger a re-render
-            console.log(winnerResult[0]);
         }
     };
-    const getWinner = async (proposalId) => {
-        try {
-            setLoading(true);
-            const winner = await backend.call("getWinner", proposalId);
-            console.log("Winner Selected:", winner);
-            return winner;
-        } catch (error) {
-            console.error("Error Selected result:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-    useEffect(() => {
-        fetchProposalData(); // Call the function when the component mounts
-    }, []);
 
     const alertStyles = {
         success: {
@@ -186,9 +159,23 @@ const Details = (props) => {
                                                 {alertInfo.message}
                                             </div>
                                         )}
-                                        <h2 className="text-2xl font-bold text-left dark:text-white text-black">
-                                            {proposalData.topicName}
-                                        </h2>
+                                        <div className="flex justify-between mb-4">
+                                            <div>
+                                                <h2 className="text-2xl font-bold text-left dark:text-white text-black">
+                                                    {proposalData.topicName}
+                                                </h2>
+                                            </div>
+                                            <button
+                                                onClick={() => toggleModal()}
+                                                type="button"
+                                                className={`text-white font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none focus:ring-4 ${checkReward ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 border-green-600 focus:ring-green-300'
+                                                    }`}
+                                                disabled={checkReward}
+                                            >
+                                                Give points
+                                            </button>
+                                        </div>
+
                                         <div className="dark:bg-gray-800 rounded-lg p-4 border-2 border-white p-4 mt-4">
                                             <div className="flex justify-between mb-4">
                                                 <div>
@@ -315,9 +302,44 @@ const Details = (props) => {
                     </div>
                 </div>
             </div>
+            {isModalVisible && (
+                <>
+                    <div className="modal-overlay">
+                        <div id="authentication-modal" className="relative p-4 w-full max-w-md max-h-full">
+                            <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                                        Give Points For Current Proposal
+                                    </h3>
+                                    <button type="button" className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => toggleModal()}>
+                                        <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                        </svg>
+                                        <span className="sr-only">Close modal</span>
+                                    </button>
+                                </div>
+                                <div className="p-6 md:p-6 space-y-6">
+                                    <form className="space-y-6" action="#" onSubmit={GivePoint}>
+                                        <div>
+                                            <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
+                                            <input type="number" name="price" id="price"
+                                                value={points}
+                                                onChange={handleChange}
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Enter the price" required />
+                                        </div>
+
+                                        <button type="submit" className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{isSubmitting ? "Giving..." : "Give Points"}</button>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
         </>
     );
 };
 
-export default Details;
+export default OpenDetails;

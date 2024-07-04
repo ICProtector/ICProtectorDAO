@@ -1,0 +1,39 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000; /* High z-index to cover everything */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    z-index: 1001; /* Higher than overlay to be on top */
+}
+
+.portfolio-container.modal-open .Nabar-Main,
+.portfolio-container.modal-open .Sidebar-Main {
+    z-index: 0; /* Ensure the navbar and sidebar are below the overlay */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;  /* Reducing scrollbar width to 5px */
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;  /* Light grey track */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #888;  /* Dark grey handle */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555;  /* Darker grey handle on hover */
+}

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import Details from './proposals/detail';
+import ClosedDetail from './proposals/closeddetail';
 import NavigationBar from './navigationBar';
 import { useParams } from 'react-router-dom';
 import Sidebar from './sidebar';
 
 // App Component
-const AdminDetailPage = () => {
+const AdmiClosedDetailPage = () => {
     const { id } = useParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -17,9 +17,9 @@ const AdminDetailPage = () => {
     <div>
       <NavigationBar toggleSidebar={toggleSidebar} />
       <Sidebar isOpen={isSidebarOpen} />
-      <Details id={id}/>
+      <ClosedDetail id={id}/>
     </div>
   );
 };
 
-export default AdminDetailPage;
+export default AdmiClosedDetailPage;

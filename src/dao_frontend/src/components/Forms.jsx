@@ -12,6 +12,7 @@ const Forms = () => {
   const [optionCount, setOptionCount] = useState(2); // Default to two options
   const [options, setOptions] = useState(["Yes", "No"]); // Default to Yes and No
   const [file, setFile] = useState(null);
+  const [imageURL, setImageURL] = useState("");
   const [id, setId] = useState("");
   const [endtime, setEndtime] = useState(null);
   const [alertInfo, setAlertInfo] = useState({
@@ -43,7 +44,7 @@ const Forms = () => {
   };
 
   const backendCanisterId = "7wzen-oqaaa-aaaap-ahduq-cai";
-  const backend = ic.local(backendCanisterId);
+  const backend = ic(backendCanisterId);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -54,7 +55,7 @@ const Forms = () => {
       !description ||
       options.some((option) => !option) ||
       !endtime||
-      !file
+      (!file && !imageURL)
     ) {
       setAlertInfo({
         show: true,
@@ -90,12 +91,13 @@ const Forms = () => {
       console.error("Please fill all 5 option fields.");
       return;
     }
-    console.log({ topicName, description, options, file });
-    if (file) {
-      callCreateProposal(file);
+    const imageData = file ? file : imageURL;
+    if (imageData) {
+      callCreateProposal(imageData);
     } else {
       callCreateProposal("");
     }
+    console.log({ topicName, description, options, file,imageData });
   };
 
   const handleFileChange = (e) => {
@@ -121,7 +123,7 @@ const Forms = () => {
     }
   };
 
-  const callCreateProposal = async () => {
+  const callCreateProposal = async (imageData) => {
     try {
       const pollOptions = {
         op1: "Option 1",
@@ -162,7 +164,7 @@ const Forms = () => {
           id,
           topicName,
           description,
-          file,
+          imageData,
           0,
           timestampInNanoseconds,
           val,
@@ -323,6 +325,18 @@ const Forms = () => {
               id="file"
               onChange={handleFileChange}
               className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-600 dark:file:text-gray-200"
+            />
+          </div>
+          <div>
+            <label htmlFor="imageURL" className={labelClass}>
+              Image URL
+            </label>
+            <input
+              type="text"
+              id="imageURL"
+              value={imageURL}
+              onChange={(e) => setImageURL(e.target.value)}
+              className={`${inputClass} dark:bg-gray-700 dark:text-white`}
             />
           </div>
           <button

@@ -18,7 +18,8 @@ import AdminOpenProposal from "./pages/Dashboard/openproposal";
 import AdminClosedProposal from "./pages/Dashboard/closedproposal";
 import AdminPendingProposal from "./pages/Dashboard/pendingproposal";
 import AdminRejectedProposal from "./pages/Dashboard/rejectedproposal";
-import AdminDetailPage from "./pages/Dashboard/detailpage";
+import AdmiOpenDetailPage from "./pages/Dashboard/opendetailpage";
+import AdminClosedDetailPage from "./pages/Dashboard/closeddetailpage";
 import AdminScam from './pages/Dashboard/ScamPage';
 import AdminScamFormPage from './pages/Dashboard/ScamFormPage';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -48,7 +49,8 @@ export default function Router() {
         <Route path="/admin/closed-proposal"  element={<AdminClosedProposal />} />
         <Route path="/admin/pending-proposal"  element={<AdminPendingProposal />} />
         <Route path="/admin/rejected-proposal"  element={<AdminRejectedProposal />} />
-        <Route path='/admin/detail-proposals/:id'  element={<AdminDetailPage />} />
+        <Route path='/admin/open-detail-proposals/:id'  element={<AdmiOpenDetailPage />} />
+        <Route path='/admin/closed-detail-proposals/:id'  element={<AdminClosedDetailPage />} />
         <Route path='/admin/pending-detail-proposals/:id'  element={<AdminPendingDetailPage />} />
         <Route path='/admin/scam-list'  element={<AdminScam />} />
         <Route path='/admin/add-scams'  element={<AdminScamFormPage />} />
