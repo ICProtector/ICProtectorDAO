@@ -10,8 +10,11 @@ const OpenProposal = () => {
     const [onlyOpen, setOnlyOpen] = useState(false); // State for the "Only Open Proposal" checkbox
     const [proposals, setProposals] = useState([]);
     const [proposalData, setProposalData] = useState([]); // State to hold your proposal data
-    const backendCanisterId = '7wzen-oqaaa-aaaap-ahduq-cai';
-    const backend = ic(backendCanisterId);
+
+  const backendCanisterId = "7wzen-oqaaa-aaaap-ahduq-cai";
+  const backend = ic(backendCanisterId);
+  
+//   const backend = ic.local("br5f7-7uaaa-aaaaa-qaaca-cai");
     const formatCreationTime = (nsTimestamp) => {
         const milliseconds = nsTimestamp / 1_000_000; // Convert nanoseconds to milliseconds
         const date = new Date(milliseconds); // Create a new Date object

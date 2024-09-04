@@ -5,6 +5,7 @@ import { useConnect } from "@connect2ic/react";
 import { Principal } from "@dfinity/principal";
 import '../../../components/loader.css'
 import './modal.css';
+import swal from 'sweetalert';
 
 
 import { useTheme } from '../../../contexts/ThemeContext';
@@ -19,17 +20,15 @@ const OpenDetails = (props) => {
     const [isSubmitting, setSubmiting] = useState(false);
     const [pointResult, setPointResult] = useState(null);
     const [isModalVisible, setModalVisible] = useState(false);
-    const [alertInfo, setAlertInfo] = useState({
-        show: false,
-        type: "",
-        message: "",
-    });
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
 
     };
-    const backendCanisterId = '7wzen-oqaaa-aaaap-ahduq-cai';
+
+    const backendCanisterId = "7wzen-oqaaa-aaaap-ahduq-cai";
     const backend = ic(backendCanisterId);
+
+    // const backend = ic.local("br5f7-7uaaa-aaaaa-qaaca-cai");
     const formatCreationTime = (nsTimestamp) => {
         const milliseconds = nsTimestamp / 1_000_000; // Convert nanoseconds to milliseconds
         const date = new Date(milliseconds); // Create a new Date object
@@ -87,28 +86,28 @@ const OpenDetails = (props) => {
                 Principal.fromText(creator),
                 points
             );
+            if(result == 'success'){
+                swal({
+                    title:'Funds given for this proposal',
+                    icon:'success'
+                });
+            }else{
+                swal({
+                    title:'result',
+                    icon:'info'
+                });
+            }
             setPointResult(result);
-            alert("Points given fpr this proposal ");
             // Handle post-vote UI update or confirmation here
         } catch (error) {
-            console.error("Error casting vote:", error);
-            alert("Error casting vote:", error);
+            console.error("Error funding proposal:", error);
+            alert("Error funding proposal:", error);
         } finally {
             setSubmiting(false);
 
         }
     };
 
-    const alertStyles = {
-        success: {
-            backgroundColor: darkMode ? "#b9fbc0" : "#d4edda", // Green background
-            color: darkMode ? "#1f7a1f" : "#155724", // Green text
-        },
-        error: {
-            backgroundColor: darkMode ? "#fdb5b5" : "#f8d7da", // Red background
-            color: darkMode ? "#971212" : "#721c24", // Red text
-        },
-    };
     const calculateTotalVotes = () => {
         if (!proposalData) return 0;
         const { options, twoOptionOptions } = proposalData;
@@ -134,31 +133,17 @@ const OpenDetails = (props) => {
         <> <div className="p-4 sm:ml-64 dark:bg-gray-800" style={{ minHeight: '100vh' }}>
             <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
                 <div className="lg:flex pb-24 pt-10 p-4">
-                    <div className="flex flex-col w-full gap-4 text-white">
-                        {loading && (
-                            <div className="flex justify-center items-center">
-                                <div className="loader"></div>
-                            </div>
-                        )}
-                        {!loading && (
-                            <>
-                                {proposalData && (
-                                    <>
-                                        {alertInfo.show && (
-                                            <div
-                                                style={{
-                                                    padding: "1rem",
-                                                    marginBottom: "1rem",
-                                                    borderRadius: "0.25rem",
-                                                    backgroundColor:
-                                                        alertStyles[alertInfo.type].backgroundColor,
-                                                    color: alertStyles[alertInfo.type].color,
-                                                }}
-                                                role="alert"
-                                            >
-                                                {alertInfo.message}
-                                            </div>
-                                        )}
+                    {loading && (
+                          <div className="flex flex-col w-full gap-4 text-white">
+                          <div className="flex justify-center items-center">
+                              <div className="loader"></div>
+                          </div> </div>
+                    )}
+                    {!loading && (
+                        <>
+                            {proposalData && (
+                                <>
+                                    <div className="flex flex-col w-full gap-4 text-white">
                                         <div className="flex justify-between mb-4">
                                             <div>
                                                 <h2 className="text-2xl font-bold text-left dark:text-white text-black">
@@ -214,11 +199,14 @@ const OpenDetails = (props) => {
                                                 <div ></div>
                                             )}
                                         </div>
+                                    </div>
+                                    <div className="min-w-[350px] 2xl:min-w-[430px] mx-2 rounded-3xl overflow-hidden ">
+
                                         <div className="dark:bg-gray-800 rounded-lg border-2 border-gray-700 border-solid dark:border-gray-200 p-4 mt-4">
                                             <h3 className="text-2xl mb-4 font-bold dark:text-white text-black text-left">
                                                 Total Vote Casted
                                             </h3>
-                                            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                                            <div className="relative overflow-x-auto">
                                                 <div className="pt-7 flex flex-col gap-2">
                                                     <div className="mb-5">
                                                         <div>
@@ -296,10 +284,11 @@ const OpenDetails = (props) => {
                                                 </div>
                                             </div>
                                         </div>
-                                    </>
-                                )} </>
-                        )}
-                    </div>
+                                    </div>
+                                </>
+                            )} </>
+                    )}
+
                 </div>
             </div>
             {isModalVisible && (

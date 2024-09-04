@@ -10,8 +10,11 @@ const ScamContent = () => {
     const { darkMode, toggleTheme } = useTheme();
     const [proposals, setProposals] = useState([]);
     const [loading, setLoading] = useState(false);
-    const backendCanisterId = '7wzen-oqaaa-aaaap-ahduq-cai';
-    const backend = ic(backendCanisterId);
+
+  const backendCanisterId = "7wzen-oqaaa-aaaap-ahduq-cai";
+  const backend = ic(backendCanisterId);
+  
+//   const backend = ic.local("br5f7-7uaaa-aaaaa-qaaca-cai");
 
     const fetchScamList = async () => {
         setLoading(true);

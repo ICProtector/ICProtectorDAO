@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import ic from "ic0";
 import Compressor from "compressorjs";
-import { useConnect } from "@connect2ic/react";
+import { useConnect, ConnectButton } from "@connect2ic/react";
 import { Principal } from "@dfinity/principal";
+import swal from 'sweetalert';
 
 const Forms = () => {
   const { darkMode } = useTheme();
@@ -12,16 +13,12 @@ const Forms = () => {
   const [optionCount, setOptionCount] = useState(2); // Default to two options
   const [options, setOptions] = useState(["Yes", "No"]); // Default to Yes and No
   const [file, setFile] = useState(null);
+  const [submitting, setSubmitting] = useState(null);
   const [imageURL, setImageURL] = useState("");
   const [id, setId] = useState("");
   const [endtime, setEndtime] = useState(null);
   const [imageSource, setImageSource] = useState("file"); // 'file' or 'url'
 
-  const [alertInfo, setAlertInfo] = useState({
-    show: false,
-    type: "",
-    message: "",
-  });
   const { isConnected, principal, activeProvider } = useConnect({
     onConnect: () => {
       // Signed in
@@ -48,10 +45,9 @@ const Forms = () => {
   const backendCanisterId = "7wzen-oqaaa-aaaap-ahduq-cai";
   const backend = ic(backendCanisterId);
 
+  // const backend = ic.local("br5f7-7uaaa-aaaaa-qaaca-cai");
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    window.scrollTo(0, 0);
     if (
       !topicName ||
       !description ||
@@ -59,12 +55,11 @@ const Forms = () => {
       !endtime ||
       (!file && !imageURL)
     ) {
-      setAlertInfo({
-        show: true,
-        type: "error",
-        message: "Please fill all the fields.",
+      swal({
+        title: 'Error',
+        text: "Please fill all the fields.",
+        icon: "error"
       });
-      setTimeout(() => setAlertInfo(false), 5000);
       console.error("Please fill all the fields.");
       return;
     }
@@ -72,24 +67,22 @@ const Forms = () => {
     // Check if end time is in the future
     const currentTime = new Date();
     if (endtime <= currentTime) {
-      setAlertInfo({
-        show: true,
-        type: "error",
-        message: "End time must be in the future.",
+      swal({
+        title: 'Error',
+        text: "End time must be in the future.",
+        icon: "error"
       });
-      setTimeout(() => setAlertInfo(false), 5000);
       console.error("End time must be in the future.");
       return;
     }
 
     // Check if all options are filled if optionCount is 5
     if (optionCount === 5 && options.some((option) => !option)) {
-      setAlertInfo({
-        show: true,
-        type: "error",
-        message: "Please fill all 5 option fields.",
+      swal({
+        title: 'Error',
+        text: "Please fill all 5 option fields.",
+        icon: "error"
       });
-      setTimeout(() => setAlertInfo(false), 5000);
       console.error("Please fill all 5 option fields.");
       return;
     }
@@ -126,6 +119,8 @@ const Forms = () => {
   };
 
   const callCreateProposal = async (imageData) => {
+
+    setSubmitting(true);
     try {
       const pollOptions = {
         op1: "Option 1",
@@ -174,31 +169,38 @@ const Forms = () => {
           Principal.fromText(principal)
         );
         if (response.length === 0) {
-          setAlertInfo({
-            show: true,
-            type: "error",
-            message: "A user can create five proposals a day.",
+          swal({
+            title: 'Error',
+            text: "A user can create five proposals a day.",
+            icon: "error"
           });
-          setTimeout(() => setAlertInfo(false), 5000);
           clearfunction();
         } else {
-          setAlertInfo({
-            show: true,
-            type: "success",
-            message: "Proposal Created.",
+
+          swal({
+            title: 'Proposal Created',
+            text: "The proposal is created and pending for approval of admin.",
+            icon: "success"
           });
-          setTimeout(() => setAlertInfo(false), 5000);
           clearfunction();
           console.log("Proposal Created:", response);
         }
       } else {
-        alert("Connect your wallet");
+        swal({
+          title: 'Connect your wallet',
+          icon: 'success'
+        });
       }
     } catch (error) {
-      setAlertInfo({ show: true, type: "error", message: error.message });
-      setTimeout(() => setAlertInfo(false), 5000);
+      swal({
+        title: 'Error',
+        text: error.message,
+        icon: "error"
+      });
       console.error("Error creating proposal:", error);
     }
+
+    setSubmitting(false);
   };
 
   const clearfunction = () => {
@@ -240,86 +242,64 @@ const Forms = () => {
   const labelClass =
     "block text-sm font-medium text-gray-700 dark:text-gray-200 text-left py-1";
 
-  const alertStyles = {
-    success: {
-      backgroundColor: darkMode ? "#b9fbc0" : "#d4edda", // Green background
-      color: darkMode ? "#1f7a1f" : "#155724", // Green text
-    },
-    error: {
-      backgroundColor: darkMode ? "#fdb5b5" : "#f8d7da", // Red background
-      color: darkMode ? "#971212" : "#721c24", // Red text
-    },
-  };
 
   return (
     <div
       className={`min-h-screen flex items-center p-4 justify-center ${gradientClass}`}
     >
       <div className={`max-w-lg w-full p-3 rounded-lg ${cardClass}`}>
-        <h2 className="text-2xl font-bold mb-4 text-center">Create Proposal</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {alertInfo.show && (
-            <div
-              style={{
-                padding: "1rem",
-                marginBottom: "1rem",
-                borderRadius: "0.25rem",
-                backgroundColor: alertStyles[alertInfo.type].backgroundColor,
-                color: alertStyles[alertInfo.type].color,
-              }}
-              role="alert"
-            >
-              {alertInfo.message}
-            </div>
-          )}
-          <div>
-            <label htmlFor="topicName" className={labelClass}>
-              Topic Name
-            </label>
-            <input
-              type="text"
-              id="topicName"
-              value={topicName}
-              onChange={(e) => setTopicName(e.target.value)}
-              className={`${inputClass} dark:bg-gray-700 dark:text-white`}
-            />
-          </div>
-          <div>
-            <label htmlFor="description" className={labelClass}>
-              Description
-            </label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className={`${inputClass} dark:bg-gray-700 dark:text-white`}
-              rows="4"
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Number of Options</label>
-            <select
-              onChange={(e) => updateOptionCount(Number(e.target.value))}
-              className={`${inputClass} dark:bg-gray-700 dark:text-white`}
-              defaultValue={2}
-            >
-              <option value={2}>Two</option>
-              <option value={5}>Five</option>
-            </select>
-          </div>
-          {options.map((option, index) => (
-            <div key={index} className="flex items-center">
-              <input
-                type="text"
-                value={option}
-                placeholder={`Option ${index + 1}`}
-                onChange={(e) => updateOption(e.target.value, index)}
-                className={`${inputClass} dark:bg-gray-700 dark:text-white flex-grow`}
-              />
-            </div>
-          ))}
-          <div>Choose a file or enter image url</div>
-          {/* <div>
+        {principal ?
+          <>
+            <h2 className="text-2xl font-bold mb-4 text-center">Create Proposal</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="topicName" className={labelClass}>
+                  Topic Name
+                </label>
+                <input
+                  type="text"
+                  id="topicName"
+                  value={topicName}
+                  onChange={(e) => setTopicName(e.target.value)}
+                  className={`${inputClass} dark:bg-gray-700 dark:text-white`}
+                />
+              </div>
+              <div>
+                <label htmlFor="description" className={labelClass}>
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className={`${inputClass} dark:bg-gray-700 dark:text-white`}
+                  rows="4"
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Number of Options</label>
+                <select
+                  onChange={(e) => updateOptionCount(Number(e.target.value))}
+                  className={`${inputClass} dark:bg-gray-700 dark:text-white`}
+                  defaultValue={2}
+                >
+                  <option value={2}>Two</option>
+                  <option value={5}>Five</option>
+                </select>
+              </div>
+              {options.map((option, index) => (
+                <div key={index} className="flex items-center">
+                  <input
+                    type="text"
+                    value={option}
+                    placeholder={`Option ${index + 1}`}
+                    onChange={(e) => updateOption(e.target.value, index)}
+                    className={`${inputClass} dark:bg-gray-700 dark:text-white flex-grow`}
+                  />
+                </div>
+              ))}
+              <div>Choose a file or enter image url</div>
+              {/* <div>
             <label htmlFor="file" className={labelClass}>
               Choose File
             </label>
@@ -342,64 +322,79 @@ const Forms = () => {
               className={`${inputClass} dark:bg-gray-700 dark:text-white`}
             />
           </div> */}
-          <div>
-            <div className="mb-4">
-              <label>
-                <input
-                  type="radio"
-                  name="imageSource"
-                  value="file"
-                  checked={imageSource === "file"}
-                  onChange={() => setImageSource("file")}
-                />{" "}
-                Upload File
-              </label>
-              <label className="ml-4">
-                <input
-                  type="radio"
-                  name="imageSource"
-                  value="url"
-                  checked={imageSource === "url"}
-                  onChange={() => setImageSource("url")}
-                />{" "}
-                Enter URL
-              </label>
-            </div>
+              <div>
+                <div className="mb-4">
+                  <label>
+                    <input
+                      type="radio"
+                      name="imageSource"
+                      value="file"
+                      checked={imageSource === "file"}
+                      onChange={() => setImageSource("file")}
+                    />{" "}
+                    Upload File
+                  </label>
+                  <label className="ml-4">
+                    <input
+                      type="radio"
+                      name="imageSource"
+                      value="url"
+                      checked={imageSource === "url"}
+                      onChange={() => setImageSource("url")}
+                    />{" "}
+                    Enter URL
+                  </label>
+                </div>
 
-            {imageSource === "file" ? (
-              <div>
-                <label htmlFor="file" className={labelClass}>
-                  Choose File
-                </label>
-                <input
-                  type="file"
-                  id="file"
-                  onChange={handleFileChange}
-                  className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-600 dark:file:text-gray-200"
-                />
+                {imageSource === "file" ? (
+                  <div>
+                    <label htmlFor="file" className={labelClass}>
+                      Choose File
+                    </label>
+                    <input
+                      type="file"
+                      id="file"
+                      onChange={handleFileChange}
+                      className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-600 dark:file:text-gray-200"
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <label htmlFor="imageURL" className={labelClass}>
+                      Image URL
+                    </label>
+                    <input
+                      type="text"
+                      id="imageURL"
+                      value={imageURL}
+                      onChange={(e) => setImageURL(e.target.value)}
+                      className={`${inputClass} dark:bg-gray-700 dark:text-white`}
+                    />
+                  </div>
+                )}
               </div>
-            ) : (
-              <div>
-                <label htmlFor="imageURL" className={labelClass}>
-                  Image URL
-                </label>
-                <input
-                  type="text"
-                  id="imageURL"
-                  value={imageURL}
-                  onChange={(e) => setImageURL(e.target.value)}
-                  className={`${inputClass} dark:bg-gray-700 dark:text-white`}
-                />
+              <button
+                type="submit"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+              >
+                {submitting ? "Submitting" : "Submit"}
+              </button>
+            </form>
+          </>
+          : <div className="flex justify-center ">
+            <div className="w-full bg-white max-w-lg mt-8 shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
+              <div className="p-8 animate-fadeInUp">
+                <h3 className="text-center text-xl text-gray-800 mb-4">Connect to your Wallet</h3>
+                <p className="text-lg">
+                  Connecting your wallet allows you to securely use this application. You can create a new proposal, vote on an open proposal and get rewards.
+                </p>
+                <div className="flex justify-center mt-4">
+                  <ConnectButton />
+                </div>
               </div>
-            )}
+            </div>
           </div>
-          <button
-            type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-          >
-            Submit
-          </button>
-        </form>
+        }
       </div>
     </div>
   );

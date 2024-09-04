@@ -8,13 +8,13 @@ const ScamContent = () => {
     const { darkMode, toggleTheme } = useTheme();
     const [proposals, setProposals] = useState([]);
     const [loading, setLoading] = useState(false);
-    const backendCanisterId = '7wzen-oqaaa-aaaap-ahduq-cai';
+    const [deleting, setDeleting] = useState({});
+
+    const backendCanisterId = "7wzen-oqaaa-aaaap-ahduq-cai";
     const backend = ic(backendCanisterId);
-    const [alertInfo, setAlertInfo] = useState({
-        show: false,
-        type: "",
-        message: "",
-    });
+
+    // const backend = ic.local("br5f7-7uaaa-aaaaa-qaaca-cai");
+
 
     const fetchScamList = async () => {
         setLoading(true);
@@ -28,43 +28,37 @@ const ScamContent = () => {
             setLoading(false);
         }
     };
-    const Delete = async (id) => {   
-        setLoading(true);  
+    const Delete = async (id) => {
+        setDeleting((prevState) => ({
+            ...prevState,
+            [id]: true,
+        }));
         try {
             const result = await backend.call("removeScamEntry", Number(id));
             console.log(result);
             fetchScamList();
-            setAlertInfo({
-                show: true,
-                type: "success",
-                message: "Scam Delete Successfully.",
+            swal({
+                title:'Scam Delete Successfully.',
+                icon:'success'
             });
-            setTimeout(() => setAlertInfo({ ...alertInfo, show: false }), 5000);
 
         } catch (error) {
             console.error("Error deleting scam entry:", error);            
-            setAlertInfo({
-                show: true,
-                type: "error",
-                message: "Error deleting scam.",
+            swal({
+                title:'Error deleting scam.',
+                text:error,
+                icon:'error'
             });
-            setTimeout(() => setAlertInfo({ ...alertInfo, show: false }), 5000);
         }
-    };  
+        setDeleting((prevState) => ({
+            ...prevState,
+            [id]: true,
+        }));
+    };
     useEffect(() => {
         fetchScamList();
     }, []);
-    
-    const alertStyles = {
-        success: {
-          backgroundColor: darkMode ? "#b9fbc0" : "#d4edda",
-          color: darkMode ? "#1f7a1f" : "#155724",
-        },
-        error: {
-          backgroundColor: darkMode ? "#fdb5b5" : "#f8d7da",
-          color: darkMode ? "#971212" : "#721c24",
-        },
-    };
+
     return (
         <>
             <div className="p-4 sm:ml-64 dark:bg-gray-800" style={{ minHeight: '100vh' }}>
@@ -91,56 +85,56 @@ const ScamContent = () => {
                                 <div className="loader"></div>
                             </div>
                         ) : proposals.length > 0 ? (
-                        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                <tr>
-                                    <th scope="col" className="text-center px-6 py-3 w-1">
-                                        #
-                                    </th>
-                                    <th scope="col" className=" text-center px-6 py-3 w-1/6">
-                                        Title
-                                    </th>
-                                    <th scope="col" className="text-center px-6 py-3 w-3/6">
-                                        Description
-                                    </th>
-                                    <th scope="col" className="text-center px-6 py-3 w-2/6">
-                                        URL
-                                    </th>
-                                    
-                                    <th scope="col" className="text-center px-6 py-3 w-2/6">
-                                        Action
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className='mt-2'>
-                                {proposals.map((proposal, index) => (
-                                    <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td scope="row" className=" text-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white w-1">
-                                            {index+1}
-                                        </td>
-                                        <td className="text-center px-6 py-4 w-1/6">
-                                            {proposal.title}
-                                        </td>
-                                        <td className="px-6 py-4 w-3/6">
-                                            {proposal.description}
-                                        </td>
-                                        <td className="text-center px-6 py-4 w-2/6">
-                                            <a href={proposal.url} target='blank' className="text-blue-500 underline">
-                                                {proposal.url}
-                                            </a>
-                                        </td>
-                                        <td className="text-center px-6 py-4 w-2/6">
-                                        <button
-                                                onClick={() => Delete(proposal.id)}
-                                                type="button"
-                                                className={`text-white font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none focus:ring-4 bg-red-500 hover:bg-red-600 border-red-600 focus:ring-red-300' }`}                                            >
-                                              Delete
-                                            </button> 
-                                        </td>
+                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" className="text-center px-6 py-3 w-1">
+                                            #
+                                        </th>
+                                        <th scope="col" className=" text-center px-6 py-3 w-1/6">
+                                            Title
+                                        </th>
+                                        <th scope="col" className="text-center px-6 py-3 w-3/6">
+                                            Description
+                                        </th>
+                                        <th scope="col" className="text-center px-6 py-3 w-2/6">
+                                            URL
+                                        </th>
+
+                                        <th scope="col" className="text-center px-6 py-3 w-2/6">
+                                            Action
+                                        </th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className='mt-2'>
+                                    {proposals.map((proposal, index) => (
+                                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                            <td scope="row" className=" text-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white w-1">
+                                                {index + 1}
+                                            </td>
+                                            <td className="text-center px-6 py-4 w-1/6">
+                                                {proposal.title}
+                                            </td>
+                                            <td className="px-6 py-4 w-3/6">
+                                                {proposal.description}
+                                            </td>
+                                            <td className="text-center px-6 py-4 w-2/6">
+                                                <a href={proposal.url} target='blank' className="text-blue-500 underline">
+                                                    {proposal.url}
+                                                </a>
+                                            </td>
+                                            <td className="text-center px-6 py-4 w-2/6">
+                                                <button
+                                                    onClick={() => Delete(proposal.id)}
+                                                    type="button"
+                                                    className={`text-white font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none focus:ring-4 bg-red-500 hover:bg-red-600 border-red-600 focus:ring-red-300' }`}                                            >
+                                                    {deleting[proposal.id] ? "Deleting ..." : "Delete"}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         ) : <p className="text-black dark:text-white text-lg">No Scam to display.</p>}
                     </div>
 

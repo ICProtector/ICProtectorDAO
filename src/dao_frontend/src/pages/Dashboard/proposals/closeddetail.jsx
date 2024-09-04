@@ -1,27 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import ic from "ic0";
-import { useConnect } from "@connect2ic/react";
-import { Principal } from "@dfinity/principal";
 import '../../../components/loader.css'
-
+import swal from 'sweetalert';
 
 import { useTheme } from '../../../contexts/ThemeContext';
 const ClosedDetail = (props) => {
     const { id } = props;
     const { darkMode, toggleTheme } = useTheme(); // Set default or dynamic based on use case
     const [loading, setLoading] = useState(false);
+    const [winnersResult, setWinnerResult] = useState(false);
     const [proposalData, setProposalData] = useState(null);
-    const [previousVote, setPreviousVote] = useState([]);
     const [winner, setWinner] = useState(null);
-    const [alertInfo, setAlertInfo] = useState({
-        show: false,
-        type: "",
-        message: "",
-    });
+    const [refetchTrigger,setRefetchTrigger] = useState(false);
 
-    const backendCanisterId = '7wzen-oqaaa-aaaap-ahduq-cai';
+    const backendCanisterId = "7wzen-oqaaa-aaaap-ahduq-cai";
     const backend = ic(backendCanisterId);
+
+    // const backend = ic.local("br5f7-7uaaa-aaaaa-qaaca-cai");
     const formatCreationTime = (nsTimestamp) => {
         const milliseconds = nsTimestamp / 1_000_000; // Convert nanoseconds to milliseconds
         const date = new Date(milliseconds); // Create a new Date object
@@ -46,9 +41,6 @@ const ClosedDetail = (props) => {
                 );
             }
             setProposalData(result[0]);
-            setPreviousVote(vote);
-            console.log("vote", vote);
-            checkResult(result[0].endTime);
 
 
         } catch (error) {
@@ -57,58 +49,12 @@ const ClosedDetail = (props) => {
             setLoading(false);
         }
     };
-    const castVote = async (proposalId, option) => {
-        try {
-            setLoading(true);
-            const alreadyVoted = previousVote.some(
-                (vote) => vote.proposalId === proposalId
-            );
 
-            if (alreadyVoted) {
-                setAlertInfo({
-                    show: true,
-                    type: "error",
-                    message: "Already voted for this proposal",
-                });
-                setTimeout(() => setAlertInfo(false), 5000);
-                console.log("Already voted for this proposal");
-                return; // Exit the function, preventing further execution
-            }
+    const checkResult = async () => {
+        const winnerResult = await getWinner(id);
+        setWinner(winnerResult[0]);
+        console.log('winner result', winnerResult[0]);
 
-            setAlertInfo({
-                show: true,
-                type: "success",
-                message: "You cast vote successffully",
-            });
-            setTimeout(() => setAlertInfo(false), 5000);
-            console.log("Vote result:", result);
-
-            // Handle post-vote UI update or confirmation here
-        } catch (error) {
-            console.error("Error casting vote:", error);
-
-            setAlertInfo({
-                show: true,
-                type: "error",
-                message: "Error casting vote:".error,
-            });
-            setTimeout(() => setAlertInfo(false), 5000);
-        } finally {
-            setLoading(false);
-        }
-    };
-    const determineStatus = (endTime) => {
-        const currentTime = Date.now();
-        const endMilliseconds = Number(endTime) / 1_000_000;
-        return currentTime > endMilliseconds ? "Closed" : "Vote";
-    };
-
-    const checkResult = async (endTime) => {
-        if (determineStatus(endTime) === "Closed") {
-            const winnerResult = await getWinner(id);
-            setWinner(winnerResult[0]); // This will update your state and trigger a re-render
-            console.log(winnerResult[0]);
-        }
     };
     const getWinner = async (proposalId) => {
         try {
@@ -123,19 +69,13 @@ const ClosedDetail = (props) => {
         }
     };
     useEffect(() => {
+      
         fetchProposalData(); // Call the function when the component mounts
     }, []);
 
-    const alertStyles = {
-        success: {
-            backgroundColor: darkMode ? "#b9fbc0" : "#d4edda", // Green background
-            color: darkMode ? "#1f7a1f" : "#155724", // Green text
-        },
-        error: {
-            backgroundColor: darkMode ? "#fdb5b5" : "#f8d7da", // Red background
-            color: darkMode ? "#971212" : "#721c24", // Red text
-        },
-    };
+    useEffect(()=>{        
+        checkResult();
+    },[refetchTrigger]);
     const calculateTotalVotes = () => {
         if (!proposalData) return 0;
         const { options, twoOptionOptions } = proposalData;
@@ -151,6 +91,38 @@ const ClosedDetail = (props) => {
         }
     };
 
+    const winnersSelect = async (proposalId) => {
+        try {
+            setWinnerResult(true);
+            const result = await backend.call("winnersSelect", proposalId);
+            if (result == 'success') {
+                swal({
+                    title: 'Winner Selected',
+                    text: 'View detail to see winner',
+                    icon: 'success'
+                });
+                setRefetchTrigger(!refetchTrigger);
+            }
+            else {
+                swal({
+                    title: 'Error',
+                    text: result,
+                    icon: 'warning'
+                })
+            }
+            console.log("Winner Selected:", result);
+        } catch (error) {
+            swal({
+                title: 'Error Selected result',
+                text: error,
+                icon: 'error'
+            });
+            console.error("Error Selected result:", error);
+        } finally {
+            setWinnerResult(false);
+        }
+    };
+
     const totalVotes = calculateTotalVotes();
 
     const calculatePercentage = (count) => {
@@ -161,31 +133,18 @@ const ClosedDetail = (props) => {
         <> <div className="p-4 sm:ml-64 dark:bg-gray-800" style={{ minHeight: '100vh' }}>
             <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
                 <div className="lg:flex pb-24 pt-10 p-4">
-                    <div className="flex flex-col w-full gap-4 text-white">
-                        {loading && (
+                    {loading && (
+
+                        <div className="flex flex-col w-full gap-4 text-white">
                             <div className="flex justify-center items-center">
                                 <div className="loader"></div>
-                            </div>
-                        )}
-                        {!loading && (
-                            <>
-                                {proposalData && (
-                                    <>
-                                        {alertInfo.show && (
-                                            <div
-                                                style={{
-                                                    padding: "1rem",
-                                                    marginBottom: "1rem",
-                                                    borderRadius: "0.25rem",
-                                                    backgroundColor:
-                                                        alertStyles[alertInfo.type].backgroundColor,
-                                                    color: alertStyles[alertInfo.type].color,
-                                                }}
-                                                role="alert"
-                                            >
-                                                {alertInfo.message}
-                                            </div>
-                                        )}
+                            </div> </div>
+                    )}
+                    {!loading && (
+                        <>
+                            {proposalData && (
+                                <>
+                                    <div className="flex flex-col w-full gap-4 text-white">
                                         <h2 className="text-2xl font-bold text-left dark:text-white text-black">
                                             {proposalData.topicName}
                                         </h2>
@@ -227,11 +186,26 @@ const ClosedDetail = (props) => {
                                                 <div ></div>
                                             )}
                                         </div>
+                                    </div>
+                                    <div className="min-w-[350px] 2xl:min-w-[430px]  rounded-3xl overflow-hidden mx-2">
+
                                         <div className="dark:bg-gray-800 rounded-lg border-2 border-gray-700 border-solid dark:border-gray-200 p-4 mt-4">
                                             <h3 className="text-2xl mb-4 font-bold dark:text-white text-black text-left">
                                                 Total Vote Casted
                                             </h3>
-                                            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                                            <div className="flex justify-between items-center mb-2">
+                                                <span className="text-black text-xl font-bold dark:text-white">
+                                                    {winner ? `Proposal Result: ${winner.correctOption}` :
+                                                        <>
+                                                            <button onClick={() => winnersSelect(proposalData.id)} type="button"
+                                                                className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                                                {winnersResult ? "Getting ..." : 'Get Result'}
+                                                            </button>
+                                                        </>
+                                                    }
+                                                </span>
+                                            </div>
+                                            <div className="relative overflow-x-auto">
                                                 <div className="pt-7 flex flex-col gap-2">
                                                     <div className="mb-5">
                                                         <div>
@@ -309,10 +283,10 @@ const ClosedDetail = (props) => {
                                                 </div>
                                             </div>
                                         </div>
-                                    </>
-                                )} </>
-                        )}
-                    </div>
+                                    </div>
+                                </>
+                            )} </>
+                    )}
                 </div>
             </div>
         </div>

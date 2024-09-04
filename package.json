@@ -22,6 +22,7 @@
     "ic0": "^0.2.8",
     "react-datepicker": "^6.9.0",
     "recharts": "^2.12.7",
+    "sweetalert": "^2.1.2",
     "tailwind-merge": "^2.3.0",
     "zustand": "^4.5.2"
   },
