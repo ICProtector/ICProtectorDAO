@@ -175,7 +175,16 @@ actor ProposalManager {
     map.put(id, newProposal);
     return ?newProposal;
   };
-
+  public shared (msg) func deleteProposal(proposalId : Text) : async Text {
+    switch (map.remove(proposalId)) {
+      case (null) {
+        return "Proposal not found"; // If the proposal does not exist
+      };
+      case (_) {
+        return "Proposal deleted successfully"; // Proposal successfully removed
+      };
+    };
+  };
   public query func getProposal(id : Text) : async ?Proposal {
     return map.get(id);
   };
