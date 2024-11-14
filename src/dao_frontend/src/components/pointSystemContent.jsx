@@ -1,22 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import icpdao3 from '/icpdao3.webp';
 import vote from '/vote.png';
-import { useTheme } from '../contexts/ThemeContext';
 
 const PointSystemContent = () => {
-
-    const { darkMode, toggleTheme } = useTheme();
-
-    const includedFeatures = [
-        "Earn points for every purchase",
-        "Redeem points for discounts",
-        "Access exclusive member-only deals",
-        "Receive personalized rewards and offers",
-        "Track your points and rewards easily",
-    ];
-    const gradientClass = darkMode ? 'bg-gradient-to-r from-gray-950 to-gray-950' : 'bg-gradient-to-b from-orange-200 to-orange-500';
-    const buttonClass = darkMode ? 'bg-gradient-to-r from-red-600 to-red-900' : 'bg-gradient-to-r from-red-400 to-red-600';
-
 
     return (
         <>
@@ -35,7 +21,7 @@ const PointSystemContent = () => {
 
                 </div>
             </div>
-            <div className="py-24 sm:py-32">
+            <div className="py-12 sm:py-22">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
                     <div className="mx-auto max-w-2xl sm:text-center">
                         <h2 className="text-3xl font-bold tracking-tight dark:text-white text-gray-900 sm:text-4xl">Voting Power</h2>

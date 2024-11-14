@@ -1,68 +1,92 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import icp7 from '/icp7.webp';
 import icpContent from '/icpContent.jpeg';
 import above_footer from '/ab_footer.png';
-import { useTheme } from '../contexts/ThemeContext';
+import { Shield, Users, Calendar, ChevronRight, ShieldCheck } from 'lucide-react'
+
 const IcpContent = () => {
-
-    const { darkMode, toggleTheme } = useTheme();
-
-    const myStyle = {
-        translate: 'none',
-        rotate: 'none',
-        scale: 'none',
-        opacity: 1,
-        transform: 'translate(0px, 0px)'
-    };
-    const gradientClass = darkMode ? 'bg-gradient-to-r from-gray-950 to-gray-950' : 'bg-gradient-to-b from-orange-200 to-orange-500';
-    const buttonClass = darkMode ? 'bg-gradient-to-r from-red-600 to-red-900' : 'bg-gradient-to-r from-red-400 to-red-600';
-
 
     return (
         <>
-            <div>
-                <div className="relative isolate px-6 lg:px-8">
-                    <div className="mx-auto max-w-2xl py-20 sm:py-20 lg:py-26">
-                        <div className="hidden sm:mb-8 sm:flex sm:justify-center"></div>
-                        <div className="text-center">
-                            <h1 className="text-4xl font-bold tracking-tight dark:text-white text-gray-900 sm:text-6xl">All about ICP Protector</h1>
-                            <p className="mt-6 text-lg leading-8 dark:text-gray-300 text-gray-900">
-                                ICP Protector is a noble group composed of multiple mostly anonymous members that decided to come together to expose the growing number of scams appearing in the ICP ecosystem and twitter community (the biggest ICP Community at the time of writing). Discussions began in early 2023 on how best to try to eliminate or reduce the growing problem of scams, fraudsters, ruggers, general bad practices, and taking advantage of others. We each believe that many of the scams and bad actors in the community are harming the ecosystem and slowing its growth while creating distrust.
+            <main className="container mx-auto px-4 py-16 md:w-[1120px]">
+                <h1 className="text-4xl md:text-6xl dark:text-white font-bold mb-8 text-center">About ICP Protector</h1>
+                <section className="text-center pb-20">
+                    <p className="text-xl mb-8 max-w-2xl mx-auto dark:text-gray-300">
+                        Be part of the community that's making the ICP ecosystem safer and more transparent.
+                    </p>
+                    <div className="px-6 py-3 bg-black text-white dark:bg-white dark:text-black rounded-md hover:bg-gray-900 cursor-pointer text-lg font-semibold inline-block">
+                        Connect Wallet to Join
+                    </div>
+                </section>
+                <div className="bg-white/90 dark:bg-gray-800/90 shadow-xl mb-12 rounded-lg">
+                    <div className="p-6 md:p-8">
+                        <div className="flex items-center justify-center mb-6">
+                            <Shield className="w-16 h-16 text-orange-500 dark:text-white" />
+                        </div>
+                        <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-center dark:text-white">Our Mission</h2>
+                        <p className="text-lg mb-6 dark:text-white">
+                            ICP Protector is a noble group composed of multiple mostly anonymous members that decided to come together to expose the growing number of scams appearing in the ICP ecosystem and Twitter community (the biggest ICP Community at the time of writing).
+
+                            We believe that many of the scams and bad actors in the community are harming the ecosystem and slowing its growth while creating distrust. Our goal is to shine light on the darkness and make a positive difference in the community.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8 mb-12">
+                    <div className="bg-white/90 dark:bg-gray-800/90 shadow-xl rounded-lg">
+                        <div className="p-6 md:p-8">
+                            <div className="flex items-center justify-center mb-6">
+                                <Users className="w-12 h-12 text-orange-500 dark:text-white" />
+                            </div>
+                            <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-center  dark:text-white">Our Team</h2>
+                            <p className="text-lg mb-4  dark:text-white">
+                                Most members have been a part of ICP since or shortly after genesis and contribute to the cause in our free time. We are decentralized in the way we operate, and each contributes at our own pace.
+                            </p>
+                            <p className="text-lg  dark:text-white">
+                                After doing extensive research and following many leads, we started to put together evidence to expose some of the pump and dump or rugpull coins and NFTs being promoted on Twitter.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="bg-white/90 dark:bg-gray-800/90 shadow-xl rounded-lg">
+                        <div className="p-6 md:p-8">
+                            <div className="flex items-center justify-center mb-6">
+                                <Calendar className="w-12 h-12 text-orange-500 dark:text-white" />
+                            </div>
+                            <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-center  dark:text-white">Our Journey</h2>
+                            <p className="text-lg mb-4  dark:text-white">
+                                Discussions began in early 2023 on how best to try to eliminate or reduce the growing problem of scams, fraudsters, ruggers, general bad practices, and taking advantage of others.
+                            </p>
+                            <p className="text-lg  dark:text-white">
+                                Forward to 2024, after deep investigations & a successful track record, the group started to think of other ways of improving the ecosystem without having to solely rely on a web2 platform like Twitter (X).
                             </p>
                         </div>
                     </div>
                 </div>
-            </div>
-            <section className="section7 p-3">
-                <div className="mx-auto flex h-full flex-col items-start justify-center md:w-[1120px] md:flex-row md:items-center">
 
-                    <div className="section7-line mx-[15px] mt-[20px] text-center text-[#000] md:mt-0 md:w-[70%] md:pl-[40px] md:text-left" style={myStyle}>
-                        <div className="mt-[20px] text-lg  dark:text-white">After noticing that there were more frequent scams and some well known ICP twitter accounts involved with promoting them, the founders of ICP Protector with their common goal of shining some light on the darkness, came together to form the ICPProtector twitter account. A group chat on Twitter & Openchat was started to track the scammers, compile evidence, and create a reports to inform the ICP Community.  Most members have been a part of ICP since or shortly after genesis and contribute to the cause on our free time to try to make a positive difference in the community. We are decentralized in the way we operate and each contributes at our own pace, so each member can post on the twitter at any time. After doing extensive research and following many of the leads, we started to put together evidence to expose some of the pump and dump or rugpull coins and NFTs being promoted on twitter. As traction was gained, we started receiving many DM’s from ICP community members appreciating what we were doing and also contributing with information and leads. ICPProtector has been steadily growing with the help of the community.</div>
-                    </div> <div className="section7-img mx-auto flex items-center justify-center md:ml-0 md:w-[50%] md:justify-end" style={myStyle}>
-                        <div className="flex items-center justify-center w-[100%] h-[100%] md:w-full">
-                            <img src={icp7} className="w-[100%] h-[100%] md:w-full" alt="" />
+                <div className="bg-white/90 dark:bg-gray-800/90 shadow-xl mb-12 rounded-lg">
+                    <div className="p-6 md:p-8">
+                        <div className="flex items-center justify-center mb-6">
+                            <ShieldCheck className="w-12 h-12 text-orange-500 dark:text-white" />
                         </div>
+                        <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-center dark:text-white">Our Impact</h2>
+                        <p className="text-lg mb-6  dark:text-white">
+                            As traction was gained, we started receiving many DMs from ICP community members appreciating what we were doing and also contributing with information and leads. ICPProtector has been steadily growing with the help of the community.
 
+                            We decided to try to create a safer and more transparent environment for the whole ecosystem by forming the ICP Protector DAO. We all deeply care about ICP and put the time in to investigate and expose any clear threats to the ICP Community.
+                        </p>
                     </div>
                 </div>
-            </section>
 
-            <section className="section10 flex flex-col items-center justify-center pt-[50px] md:h-[100vh] md:items-start md:pt-0">
-                <div className="section10-line1 mx-[15px] items-center justify-center rounded-[30px] bg-[#fff] dark:bg-gray-950 dark:border-2 dark:border-white p-[20px] md:mx-auto md:flex md:w-[1120px] md:p-[50px]" style={myStyle}>
-                    <div className="flex flex-1 flex-col items-center justify-center md:w-[50%] md:items-start md:text-left">
-                        <div className="w-full">
-                            <div className="text-left text-[16px] leading-[24px] text-[#000] md:text-[20px] md:leading-[30px] dark:text-white">Forward to 2024 after deep investigations & a successful track record, the group started to think of other ways of improving the ecosystem without having to solely rely on a web2 platform like twitter (X). Since the ICP Community is small (around 2000 active members) but growing, the group discussed the next step in their journey to help protect the community. It was decided to try to create a safer and more transparent environment for the whole ecosystem by forming the ICP Protector DAO. We all deeply care about ICP and put the time in to investigate and expose any clear threats to the ICP Community. We are here to protect your ICP from malicious people who target our ecosystem!</div>
-                        </div>
-                    </div>
-                    <div className="mt-[30px] flex w-full items-center justify-center md:ml-[5%] md:mt-0 md:w-[40%]">
-                        <img src={icpContent} className="" alt="" />
-                    </div>
-                </div>
-            </section>
+
+               
+            </main>
+
+
             <div className="overflow-hidden py-8">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                <div className="flex items-center justify-center w-[20%] h-[20%] sm:w-full"> 
-                    <img src={above_footer} alt="" style={{ width: '60%' }} /></div>
+                    <div className="flex items-center justify-center w-[20%] h-[20%] sm:w-full">
+                        <img src={above_footer} alt="" style={{ width: '60%' }} /></div>
                 </div>
             </div>
         </>

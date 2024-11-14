@@ -244,135 +244,101 @@ const Forms = () => {
 
 
   return (
-    <div
-      className={`min-h-screen flex items-center p-4 justify-center ${gradientClass}`}
-    >
-      <div className={`max-w-lg w-full p-3 rounded-lg ${cardClass}`}>
-        {principal ?
+    <div className={`min-h-screen flex items-center justify-center ${gradientClass} p-4`}>
+      <div className={`max-w-2xl w-full bg-white dark:bg-gray-800 shadow-2xl rounded-lg p-6`}>
+        {isConnected ? (
           <>
-            <h2 className="text-2xl font-bold mb-4 text-center">Create Proposal</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="topicName" className={labelClass}>
-                  Topic Name
-                </label>
+            <h2 className="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-white">Create Proposal</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 text-start">Topic Name</label>
                 <input
                   type="text"
-                  id="topicName"
                   value={topicName}
                   onChange={(e) => setTopicName(e.target.value)}
-                  className={`${inputClass} dark:bg-gray-700 dark:text-white`}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white"
                 />
               </div>
-              <div>
-                <label htmlFor="description" className={labelClass}>
-                  Description
-                </label>
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 text-start">Description</label>
                 <textarea
-                  id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className={`${inputClass} dark:bg-gray-700 dark:text-white`}
                   rows="4"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white"
                 />
               </div>
-              <div>
-                <label className={labelClass}>Number of Options</label>
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 text-start">Number of Options</label>
                 <select
+                  value={optionCount}
                   onChange={(e) => updateOptionCount(Number(e.target.value))}
-                  className={`${inputClass} dark:bg-gray-700 dark:text-white`}
-                  defaultValue={2}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white"
                 >
                   <option value={2}>Two</option>
                   <option value={5}>Five</option>
                 </select>
               </div>
-              {options.map((option, index) => (
-                <div key={index} className="flex items-center">
-                  <input
-                    type="text"
-                    value={option}
-                    placeholder={`Option ${index + 1}`}
-                    onChange={(e) => updateOption(e.target.value, index)}
-                    className={`${inputClass} dark:bg-gray-700 dark:text-white flex-grow`}
-                  />
-                </div>
-              ))}
-              <div>Choose a file or enter image url</div>
-              {/* <div>
-            <label htmlFor="file" className={labelClass}>
-              Choose File
-            </label>
-            <input
-              type="file"
-              id="file"
-              onChange={handleFileChange}
-              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-600 dark:file:text-gray-200"
-            />
-          </div>
-          <div>
-            <label htmlFor="imageURL" className={labelClass}>
-              Image URL
-            </label>
-            <input
-              type="text"
-              id="imageURL"
-              value={imageURL}
-              onChange={(e) => setImageURL(e.target.value)}
-              className={`${inputClass} dark:bg-gray-700 dark:text-white`}
-            />
-          </div> */}
-              <div>
-                <div className="mb-4">
-                  <label>
-                    <input
-                      type="radio"
-                      name="imageSource"
-                      value="file"
-                      checked={imageSource === "file"}
-                      onChange={() => setImageSource("file")}
-                    />{" "}
-                    Upload File
-                  </label>
-                  <label className="ml-4">
-                    <input
-                      type="radio"
-                      name="imageSource"
-                      value="url"
-                      checked={imageSource === "url"}
-                      onChange={() => setImageSource("url")}
-                    />{" "}
-                    Enter URL
-                  </label>
-                </div>
-
-                {imageSource === "file" ? (
-                  <div>
-                    <label htmlFor="file" className={labelClass}>
-                      Choose File
-                    </label>
-                    <input
-                      type="file"
-                      id="file"
-                      onChange={handleFileChange}
-                      className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-600 dark:file:text-gray-200"
-                    />
-                  </div>
-                ) : (
-                  <div>
-                    <label htmlFor="imageURL" className={labelClass}>
-                      Image URL
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Array.from({ length: optionCount }).map((_, index) => (
+                  <div key={index} className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 text-start">
+                      Option {index + 1}
                     </label>
                     <input
                       type="text"
-                      id="imageURL"
-                      value={imageURL}
-                      onChange={(e) => setImageURL(e.target.value)}
-                      className={`${inputClass} dark:bg-gray-700 dark:text-white`}
+                      value={options[index] || ""}
+                      onChange={(e) => {
+                        const newOptions = [...options];
+                        newOptions[index] = e.target.value;
+                        setOptions(newOptions);
+                      }}
+                      placeholder={`Enter option ${index + 1}`}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white"
                     />
                   </div>
-                )}
+                ))}
               </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 text-start">Image Upload Method</label>
+                <div className="flex space-x-4">
+                  <label className="flex items-center space-x-2 dark:text-white">
+                    <input type="radio" checked={imageSource === 'file'} onChange={() => setImageSource('file')} />
+                    <span>Upload File</span>
+                  </label>
+                  <label className="flex items-center space-x-2 dark:text-white">
+                    <input type="radio" checked={imageSource === 'url'} onChange={() => setImageSource('url')} />
+                    <span>Enter URL</span>
+                  </label>
+                </div>
+              </div>
+              {imageSource === 'file' ? (
+                <div>
+                  <label htmlFor="file" className={labelClass}>
+                    Choose File
+                  </label>
+                  <input
+                    type="file"
+                    id="file"
+                    onChange={handleFileChange}
+                    className="mt-1 block w-full text-sm dark:text-white text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-600 dark:file:text-gray-200"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label htmlFor="imageURL" className={labelClass}>
+                    Image URL
+                  </label>
+                  <input
+                    type="text"
+                    id="imageURL"
+                    value={imageURL}
+                    onChange={(e) => setImageURL(e.target.value)}
+                    className={`${inputClass} dark:bg-gray-700 dark:text-white`}
+                  />
+                </div>
+              )}
               <button
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
@@ -381,20 +347,15 @@ const Forms = () => {
               </button>
             </form>
           </>
-          : <div className="flex justify-center ">
-            <div className="w-full bg-white max-w-lg mt-8 shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
-              <div className="p-8 animate-fadeInUp">
-                <h3 className="text-center text-xl text-gray-800 mb-4">Connect to your Wallet</h3>
-                <p className="text-lg">
-                  Connecting your wallet allows you to securely use this application. You can create a new proposal, vote on an open proposal and get rewards.
-                </p>
-                <div className="flex justify-center mt-4">
-                  <ConnectButton />
-                </div>
-              </div>
-            </div>
+        ) : (
+          <div className="text-center space-y-6">
+            <h3 className="text-xl text-gray-900 dark:text-white">Connect to your Wallet</h3>
+            <p className="text-lg text-gray-700 dark:text-gray-300">
+              Connecting your wallet allows you to securely use this application. You can create a new proposal, vote on an open proposal, and get rewards.
+            </p>
+            <ConnectButton />
           </div>
-        }
+        )}
       </div>
     </div>
   );
