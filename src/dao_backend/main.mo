@@ -581,7 +581,7 @@ actor ProposalManager {
   private stable var scamEntries : [(Int, ScamEntry)] = [];
 
   var scamMap : HashMap.HashMap<Int, ScamEntry> = HashMap.HashMap<Int, ScamEntry>(0, Int.equal, Int.hash);
-  private var nextScamId : Nat = 0; // Counter for generating unique IDs
+  private stable var nextScamId : Nat = 0; // Counter for generating unique IDs
 
   public shared ({ caller }) func addScamEntry(title : Text, description : Text, url : Text) : async Nat {
     Debug.print(debug_show (("=>", caller)));

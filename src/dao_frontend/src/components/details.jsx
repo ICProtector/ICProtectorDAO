@@ -264,13 +264,13 @@ const Details = (props) => {
                                 </h3>
                                 <div className="flex flex-col">
                                   <button
-                                    onClick={() => castVote(proposalData.id, "Yes")}
+                                    onClick={() => castVote(proposalData.id, "yes")}
                                     className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:bg-white dark:border-white focus:outline-none"
                                   >
                                     Yes
                                   </button>
                                   <button
-                                    onClick={() => castVote(proposalData.id, "No")}
+                                    onClick={() => castVote(proposalData.id, "no")}
                                     className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:bg-white dark:border-white focus:outline-none"
                                   >
                                     No
@@ -329,10 +329,10 @@ const Details = (props) => {
                                   Options:
                                 </h3>
                                 <div className="flex flex-col">
-                                  <button className={`${winner && winner.correctOption == 'Yes' ? 'bg-green-600 text-white' : "bg-white text-black"} text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5  dark:border-white focus:outline-none`}>
+                                  <button className={`${winner && winner.correctOption == 'yes' ? 'bg-green-600 text-white' : "bg-white text-black"} text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5  dark:border-white focus:outline-none`}>
                                     Yes
                                   </button>
-                                  <button className={`${winner && winner.correctOption == 'No' ? 'bg-green-600 text-white' : "bg-white text-black"} text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:border-white focus:outline-none`}>
+                                  <button className={`${winner && winner.correctOption == 'no' ? 'bg-green-600 text-white' : "bg-white text-black"} text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:border-white focus:outline-none`}>
                                     No
                                   </button>
                                 </div>
