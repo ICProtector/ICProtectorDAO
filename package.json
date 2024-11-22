@@ -19,12 +19,15 @@
     "@connect2ic/core": "^0.2.0-beta.24",
     "@connect2ic/react": "^0.2.0-beta.24",
     "compressorjs": "^1.2.1",
+    "framer-motion": "^11.11.17",
     "ic0": "^0.2.8",
     "lucide-react": "^0.456.0",
     "react-datepicker": "^6.9.0",
+    "react-tsparticles": "^2.12.2",
     "recharts": "^2.12.7",
     "sweetalert": "^2.1.2",
     "tailwind-merge": "^2.3.0",
+    "tsparticles": "^3.6.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

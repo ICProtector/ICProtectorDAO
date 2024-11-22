@@ -1,158 +1,294 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { Shield, Award } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useTheme } from '../contexts/ThemeContext';
+
+// Assuming these imports are correct and the images are in the right place
 import reward from '/reward.jpg';
 import icpdao4 from '/icpdao4.png';
 import above_footer from '/ab_footer.png';
-import { useTheme } from '../contexts/ThemeContext';
-import nft1 from '/nfts/nft1.jpg'
-import nft2 from '/nfts/nft2.jpg'
-import nft3 from '/nfts/nft3.jpg'
-import nft4 from '/nfts/nft4.jpg'
-import nft5 from '/nfts/nft5.jpg'
-import nft6 from '/nfts/nft6.jpg'
-import nft7 from '/nfts/nft7.jpg'
-import nft8 from '/nfts/nft8.jpg'
-import nft9 from '/nfts/nft9.jpg'
+import nft1 from '/nfts/nft1.jpg';
+import nft2 from '/nfts/nft2.jpg';
+import nft3 from '/nfts/nft3.jpg';
+import nft4 from '/nfts/nft4.jpg';
+import nft5 from '/nfts/nft5.jpg';
+import nft6 from '/nfts/nft6.jpg';
+import nft7 from '/nfts/nft7.jpg';
+import nft8 from '/nfts/nft8.jpg';
+import nft9 from '/nfts/nft9.jpg';
 
-import { LucideShield, Sun, Menu, X, Shield, Award, Gift } from 'lucide-react'
+const FeatureCard = ({ icon: Icon, title, items }) => (
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 h-full">
+        <div className="flex items-center space-x-2 mb-4">
+            <Icon className="w-6 h-6 text-orange-500" />
+            <h3 className="text-xl font-semibold">{title}</h3>
+        </div>
+        <ul className="space-y-2">
+            {items.map((item, index) => (
+                <li key={index} className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>{item}</span>
+                </li>
+            ))}
+        </ul>
+    </div>
+);
+
+const NFTGrid = ({ images }) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {images.map((src, index) => (
+            <motion.div
+                key={index}
+                className="aspect-square overflow-hidden rounded-lg"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+            >
+                <img src={src} alt={`NFT ${index + 1}`} className="object-cover w-full h-full" />
+            </motion.div>
+        ))}
+    </div>
+);
 
 const HomeContent = () => {
-    const { darkMode, toggleTheme } = useTheme();
-    const [proposalId, setProposalId] = useState("1"); // Set default or dynamic based on use case
-    const [loading, setLoading] = useState(false);
-    const [proposalData, setProposalData] = useState(null);
-
-
-
-
-    const myStyle = {
-        translate: 'none',
-        rotate: 'none',
-        scale: 'none',
-        opacity: 1,
-        transform: 'translate(0px, 0px)'
-    };
-    const gradientClass = darkMode ? 'bg-gradient-to-r from-gray-950 to-gray-950' : 'bg-gradient-to-b from-orange-200 to-orange-500';
-    const buttonClass = darkMode ? 'bg-gradient-to-r from-red-600 to-red-900' : 'bg-gradient-to-r from-red-400 to-red-600';
-
+    const { darkMode } = useTheme();
 
     return (
-        <>
-            <main className='container mx-auto px-4 py-16 md:w-[1120px]'>
-                <section className="text-center mb-20 py-12">
-                    <h1 className="text-4xl md:text-6xl font-bold mb-6 dark:text-white">ICP Protector DAO</h1>
-                    <p className="text-xl mb-8 max-w-2xl mx-auto dark:text-gray-300">
+        <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+
+            <main className="container mx-auto px-4 py-16 max-w-7xl">
+                <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="text-center mb-20 py-12"
+                >
+                    <h1 className="text-4xl md:text-6xl font-bold mb-6">ICP Protector DAO</h1>
+                    <p className="text-xl mb-8 max-w-2xl mx-auto opacity-75">
                         The first 100% on-chain DAO, without investing but with RWA rewards. Help us to protect your friends & the community, by reporting and voting of potential Scams.
                     </p>
                     <div className="flex justify-center space-x-4">
-                        <button className="bg-black text-white dark:bg-white dark:text-black font-semibold py-2 px-6 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors duration-300">
+                        <button className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition duration-300">
                             Get Started
                         </button>
-                        <button className="border border-gray-300 text-black dark:text-white dark:border-gray-600 font-semibold py-2 px-6 rounded-lg bg-white dark:bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                        <button className="px-6 py-3 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold rounded-lg transition duration-300">
                             Learn More
                         </button>
                     </div>
-                </section>
+                </motion.section>
 
-
-
-                <section className="grid md:grid-cols-2 gap-12 mb-20">
-                    <div className="bg-white/90 dark:bg-gray-800/90 shadow-xl rounded-lg p-6 md:p-8">
-                        <div className="flex items-center mb-4">
-                            <Shield className="w-8 h-8 text-orange-500 mr-2" />
-                            <h2 className="text-2xl md:text-3xl font-bold dark:text-white">Why the fairest DAO?</h2>
+                <section className="grid md:grid-cols-2 gap-12 mb-20 px-6 py-12 bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg items-center">
+                    {/* Feature Card */}
+                    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl p-8 md:p-10 flex flex-col justify-center items-start h-full">
+                        <div className="flex items-center mb-6">
+                            <div className="flex items-center justify-center w-14 h-14 bg-orange-100 dark:bg-orange-900 rounded-full shadow-md">
+                                <Shield className="w-7 h-7 text-orange-500" />
+                            </div>
+                            <h2 className="text-3xl font-bold ml-5 text-gray-900 dark:text-white">
+                                Why Choose the Fairest DAO?
+                            </h2>
                         </div>
-                        <ul className="list-disc pl-5 mt-12 text-gray-900 dark:text-white">
-                            <li className='text-left mt-2 text-gray-900 dark:text-white'>The Voting power contribution is the key.</li>
-                            <li className='text-left mt-2 text-gray-900 dark:text-white'>1 User = 1 VP</li>
-                            <li className='text-left mt-2 text-gray-900 dark:text-white'>1 User holding 1 NFT = 3 VP but a max of 30 VP (doesn't matter if you own hundreds of NFTs)</li>
+                        <p className="text-lg mb-6 text-gray-600 dark:text-gray-300">
+                            ICP Protector DAO redefines fairness by empowering every participant equally, regardless of financial status or influence. Here’s why we stand out:
+                        </p>
+                        <ul className="space-y-6">
+                            <li className="flex items-start">
+                                <div className="flex items-center justify-center w-9 h-7 bg-orange-500 text-white rounded-full mr-4 shadow-md">
+                                    <span className="font-semibold text-sm">1</span>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-gray-900 dark:text-white">
+                                        Equal Voting Power
+                                    </h4>
+                                    <p className="text-gray-700 dark:text-gray-300 text-start">
+                                        Each user contributes equally to decision-making with one voting point (VP).
+                                    </p>
+                                </div>
+                            </li>
+                            <li className="flex items-start">
+                                <div className="flex items-center justify-center w-9 h-7 bg-orange-500 text-white rounded-full mr-4 shadow-md">
+                                    <span className="font-semibold text-sm">2</span>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-gray-900 dark:text-white text-start">
+                                        NFT Incentives
+                                    </h4>
+                                    <p className="text-gray-700 dark:text-gray-300 text-start">
+                                        Owning NFTs grants additional voting power, capped at a fair maximum of 30 VP.
+                                    </p>
+                                </div>
+                            </li>
+                            <li className="flex items-start">
+                                <div className="flex items-center justify-center w-8 h-8 bg-orange-500 text-white rounded-full mr-4 shadow-md">
+                                    <span className="font-semibold text-sm">3</span>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-gray-900 dark:text-white text-start">
+                                        Community-Driven
+                                    </h4>
+                                    <p className="text-gray-700 dark:text-gray-300 text-start">
+                                        Decisions prioritize transparency, fairness, and collective impact.
+                                    </p>
+                                </div>
+                            </li>
                         </ul>
                     </div>
-                    <div className="p-4 md:p-8">
-                        <div className="flex items-center justify-center w-full h-full md:w-full transform hover:scale-105 transition-transform duration-300 ease-in-out">
 
-                            <img src={icpdao4} alt="DAO Image" style={{ width: '90%' }} />
-                        </div>
-                    </div>
-                </section>
-
-                <section className="grid md:grid-cols-2 gap-12 mb-20">
-                    <div className="p-4 md:p-8">
-                        <div className="flex items-center justify-center w-full h-full md:w-full transform hover:scale-105 transition-transform duration-300 ease-in-out">
-
-                            <img src={reward} alt="DAO Image" style={{ width: '90%' }} className='mt-8' />
-                        </div>
-                    </div>
-                    <div className="bg-white/90 dark:bg-gray-800/90 shadow-xl rounded-lg p-6 md:p-8">
-                        <div className="flex items-center mb-4">
-                            <Award className="w-8 h-8 text-orange-500 mr-2" />
-                            <h2 className="text-2xl md:text-3xl font-bold dark:text-white">What rewards?</h2>
-                        </div>
-                        <ul className="list-disc pl-5 mt-12 text-gray-900 dark:text-white">
-                            <li className='text-left mt-2 text-gray-900 dark:text-white'>1 Vote = 1 Point</li>
-                            <li className='text-left mt-2 text-gray-900 dark:text-white'>1 Proposal = 2 Points (up to 20 points, depends on the file the user has)</li>
-                            <li className='text-left mt-2 text-gray-900 dark:text-white'>With 555 Points users can mint 1 NFT with a custom background cover.</li>
-                            <li className='text-left mt-2 text-gray-900 dark:text-white'>With 888 Points users can start to claim Merch on Dyor.shop.</li>
-                            <li className='text-left mt-2 text-gray-900 dark:text-white'>NFT mining = each NFT that a user stake, will reward them 1 Point each day/each NFT.</li>
-                            <li className='text-left mt-2 text-gray-900 dark:text-white'>NFT's, DAO website, VP & Points are 100% on-chain.</li>
-                        </ul>
-                    </div>
-                </section>
-                <section className="mb-20">
-                    <h2 className="text-3xl font-bold mb-8 dark:text-white text-center">Featured Video</h2>
-                    <div className="flex justify-center">
-                        <iframe allowFullScreen
-                            className="w-full max-w-2xl aspect-video rounded-lg shadow-lg" src="https://www.youtube.com/embed/YTNSGmcsiSc?si=O1Zn29sqTssup7e2" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                    </div>
-                </section>
-                <div className="overflow-hidden py-24 sm:py-32">
-                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                        <p className="mt-2 text-3xl font-bold dark:text-white tracking-tight text-gray-900 sm:text-4xl">Our NFT Collection</p>
-                        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                            <p className="mt-2 leading-8 dark:text-gray-300 text-gray-900 mb-5">
-                                Here are some of our Genesis NFT collection that includes Voting Power & some hidden gems:
-                            </p>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <div class="aspect-w-1 aspect-h-1">
-                                    <img class="object-cover w-full h-full rounded-lg" src={nft1} alt="Image 1" />
-                                </div>
-                                <div class="aspect-w-1 aspect-h-1">
-                                    <img class="object-cover w-full h-full rounded-lg" src={nft2} alt="Image 2" />
-                                </div>
-                                <div class="aspect-w-1 aspect-h-1">
-                                    <img class="object-cover w-full h-full rounded-lg" src={nft3} alt="Image 3" />
-                                </div>
-                                <div class="aspect-w-1 aspect-h-1">
-                                    <img class="object-cover w-full h-full rounded-lg" src={nft4} alt="Image 4" />
-                                </div>
-                                <div class="aspect-w-1 aspect-h-1">
-                                    <img class="object-cover w-full h-full rounded-lg" src={nft5} alt="Image 5" />
-                                </div>
-                                <div class="aspect-w-1 aspect-h-1">
-                                    <img class="object-cover w-full h-full rounded-lg" src={nft6} alt="Image 6" />
-                                </div>
-                                <div class="aspect-w-1 aspect-h-1">
-                                    <img class="object-cover w-full h-full rounded-lg" src={nft7} alt="Image 7" />
-                                </div>
-                                <div class="aspect-w-1 aspect-h-1">
-                                    <img class="object-cover w-full h-full rounded-lg" src={nft8} alt="Image 8" />
-                                </div>
-                                <div class="aspect-w-1 aspect-h-1">
-                                    <img class="object-cover w-full h-full rounded-lg" src={nft9} alt="Image 9" />
-                                </div>
+                    {/* Image Section */}
+                    <motion.div
+                        className="relative flex justify-center items-center h-full"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                    >
+                        <div className="relative w-full max-w-lg">
+                            <img
+                                src={icpdao4}
+                                alt="DAO Illustration"
+                                className="rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+                            />
+                            <div className="absolute top-4 left-4 bg-orange-500 text-white text-sm font-semibold py-1 px-3 rounded-lg shadow-md">
+                                Featured
                             </div>
                         </div>
+                    </motion.div>
+                </section>
+
+
+                <section className="grid md:grid-cols-2 gap-12 mb-20 px-6 py-12 bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg items-center">
+                    {/* Feature Card */}
+                    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl p-8 md:p-10 flex flex-col justify-center items-start h-full order-1 md:order-2">
+                        <div className="flex items-center mb-6">
+                            <div className="flex items-center justify-center w-14 h-14 bg-orange-100 dark:bg-orange-900 rounded-full shadow-md">
+                                <Award className="w-7 h-7 text-orange-500" />
+                            </div>
+                            <h2 className="text-3xl font-bold ml-5 text-gray-900 dark:text-white">
+                                What Rewards?
+                            </h2>
+                        </div>
+                        <ul className="space-y-6">
+                            <li className="flex items-start">
+                                <div className="flex items-center justify-center w-8 h-8 bg-orange-500 text-white rounded-full mr-4 shadow-md">
+                                    <span className="font-semibold text-sm">1</span>
+                                </div>
+                                <div>
+                                    <p className="text-gray-700 dark:text-gray-300 text-start">
+                                        <strong>1 Vote = 1 Point:</strong> Voting rewards users with 1 point.
+                                    </p>
+                                </div>
+                            </li>
+                            <li className="flex items-start">
+                                <div className="flex items-center justify-center w-11 h-8 bg-orange-500 text-white rounded-full mr-4 shadow-md">
+                                    <span className="font-semibold text-sm">2</span>
+                                </div>
+                                <div>
+                                    <p className="text-gray-700 dark:text-gray-300 text-start">
+                                        <strong>Proposals:</strong> 1 Proposal rewards 2 points (up to 20 points, depending on the user’s file).
+                                    </p>
+                                </div>
+                            </li>
+                            <li className="flex items-start">
+                                <div className="flex items-center justify-center w-11 h-8 bg-orange-500 text-white rounded-full mr-4 shadow-md">
+                                    <span className="font-semibold text-sm">3</span>
+                                </div>
+                                <div>
+                                    <p className="text-gray-700 dark:text-gray-300 text-start">
+                                        <strong>Mint NFTs:</strong> With 555 points, users can mint 1 NFT with a custom background cover.
+                                    </p>
+                                </div>
+                            </li>
+                            <li className="flex items-start">
+                                <div className="flex items-center justify-center w-10 h-8 bg-orange-500 text-white rounded-full mr-4 shadow-md">
+                                    <span className="font-semibold text-sm">4</span>
+                                </div>
+                                <div>
+                                    <p className="text-gray-700 dark:text-gray-300 text-start">
+                                        <strong>Claim Merch:</strong> With 888 points, users can claim merchandise on Dyor.shop.
+                                    </p>
+                                </div>
+                            </li>
+                            <li className="flex items-start">
+                                <div className="flex items-center justify-center w-8 h-8 bg-orange-500 text-white rounded-full mr-4 shadow-md">
+                                    <span className="font-semibold text-sm">5</span>
+                                </div>
+                                <div>
+                                    <p className="text-gray-700 dark:text-gray-300 text-start">
+                                        <strong>Daily NFT Mining:</strong> Staked NFTs reward 1 point per day per NFT.
+                                    </p>
+                                </div>
+                            </li>
+                            <li className="flex items-start">
+                                <div className="flex items-center justify-center w-9 h-8 bg-orange-500 text-white rounded-full mr-4 shadow-md">
+                                    <span className="font-semibold text-sm">6</span>
+                                </div>
+                                <div>
+                                    <p className="text-gray-700 dark:text-gray-300 text-start">
+                                        <strong>On-Chain Rewards:</strong> NFTs, DAO website, VP, and points are fully on-chain.
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
-                </div>
+
+                    {/* Image Section */}
+                    <motion.div
+                        className="relative flex justify-center items-center h-full order-2 md:order-1"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                    >
+                        <div className="relative w-full max-w-lg">
+                            <img
+                                src={reward}
+                                alt="Reward Image"
+                                className="rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+                            />
+                            <div className="absolute top-4 left-4 bg-orange-500 text-white text-sm font-semibold py-1 px-3 rounded-lg shadow-md">
+                                Featured
+                            </div>
+                        </div>
+                    </motion.div>
+                </section>
+
+
+
+
+                <section className="mb-20">
+                    <h2 className="text-4xl font-extrabold mb-6 text-center text-gray-800 dark:text-gray-200">
+                        Featured Video
+                    </h2>
+                    <p className="text-lg text-center text-gray-600 dark:text-gray-400 mb-8">
+                        Explore our latest video to understand more about our mission and vision.
+                    </p>
+                    <div className="flex justify-center">
+                        <div className="relative w-full max-w-3xl aspect-video rounded-xl shadow-lg overflow-hidden dark:border-orange-600 hover:scale-105 transition-transform duration-300">
+                            <iframe
+                                className="absolute top-0 left-0 w-full h-full"
+                                src="https://www.youtube.com/embed/YTNSGmcsiSc?si=O1Zn29sqTssup7e2"
+                                title="YouTube video player"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowFullScreen
+                            ></iframe>
+                        </div>
+                    </div>
+                </section>
+
+
+                <section className="mb-20">
+                    <h2 className="text-3xl font-bold mb-4 text-center">Our NFT Collection</h2>
+                    <p className="text-center mb-8 opacity-75">
+                        Here are some of our Genesis NFT collection that includes Voting Power & some hidden gems:
+                    </p>
+                    <NFTGrid images={[nft1, nft2, nft3, nft4, nft5, nft6, nft7, nft8, nft9]} />
+                </section>
             </main>
 
-            <div className="overflow-hidden py-8">
-                <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <div className="flex items-center justify-center w-[20%] h-[20%] sm:w-full">
-                        <img src={above_footer} alt="" style={{ width: '60%' }} /></div>
+            <footer className="py-8 bg-orange-500  dark:bg-gray-800">
+                <div className="container mx-auto px-4 flex flex-col items-center">
+                    <img src={above_footer} alt="Footer Image" className="w-41 mb-4" />
+                    {/* <p className="text-sm opacity-75">© 2023 ICP Protector DAO. All rights reserved.</p> */}
                 </div>
-            </div>
-        </>
+            </footer>
+        </div>
     );
 };
 
 export default HomeContent;
+
