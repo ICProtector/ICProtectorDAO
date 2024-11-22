@@ -162,20 +162,20 @@ const Navbar = () => {
                       Create new Proposal
                     </Link>
                   </li>
-                  <li>
+                  {/* <li>
                     <Link
                       to={"/open-proposals"}
                       className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                     >
                       Vote on open Proposal
                     </Link>
-                  </li>
+                  </li> */}
                   <li>
                     <Link
                       to={"/proposals"}
                       className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                     >
-                      See previous proposals
+                      Vote on Proposal
                     </Link>
                   </li>
 

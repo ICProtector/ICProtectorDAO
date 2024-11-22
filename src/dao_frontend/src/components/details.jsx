@@ -13,7 +13,10 @@ const Details = (props) => {
   const [proposalData, setProposalData] = useState(null);
   const [previousVote, setPreviousVote] = useState([]);
   const [votting, setVotting] = useState(false);
+  const [calResult, setCalResult] = useState(false);
+  const [refetch, setRefetch] = useState(null);
   const [winner, setWinner] = useState(null);
+  const [winnerSelected, setWinnerSelected] = useState(true);
 
   const backendCanisterId = "7wzen-oqaaa-aaaap-ahduq-cai";
   const backend = ic(backendCanisterId);
@@ -67,6 +70,23 @@ const Details = (props) => {
       setLoading(false);
     }
   };
+  const checkProposalStatus = async () => {
+    setLoading(true);
+    try {
+      if (isConnected) {
+        const result1 = await backend.call("isProposalTimeFinished", id);
+        const result2 = await backend.call("isCreateRewardClaimed", id);
+        console.log("res1 res2", result1, result2[0]);
+        if (result1) {
+          setWinnerSelected(result2[0]);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching proposal data 1:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const castVote = async (proposalId, option) => {
     try {
       setVotting(true);
@@ -115,6 +135,39 @@ const Details = (props) => {
       setVotting(false);
     }
   };
+
+  const winnersSelect = async () => {
+    try {
+      setCalResult(true);
+      const result = await backend.call("winnersSelect2", id);
+
+      if (result == 'success') {
+        swal({
+          title: 'Winner Selected',
+          icon: 'success'
+        })
+      }
+      else {
+        swal({
+          title: 'Error',
+          text: result,
+          icon: 'warning'
+        })
+      }
+      setRefetch(!refetch);
+      console.log("Winner Selected:", result);
+      // Handle post-vote UI update or confirmation here
+    } catch (error) {
+      swal({
+        title: 'Error Selected result',
+        text: error,
+        icon: 'error'
+      });
+      console.error("Error Selected result:", error);
+    } finally {
+      setCalResult(false);
+    }
+  };
   const determineStatus = (endTime) => {
     const currentTime = Date.now();
     const endMilliseconds = Number(endTime) / 1_000_000;
@@ -141,9 +194,9 @@ const Details = (props) => {
     }
   };
   useEffect(() => {
-    fetchProposalData(); // Call the function when the component mounts
-  }, [principal]);
-
+    fetchProposalData();
+    checkProposalStatus(); // Call the function when the component mounts
+  }, [principal, refetch]);
 
   return (
     <>
@@ -265,14 +318,20 @@ const Details = (props) => {
                                 <div className="flex flex-col">
                                   <button
                                     onClick={() => castVote(proposalData.id, "yes")}
-                                    className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:bg-white dark:border-white focus:outline-none"
-                                  >
+                                    disabled={votting}                                    
+                                    className={`text-xl font-mono italic border-2 rounded-xl py-2 px-6 w-full 
+                                      focus:outline-none
+                                      ${votting ? "bg-gray-400 text-gray-700 cursor-not-allowed border-gray-400" :
+                                    "bg-white text-black border-black dark:bg-white dark:border-white dark:text-black"}`} >
                                     Yes
                                   </button>
                                   <button
                                     onClick={() => castVote(proposalData.id, "no")}
-                                    className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 mb-5 dark:bg-white dark:border-white focus:outline-none"
-                                  >
+                                    disabled={votting}                                    
+                                    className={`text-xl font-mono italic border-2 rounded-xl py-2 px-6 w-full 
+                                      focus:outline-none
+                                      ${votting ? "bg-gray-400 text-gray-700 cursor-not-allowed border-gray-400" :
+                                    "bg-white text-black border-black dark:bg-white dark:border-white dark:text-black"}`} >
                                     No
                                   </button>
                                 </div>
@@ -288,10 +347,12 @@ const Details = (props) => {
                                       key.startsWith("op") && (
                                         <div key={key} className="mb-3">
                                           <button
-                                            onClick={() =>
-                                              castVote(proposalData.id, value)
-                                            }
-                                            className="text-xl font-mono italic border-2 border-black rounded-xl py-2 px-6 w-full dark:bg-white dark:border-white focus:outline-none"
+                                            onClick={() => castVote(proposalData.id, value)}
+                                            disabled={votting}
+                                            className={`text-xl font-mono italic border-2 rounded-xl py-2 px-6 w-full 
+                                                  focus:outline-none
+                                                  ${votting ? "bg-gray-400 text-gray-700 cursor-not-allowed border-gray-400" :
+                                                "bg-white text-black border-black dark:bg-white dark:border-white dark:text-black"}`}
                                           >
                                             {value}
                                           </button>
@@ -304,25 +365,37 @@ const Details = (props) => {
                           </>
                         ) : (
                           <>
-                            <button
-                              className={`text-xl font-mono italic border-2 rounded-xl py-2 px-6 mb-5 focus:outline-none ${proposalData.status === "Rejected"
-                                ? "bg-red-600 text-white"
-                                : "bg-green-600 text-white"
-                                }`}
-                            >
-                              Closed
-                            </button>
-                            <div className="flex justify-between items-center mb-2">
-                              <span className="text-black text-xl font-bold dark:text-white">
-                                {winner ? `Proposal Result: ${winner.correctOption}` : "Pending result..."}{" "}
-                              </span>
-                            </div>
-                            <div className="w-full bg-green-600 rounded-full h-2.5 dark:bg-green-500">
-                              <div
-                                className="bg-green-500 h-2.5 rounded-full"
-                                style={{ width: "100%" }}
-                              ></div>
-                            </div>
+                            {winnerSelected ?
+                              <button
+                                className={`text-xl font-mono italic border-2 rounded-xl py-2 px-6 mb-5 focus:outline-none ${proposalData.status === "Rejected"
+                                  ? "bg-red-600 text-white"
+                                  : "bg-green-600 text-white"
+                                  }`}
+                              >
+                                Closed
+                              </button>
+                              :
+                              <button onClick={() => winnersSelect()}
+                                className={`text-xl font-mono italic border-2 rounded-xl py-2 px-6 mb-5 focus:outline-none bg-green-600 text-white`}
+                              >
+                                {calResult ? 'Getting ...' : 'Get Result'}
+                              </button>
+                            }
+                            {winner &&
+                              <>
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="text-black text-xl font-bold dark:text-white">
+                                    {`Proposal Result: ${winner.correctOption}`}
+                                  </span>
+                                </div>
+                                <div className="w-full bg-green-600 rounded-full h-2.5 dark:bg-green-500">
+                                  <div
+                                    className="bg-green-500 h-2.5 rounded-full"
+                                    style={{ width: "100%" }}
+                                  ></div>
+                                </div>
+                              </>
+                            }
                             {proposalData.twoOptionType ? (
                               <div className="mt-2">
                                 <h3 className="text-lg mb-2 font-bold text-black dark:text-white">

@@ -176,7 +176,7 @@ const Forms = () => {
         } else {
           swal({
             title: "Proposal Created",
-            text: "The proposal is created and pending for approval of admin.",
+            text: "The proposal is created succesffuly ",
             icon: "success",
           });
           clearfunction();
@@ -216,15 +216,19 @@ const Forms = () => {
   const updateOptionCount = (count) => {
     setOptionCount(count);
     if (count === 2) {
-      setOptions(["Yes", "No"]);
-    } else {
-      setOptions(Array(5).fill("")); // Create five empty strings
+      setOptions(["Yes", "No"]); // Default options for 2 fields
+    } else if (count === 5) {
+      setOptions(["", "", "", "", "Reject Proposal"]); // Default last option
     }
   };
 
-  const updateOption = (value, index) => {
+  const handleOptionChange = (index, value) => {
     const newOptions = [...options];
     newOptions[index] = value;
+    if (optionCount === 5 && index === 4) {
+      // Ensure "Reject Proposal" is locked as the last option
+      newOptions[4] = "Reject Proposal";
+    }
     setOptions(newOptions);
   };
 
@@ -296,11 +300,8 @@ const Forms = () => {
                     <input
                       type="text"
                       value={options[index] || ""}
-                      onChange={(e) => {
-                        const newOptions = [...options];
-                        newOptions[index] = e.target.value;
-                        setOptions(newOptions);
-                      }}
+                      onChange={(e) => handleOptionChange(index, e.target.value)}
+                      disabled={optionCount === 2}
                       placeholder={`Enter option ${index + 1}`}
                       className="w-full px-4 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white"
                     />
@@ -375,7 +376,9 @@ const Forms = () => {
               application. You can create a new proposal, vote on an open
               proposal, and get rewards.
             </p>
-            <ConnectButton />
+            <div className="flex justify-center items-center">
+              <ConnectButton />
+            </div>
           </div>
         )}
       </div>
