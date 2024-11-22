@@ -256,6 +256,18 @@ actor ProposalManager {
     return ?newProposal;
   };
 
+  public shared (msg) func isCreateRewardClaimed(proposalId : Text) : async ?Bool {
+    switch (map.get(proposalId)) {
+      case (?proposal) {
+        return ?proposal.createRewardClaimed;
+      };
+      case (null) {
+        Debug.print(debug_show (("Proposal not found:", proposalId)));
+        return null; // Proposal does not exist
+      };
+    };
+  };
+
   // public shared func autoEndVoting() : async [Text] {
   //   let currentTime = Time.now(); // Get the current timestamp
   //   var endedProposals : [Text] = []; // To keep track of proposals whose voting has ended
