@@ -789,7 +789,7 @@ actor ProposalManager {
               proposal.options.count1;
             };
 
-            op2 = proposal.options.op1;
+            op2 = proposal.options.op2;
             count2 = if (selectedOption == proposal.options.op2) {
               proposal.options.count2 +1;
             } else {
