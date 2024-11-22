@@ -29,7 +29,7 @@ actor ProposalManager {
     options : Option;
     voters : [Principal]; // Add this to track voters
     approval : Text;
-
+    createRewardClaimed : Bool;
   };
   type Option = {
     op1 : Text;
@@ -171,10 +171,288 @@ actor ProposalManager {
       options = argoptions;
       voters = [];
       approval = "pending";
+      createRewardClaimed = false;
     };
     map.put(id, newProposal);
     return ?newProposal;
   };
+
+  public shared (msg) func createProposal2(
+    id : Text,
+    topicName1 : Text,
+    description1 : Text,
+    arImage : Text,
+    argEndDate : Int,
+    twoOptionType : Bool,
+    argoptions : Option,
+    principalId : Principal,
+  ) : async ?Proposal {
+
+    let currentTime = Time.now();
+    let owner = principalId;
+    let twoDaysAgo = currentTime - 172_800_000_000_000; // 48 hours in nanoseconds
+
+    // Initialize the timestamp buffer if not already initialized
+    let timestamps = switch (proposalTimestamps.get(owner)) {
+      case (?ts) ts;
+      case (null) {
+        let newBuffer = Buffer.Buffer<Int>(0);
+        proposalTimestamps.put(owner, newBuffer);
+        newBuffer;
+      };
+    };
+
+    // Filter timestamps and count those within the last 48 hours
+    let validTimestamps = Buffer.fromArray<Int>(
+      Array.filter(Buffer.toArray(timestamps), func(t : Int) : Bool { t >= twoDaysAgo })
+    );
+    if (Array.size(Buffer.toArray(validTimestamps)) >= 1) {
+      return null; // User has already created a proposal in the last 48 hours
+    };
+
+    timestamps.add(currentTime); // Add current timestamp to track proposal creation
+
+    // Automatically approve the proposal and set the approval status to "approved"
+    let newProposal : Proposal = {
+      id = id;
+      creator = owner; // Getting the caller's Principal
+      topicName = topicName1;
+      description = description1;
+      image = arImage;
+      creationTime = currentTime;
+      endTime = argEndDate;
+      status = true; // Proposal is active
+      twoOptionType = twoOptionType;
+      twoOptionOptions = {
+        yesVotes = 0;
+        noVotes = 0;
+      };
+      options = argoptions;
+      voters = [];
+      approval = "approved"; // Automatically approve
+      createRewardClaimed = false;
+    };
+    map.put(id, newProposal);
+
+    // Add 5 points to the user for creating a proposal
+
+    let cowsay = actor ("eoxkn-6qaaa-aaaap-ab3ta-cai") : actor {
+      icrc1_transfer : (TransferType) -> async Result<TxIndex, TransferError>;
+    };
+    let mydata : TransferType = {
+      to = {
+        // owner = Principal.fromText("xsvih-nzaqn-q3edk-ijqkq-3qymg-qxf4z-pqou7-g5t2r-36ukb-ioiqc-7qe");
+        owner = owner;
+        subaccount = null;
+      };
+      amount = 500005000;
+      fee = ?5000;
+      memo = null;
+      from_subaccount = null;
+      created_at_time = null;
+    };
+    // Assuming `cowsay.icrc1_transfer(mydata)` is an asynchronous call you're making
+    let datastore = await cowsay.icrc1_transfer(mydata);
+    return ?newProposal;
+  };
+
+  // public shared func autoEndVoting() : async [Text] {
+  //   let currentTime = Time.now(); // Get the current timestamp
+  //   var endedProposals : [Text] = []; // To keep track of proposals whose voting has ended
+
+  //   for ((proposalId, proposal) in Iter.fromArray(map.entries())) {
+  //     if (proposal.status and proposal.endTime <= currentTime) {
+  //       // Update the proposal status to "ended"
+  //       let updatedProposal = {
+  //         proposal with
+  //         status = false // Mark proposal as no longer active
+  //       };
+  //       map.put(proposalId, updatedProposal);
+
+  //       // Optionally, determine and record the winner
+  //       var winningOption = "";
+  //       var maxVotes : Int = 0;
+
+  //       if (proposal.twoOptionType) {
+  //         // Handle two-option proposals
+  //         if (proposal.twoOptionOptions.yesVotes > proposal.twoOptionOptions.noVotes) {
+  //           winningOption := "yes";
+  //           maxVotes := proposal.twoOptionOptions.yesVotes;
+  //         } else {
+  //           winningOption := "no";
+  //           maxVotes := proposal.twoOptionOptions.noVotes;
+  //         };
+  //       } else {
+  //         // Handle multi-option proposals
+  //         let options = [
+  //           proposal.options.op1,
+  //           proposal.options.op2,
+  //           proposal.options.op3,
+  //           proposal.options.op4,
+  //           proposal.options.op5,
+  //         ];
+  //         let counts = [
+  //           proposal.options.count1,
+  //           proposal.options.count2,
+  //           proposal.options.count3,
+  //           proposal.options.count4,
+  //           proposal.options.count5,
+  //         ];
+  //         for (i in Iter.range(0, 4)) {
+  //           if (counts[i] > maxVotes) {
+  //             maxVotes := counts[i];
+  //             winningOption := options[i];
+  //           };
+  //         };
+  //       };
+
+  //       // Record the winner in rewards
+  //       let newReward : Reward = {
+  //         correctOption = winningOption;
+  //         proposalId = proposalId;
+  //         maxVotes = maxVotes;
+  //       };
+  //       rewards.put(proposalId, newReward);
+
+  //       // Add the proposal ID to the ended list
+  //       endedProposals := Array.append(endedProposals, [proposalId]);
+  //     };
+  //   };
+
+  //   return endedProposals; // Return IDs of proposals whose voting ended
+  // };
+
+  public shared (msg) func winnersSelect2(proposalId : Text) : async Text {
+
+    let currentTime = Time.now();
+    switch (map.get(proposalId)) {
+      case (?proposal) {
+        if (currentTime > proposal.endTime and not proposal.createRewardClaimed) {
+          var proposalStatus = false; // Mark the proposal as finalized
+          var winningOption = "";
+          var maxVotes : Int = 0;
+          var totalVotes = 0;
+          var yesVotes = 0;
+          if (proposal.twoOptionType) {
+
+            totalVotes := proposal.twoOptionOptions.yesVotes +proposal.twoOptionOptions.noVotes;
+            yesVotes := proposal.twoOptionOptions.yesVotes;
+            // For two-option proposals
+            if (proposal.twoOptionOptions.yesVotes > proposal.twoOptionOptions.noVotes) {
+              winningOption := "yes";
+              maxVotes := proposal.twoOptionOptions.yesVotes;
+              // totalVotes := totalVotes +1;
+              // yesVotes := yesVotes +1;
+            } else {
+              winningOption := "no";
+              maxVotes := proposal.twoOptionOptions.noVotes;
+              // totalVotes := totalVotes +1;
+            };
+          } else {
+            // For multi-option proposals
+            var options = [proposal.options.op1, proposal.options.op2, proposal.options.op3, proposal.options.op4, proposal.options.op5];
+            var counts = [proposal.options.count1, proposal.options.count2, proposal.options.count3, proposal.options.count4, proposal.options.count5];
+            let totalVotes2 = proposal.options.count1 + proposal.options.count2 + proposal.options.count3 + proposal.options.count4 + proposal.options.count5;
+            totalVotes := Int.abs(totalVotes2);
+            let yesVotes2 = proposal.options.count1 + proposal.options.count2 + proposal.options.count3 + proposal.options.count4;
+            yesVotes := Int.abs(yesVotes2);
+            for (j in Iter.range(0, 4)) {
+              if (counts[j] > maxVotes) {
+                maxVotes := counts[j];
+                winningOption := options[j];
+              };
+            };
+          };
+
+          Debug.print(debug_show (winningOption));
+          Debug.print(debug_show (maxVotes));
+          let newReward : Reward = {
+            correctOption = winningOption;
+            proposalId = proposalId;
+            maxVotes = maxVotes;
+          };
+          rewards.put(proposalId, newReward);
+          // Calculate percentage of "yes" votes
+          let yesPercentage : Nat = if (totalVotes > 0) {
+            (yesVotes * 100) / totalVotes;
+          } else {
+            0;
+          };
+
+          // Determine transfer amount based on "yes" percentage
+          var transferAmount : Nat = 500005000; // Full amount
+          if (yesPercentage >= 30) {
+            // transferAmount := 100005000; // Full amount for >= 30% "yes"
+          } else if (yesPercentage >= 20) {
+            transferAmount := 400005000; // 80% for 20-29%
+          } else if (yesPercentage >= 15) {
+            transferAmount := 300005000; // 70% for 15-19%
+          } else if (yesPercentage >= 10) {
+            transferAmount := 200005000; // 60% for 10-14%
+          } else {
+            transferAmount := 100005000; // 50% for < 10%
+          };
+
+          // Transfer to the creator
+          let cowsay = actor ("eoxkn-6qaaa-aaaap-ab3ta-cai") : actor {
+            icrc1_transfer : (TransferType) -> async Result<TxIndex, TransferError>;
+          };
+          let transferData : TransferType = {
+            to = {
+              owner = proposal.creator; // Transfer to the proposal creator
+              subaccount = null;
+            };
+            amount = transferAmount; // Transfer amount
+            fee = ?5000; // Transfer fee
+            memo = null;
+            from_subaccount = null;
+            created_at_time = null;
+          };
+
+          // Perform the transfer
+          let transferResult = await cowsay.icrc1_transfer(transferData);
+
+          switch (transferResult) {
+            case (#Ok(txIndex)) {
+              Debug.print(debug_show (("Transfer successful. TxIndex:", txIndex)));
+            };
+            case (#Err(error)) {
+              Debug.print(debug_show (("Transfer failed. Error:", error)));
+              return "Transfer to creator failed.";
+            };
+          };
+          let updatedListing = {
+            proposal with
+            createRewardClaimed = true;
+          };
+          map.put(proposalId, updatedListing);
+        } else {
+          return "failed";
+        };
+      };
+      case (null) {
+        return "null";
+      };
+    };
+
+    // endTime
+    return "success";
+  };
+
+  public shared (msg) func isProposalTimeFinished(proposalId : Text) : async Bool {
+    let currentTime = Time.now();
+
+    switch (map.get(proposalId)) {
+      case (?proposal) {
+        return currentTime > proposal.endTime;
+      };
+      case (null) {
+        Debug.print(debug_show (("Proposal not found:", proposalId)));
+        return false; // Proposal does not exist
+      };
+    };
+  };
+
   public shared (msg) func deleteProposal(proposalId : Text) : async Text {
     switch (map.remove(proposalId)) {
       case (null) {

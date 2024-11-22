@@ -4,7 +4,7 @@ import ic from "ic0";
 import Compressor from "compressorjs";
 import { useConnect, ConnectButton } from "@connect2ic/react";
 import { Principal } from "@dfinity/principal";
-import swal from 'sweetalert';
+import swal from "sweetalert";
 
 const Forms = () => {
   const { darkMode } = useTheme();
@@ -56,9 +56,9 @@ const Forms = () => {
       (!file && !imageURL)
     ) {
       swal({
-        title: 'Error',
+        title: "Error",
         text: "Please fill all the fields.",
-        icon: "error"
+        icon: "error",
       });
       console.error("Please fill all the fields.");
       return;
@@ -68,9 +68,9 @@ const Forms = () => {
     const currentTime = new Date();
     if (endtime <= currentTime) {
       swal({
-        title: 'Error',
+        title: "Error",
         text: "End time must be in the future.",
-        icon: "error"
+        icon: "error",
       });
       console.error("End time must be in the future.");
       return;
@@ -79,9 +79,9 @@ const Forms = () => {
     // Check if all options are filled if optionCount is 5
     if (optionCount === 5 && options.some((option) => !option)) {
       swal({
-        title: 'Error',
+        title: "Error",
         text: "Please fill all 5 option fields.",
-        icon: "error"
+        icon: "error",
       });
       console.error("Please fill all 5 option fields.");
       return;
@@ -119,7 +119,6 @@ const Forms = () => {
   };
 
   const callCreateProposal = async (imageData) => {
-
     setSubmitting(true);
     try {
       const pollOptions = {
@@ -157,12 +156,11 @@ const Forms = () => {
       );
       if (isConnected) {
         const response = await backend.call(
-          "createProposal",
+          "createProposal2",
           id,
           topicName,
           description,
           imageData,
-          0,
           timestampInNanoseconds,
           val,
           pollOptions,
@@ -170,32 +168,31 @@ const Forms = () => {
         );
         if (response.length === 0) {
           swal({
-            title: 'Error',
-            text: "A user can create five proposals a day.",
-            icon: "error"
+            title: "Error",
+            text: "A user can create 1 proposals in 48 hours.",
+            icon: "error",
           });
           clearfunction();
         } else {
-
           swal({
-            title: 'Proposal Created',
+            title: "Proposal Created",
             text: "The proposal is created and pending for approval of admin.",
-            icon: "success"
+            icon: "success",
           });
           clearfunction();
           console.log("Proposal Created:", response);
         }
       } else {
         swal({
-          title: 'Connect your wallet',
-          icon: 'success'
+          title: "Connect your wallet",
+          icon: "success",
         });
       }
     } catch (error) {
       swal({
-        title: 'Error',
+        title: "Error",
         text: error.message,
-        icon: "error"
+        icon: "error",
       });
       console.error("Error creating proposal:", error);
     }
@@ -242,16 +239,23 @@ const Forms = () => {
   const labelClass =
     "block text-sm font-medium text-gray-700 dark:text-gray-200 text-left py-1";
 
-
   return (
-    <div className={`min-h-screen flex items-center justify-center ${gradientClass} p-4`}>
-      <div className={`max-w-2xl w-full bg-white dark:bg-gray-800 shadow-2xl rounded-lg p-6`}>
+    <div
+      className={`min-h-screen flex items-center justify-center ${gradientClass} p-4`}
+    >
+      <div
+        className={`max-w-2xl w-full bg-white dark:bg-gray-800 shadow-2xl rounded-lg p-6`}
+      >
         {isConnected ? (
           <>
-            <h2 className="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-white">Create Proposal</h2>
+            <h2 className="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-white">
+              Create Proposal
+            </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 text-start">Topic Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 text-start">
+                  Topic Name
+                </label>
                 <input
                   type="text"
                   value={topicName}
@@ -260,7 +264,9 @@ const Forms = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 text-start">Description</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 text-start">
+                  Description
+                </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -269,7 +275,9 @@ const Forms = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 text-start">Number of Options</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 text-start">
+                  Number of Options
+                </label>
                 <select
                   value={optionCount}
                   onChange={(e) => updateOptionCount(Number(e.target.value))}
@@ -301,19 +309,29 @@ const Forms = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 text-start">Image Upload Method</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 text-start">
+                  Image Upload Method
+                </label>
                 <div className="flex space-x-4">
                   <label className="flex items-center space-x-2 dark:text-white">
-                    <input type="radio" checked={imageSource === 'file'} onChange={() => setImageSource('file')} />
+                    <input
+                      type="radio"
+                      checked={imageSource === "file"}
+                      onChange={() => setImageSource("file")}
+                    />
                     <span>Upload File</span>
                   </label>
                   <label className="flex items-center space-x-2 dark:text-white">
-                    <input type="radio" checked={imageSource === 'url'} onChange={() => setImageSource('url')} />
+                    <input
+                      type="radio"
+                      checked={imageSource === "url"}
+                      onChange={() => setImageSource("url")}
+                    />
                     <span>Enter URL</span>
                   </label>
                 </div>
               </div>
-              {imageSource === 'file' ? (
+              {imageSource === "file" ? (
                 <div>
                   <label htmlFor="file" className={labelClass}>
                     Choose File
@@ -349,9 +367,13 @@ const Forms = () => {
           </>
         ) : (
           <div className="text-center space-y-6">
-            <h3 className="text-xl text-gray-900 dark:text-white">Connect to your Wallet</h3>
+            <h3 className="text-xl text-gray-900 dark:text-white">
+              Connect to your Wallet
+            </h3>
             <p className="text-lg text-gray-700 dark:text-gray-300">
-              Connecting your wallet allows you to securely use this application. You can create a new proposal, vote on an open proposal, and get rewards.
+              Connecting your wallet allows you to securely use this
+              application. You can create a new proposal, vote on an open
+              proposal, and get rewards.
             </p>
             <ConnectButton />
           </div>
