@@ -64,8 +64,9 @@
 .cancel_div {
   display: flex;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  align-items: center;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   background-color: #F3F5F9;
 }
@@ -84,9 +85,16 @@
 }
 
 .first_section {
-  justify-content: space-between;
+  justify-content: start;
+  gap: 10px;
 }
 
+@media(max-width:465px){
+  .first_section {
+    flex-direction: column !important;
+    align-items: start !important;
+  }
+}
 .second_section {
   gap: 5px;
 }
@@ -121,6 +129,7 @@
   font-weight: 700;
   line-height: normal;
   margin-bottom: 15px;
+  font-family: -apple-system, BlinkMacSystemFont, "Arial", "Helvetica Neue", sans-serif;
 }
 .row {
   display: flex;
