@@ -1,135 +1,81 @@
-import React, { useState, useEffect } from "react";
-import logo from '/Dao.png';
+import React, { useState } from "react";
+import logo from "/Dao.png";
 import { Link } from "react-router-dom";
-import { useTheme } from "../contexts/ThemeContext"; // Ensure you have this logo in your public folder or src folder.
+import { useTheme } from "../contexts/ThemeContext"; // Ensure you have this context implemented
 import ButtonLogin from "./ButtonLogin";
-import {
-  ConnectButton,
-  ConnectDialog,
-  Connect2ICProvider,
-  useConnect,
-} from "@connect2ic/react";
+import { useConnect } from "@connect2ic/react";
 
 const Navbar = () => {
   const { darkMode, toggleTheme } = useTheme();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [isDropdownWelOpen, setDropdownWeOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
+
   const toggleDropdown = (dropdown) => {
     if (openDropdown === dropdown) {
-      setOpenDropdown(null); // Close the currently open dropdown
+      setOpenDropdown(null);
     } else {
-      setOpenDropdown(dropdown); // Open the new dropdown and close others
+      setOpenDropdown(dropdown);
     }
   };
-  const buttonClass = darkMode
-    ? "bg-gradient-to-r from-red-600 to-red-900"
-    : "bg-gradient-to-r from-red-400 to-red-600";
+
   const gradientClass = darkMode
     ? "bg-gradient-to-r from-gray-950 to-gray-950"
     : "bg-gradient-to-b from-orange-200 to-orange-500";
-  const { isConnected, principal, activeProvider } = useConnect({
-    onConnect: () => {
-      // Signed in
-    },
-    onDisconnect: () => {
-      // Signed out
-    },
-  });
 
   return (
-    <nav className={`relative px-4 sm:px-6 md:px-8 ${gradientClass} lg:py-0  py-2 sm:py-3 md:py-4`}>
+    <nav
+      className={`relative px-4 sm:px-6 md:px-8 ${gradientClass} lg:py-0 py-2 sm:py-3 md:py-4`}
+    >
       <div className="container flex flex-wrap justify-between items-center mx-auto">
-        <Link to={'/'} className="flex">
-          <img src={logo} className="mr-3 h-6 sm:h-9" alt=" ICP PROTECTOR logo" />
+        {/* Logo */}
+        <Link to={"/"} className="flex items-center">
+          <img src={logo} className="mr-3 h-6 sm:h-9" alt="ICP PROTECTOR logo" />
           <span className="self-center text-lg font-semibold whitespace-nowrap dark:text-white">
             ICP PROTECTOR
           </span>
         </Link>
-        <div className="flex items-center">
-          <button
-            data-collapse-toggle="navbar-dropdown"
-            type="button"
-            className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-            aria-controls="navbar-dropdown"
-            aria-expanded="false"
-            onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+
+        {/* Mobile Menu Button */}
+        <button
+          data-collapse-toggle="navbar-dropdown"
+          type="button"
+          className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700"
+          onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          <span className="sr-only">Open main menu</span>
+          <svg
+            className="w-5 h-5"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 17 14"
           >
-            <span className="sr-only">Open main menu</span>
-            <svg
-              className="w-5 h-5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 17 14"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M1 1h15M1 7h15M1 13h15"
-              />
-            </svg>
-          </button>
-        </div>
+            <path
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M1 1h15M1 7h15M1 13h15"
+            />
+          </svg>
+        </button>
+
+        {/* Desktop Menu */}
         <div
           className={`${isMobileMenuOpen ? "" : "hidden"
             } w-full md:block md:w-auto`}
           id="navbar-dropdown"
         >
-          <ul
-            className={`flex flex-col p-4 mt-4 rounded-lg border border-gray-100 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0  dark:border-gray-700 `}
-          >
-            <li className="relative" style={{ margin: 'auto' }}>
-
+          <ul className="flex flex-col p-4 mt-4 gap-1 items-center rounded-lg border border-gray-100 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 dark:border-gray-700">
+            {/* Welcome Dropdown */}
+            <li className="relative">
               <button
-                id="dropdownNavbarLink"
-                data-dropdown-toggle="dropdownNavbar"
-                className="flex items-center py-2 px-4 md:mx-auto rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-200 md:dark:hover:text-blue-500"
-                onClick={() => toggleDropdown('welcome')}>
+                className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300"
+                onClick={() => toggleDropdown("welcome")}
+              >
                 Welcome
-                <svg className="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                  <path stroke="currentColor" strokeLinecapp="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
-                </svg>
-              </button>
-
-              <div
-                id="dropdownNavbar"
-                className={`${openDropdown === 'welcome' ? 'block' : 'hidden'} absolute z-20 font-normal bg-gray-800 divide-y divide-gray-600 rounded shadow w-44 dark:bg-gray-700`}
-                style={{ top: '100%', left: 0 }}
-              >
-                <ul className="text-sm text-gray-400" aria-labelledby="dropdownNavbarLink">
-                  <li>
-                    <Link to={'/all-about-icp'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">All About ICP</Link>
-                  </li>
-                  <li>
-                    <Link to={'/whitepaper'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">White paper</Link>
-                  </li>
-                  <li>
-                    <Link to={'/point-system'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Point System</Link>
-                  </li>
-                  <li>
-                    <Link to={'/roadmap'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">RoadMap</Link>
-                  </li>
-                  <li>
-                    <Link to={'/scam-list'} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Scam List</Link>
-                  </li>
-                </ul>
-              </div>
-            </li>
-
-            <li className="relative" style={{ margin: "auto" }}>
-              <button
-                id="dropdownNavbarLink"
-                data-dropdown-toggle="dropdownNavbar"
-                className="flex items-center py-2 px-4 md:mx-auto rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-200 md:dark:hover:text-blue-500"
-                onClick={() => toggleDropdown('proposals')}
-              >
-                Proposals
                 <svg
-                  className="w-2.5 h-2.5 ms-2.5"
+                  className="w-2.5 h-2.5 ml-2"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -137,77 +83,142 @@ const Navbar = () => {
                 >
                   <path
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="m1 1 4 4 4-4"
                   />
                 </svg>
               </button>
+
               <div
-                id="dropdownNavbar"
-                className={`${openDropdown === 'proposals' ? 'block' : 'hidden'} absolute z-20 font-normal bg-gray-800 divide-y divide-gray-600 rounded shadow w-44 dark:bg-gray-700`}
+                className={`${openDropdown === "welcome" ? "block" : "hidden"
+                  } absolute z-20 bg-white dark:bg-gray-800 rounded-lg shadow w-44 px-3 py-2 mt-1 transition-all duration-300`}
                 style={{ top: "100%", left: 0 }}
               >
-                <ul
-                  className="text-sm text-gray-400"
-                  aria-labelledby="dropdownNavbarLink"
-                >
+                <ul className="text-sm text-gray-800 dark:text-gray-300 divide-y divide-gray-200 dark:divide-gray-600">
                   <li>
                     <Link
-                      to={"/create-proposal"}
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      to={"/all-about-icp"}
+                      className="block px-4 py-2 hover:underline hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
                     >
-                      Create new Proposal
+                      All About ICP
                     </Link>
                   </li>
-                  {/* <li>
-                    <Link
-                      to={"/open-proposals"}
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      Vote on open Proposal
-                    </Link>
-                  </li> */}
                   <li>
                     <Link
-                      to={"/proposals"}
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      to={"/whitepaper"}
+                      className="block px-4 py-2 hover:underline hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
                     >
-                      Vote on Proposal
+                      White Paper
                     </Link>
                   </li>
-
                   <li>
                     <Link
-                      to={"/claim-reward"}
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      to={"/point-system"}
+                      className="block px-4 py-2 hover:underline hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
                     >
-                      Claim your reward
+                      Point System
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to={"/roadmap"}
+                      className="block px-4 py-2 hover:underline hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                    >
+                      Roadmap
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to={"/scam-list"}
+                      className="block px-4 py-2 hover:underline hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                    >
+                      Scam List
                     </Link>
                   </li>
                 </ul>
               </div>
             </li>
-            {/* <li>
-              <a href="#" className="block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-600 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-200 md:dark:hover:text-blue-500">
-                Service
-              </a>
-            </li> */}
-            <li style={{ margin: "auto" }}>
+
+            {/* Proposals Dropdown */}
+            <li className="relative">
+              <button
+                className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300"
+                onClick={() => toggleDropdown("proposals")}
+              >
+                Proposals
+                <svg
+                  className="w-2.5 h-2.5 ml-2"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 10 6"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="m1 1 4 4 4-4"
+                  />
+                </svg>
+              </button>
+
+              <div
+                className={`${openDropdown === "proposals" ? "block" : "hidden"
+                  } absolute z-20 bg-white dark:bg-gray-800 rounded-lg px-1 py-2 mt-1 shadow w-44 transition-all duration-300`}
+                style={{ top: "100%", left: 0 }}
+              >
+                <ul className="text-sm text-gray-800 dark:text-gray-300 divide-y divide-gray-200 dark:divide-gray-600">
+                  <li>
+                    <Link
+                      to={"/create-proposal"}
+                      className="block px-4 py-2 hover:underline hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                    >
+                      Create New Proposal
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to={"/proposals"}
+                      className="block px-4 py-2 hover:underline hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                    >
+                      Vote on Proposal
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to={"/claim-reward"}
+                      className="block px-4 py-2 hover:underline hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                    >
+                      Claim Your Reward
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            {/* Dark Mode Toggle */}
+            <li>
               <button
                 onClick={toggleTheme}
-                className={`block py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-600 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-200 md:dark:hover:text-blue-500`}
+                className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 {darkMode ? (
                   <svg
-                    className="w-4 h-4"
-                    aria-hidden="true"
+                    className="w-5 h-5 text-gray-900 dark:text-white"
                     xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    <path d="M10 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-11a1 1 0 0 0 1-1V1a1 1 0 0 0-2 0v2a1 1 0 0 0 1 1Zm0 12a1 1 0 0 0-1 1v2a1 1 0 1 0 2 0v-2a1 1 0 0 0-1-1ZM4.343 5.757a1 1 0 0 0 1.414-1.414L4.343 2.929a1 1 0 0 0-1.414 1.414l1.414 1.414Zm11.314 8.486a1 1 0 0 0-1.414 1.414l1.414 1.414a1 1 0 0 0 1.414-1.414l-1.414-1.414ZM4 10a1 1 0 0 0-1-1H1a1 1 0 0 0 0 2h2a1 1 0 0 0 1-1Zm15-1h-2a1 1 0 1 0 0 2h2a1 1 0 0 0 0-2ZM4.343 14.243l-1.414 1.414a1 1 0 1 0 1.414 1.414l1.414-1.414a1 1 0 0 0-1.414-1.414ZM14.95 6.05a1 1 0 0 0 .707-.293l1.414-1.414a1 1 0 1 0-1.414-1.414l-1.414 1.414a1 1 0 0 0 .707 1.707Z"></path>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 3v1m0 16v1m8.485-8.485h1M3.515 12h1m15.364-6.364l-.707.707M5.636 18.364l-.707.707M18.364 18.364l-.707-.707M5.636 5.636l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"
+                    />
                   </svg>
                 ) : (
                   <svg
@@ -223,7 +234,10 @@ const Navbar = () => {
                 )}
               </button>
             </li>
-            <li style={{ margin: "auto" }}>
+
+
+            {/* Login Button */}
+            <li>
               <ButtonLogin />
             </li>
           </ul>
