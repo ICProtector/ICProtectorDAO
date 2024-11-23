@@ -1,405 +1,252 @@
 import React, { useState, useEffect } from 'react';
 import icpdao3 from '/icpdao3.webp';
 import vote from '/vote.png';
+import { Users, List, Award, Star, Table } from "lucide-react";
 
 const PointSystemContent = () => {
 
     return (
         <>
-            <div className="">
-                <div className="relative isolate px-6  lg:px-8">
-
-                    <div className="mx-auto max-w-2xl py-20 sm:py-20 lg:py-26">
-                        <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-
-                        </div>
+            <div className="bg-white dark:bg-gray-800 py-20">
+                <div className="relative isolate px-6 lg:px-8">
+                    <div className="mx-auto max-w-2xl">
                         <div className="text-center">
-                            <h1 className="text-4xl font-bold tracking-tight dark:text-white text-gray-900 sm:text-6xl">VP & Point System</h1>
-                            <p className="mt-6 text-lg leading-8 dark:text-gray-300 text-gray-900">We ensures fair influence by granting each user a base VP, with NFT holders gaining additional VPs </p>
+                            {/* Icon Added */}
+                            <div className="flex justify-center mb-4">
+                                <Award className="w-12 h-12 text-orange-500 dark:text-orange-400" />
+                            </div>
+                            <h1 className="text-4xl font-bold tracking-tight dark:text-white text-gray-900 sm:text-6xl">
+                                VP & Point System
+                            </h1>
+                            <p className="mt-6 text-lg leading-8 dark:text-gray-300 text-gray-900">
+                                We ensure fair influence by granting each user a base VP, with NFT holders gaining additional VPs.
+                            </p>
                         </div>
                     </div>
-
                 </div>
             </div>
-            <div className="py-12 sm:py-22">
+            <div className="py-12 sm:py-22 bg-gray-50 dark:bg-gray-900">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <div className="mx-auto max-w-2xl sm:text-center">
-                        <h2 className="text-3xl font-bold tracking-tight dark:text-white text-gray-900 sm:text-4xl">Voting Power</h2>
-
+                    {/* Header Section */}
+                    <div className="mx-auto max-w-2xl sm:text-center mb-10">
+                        <h2 className="text-4xl font-bold tracking-tight flex items-center justify-center gap-2 dark:text-white text-gray-900">
+                            <Users className="w-8 h-8 text-orange-500 dark:text-orange-400" />
+                            Voting Power
+                        </h2>
                     </div>
-                    <div className="grid max-w-none grid-cols-1 lg:grid-cols-2">
-                        <div className="flex flex-col justify-center lg:pr-8 pt-6 lg:pt-4">
+
+                    {/* Content Section */}
+                    <div className="grid max-w-none grid-cols-1 lg:grid-cols-2 gap-10">
+                        <div className="flex flex-col justify-center lg:pr-8">
                             <div className="lg:max-w-lg">
-                                <ul className="list-disc pl-5 mt-6 text-lg text-gray-900 dark:text-white">
-                                    <li className='text-left mt-6 text-lg text-gray-900 dark:text-white'>Each user without a ICP Protector Genesis NFT will have 1 Voting Power.</li>
-                                    <li className='text-left mt-2 text-lg text-gray-900 dark:text-white'>With 1 ICP Protector Genesis NFT, the User will have 3 Voting Power.</li>
-                                    <li className='text-left mt-2 text-lg text-gray-900 dark:text-white'>
-                                        A User can have a max Voting Power of 30. (Doesn't matter how many NFTs the User hold.
-                                        (Reducing voting power if we see suspicious downvotes in the code or attempted bypassing the 30 voting power cap)
-                                        For example:
+                                <ul className="list-disc pl-6 text-lg text-gray-900 dark:text-gray-300">
+                                    <li>
+                                        Each user without an ICP Protector Genesis NFT will have 1
+                                        Voting Power.
+                                    </li>
+                                    <li className="mt-4">
+                                        With 1 ICP Protector Genesis NFT, the user will have 3 Voting
+                                        Power.
+                                    </li>
+                                    <li className="mt-4">
+                                        A user can have a max Voting Power of 30 regardless of the
+                                        number of NFTs held. Suspicious downvotes or attempts to
+                                        bypass the cap will result in reduced voting power.
                                     </li>
                                 </ul>
                             </div>
                         </div>
-                        <div className="flex items-center justify-center w-[100%] h-[100%] md:w-full">
-                        
-                        <img src={vote} alt="DAO Image" style={{ width: '70%' }} />
+                        <div className="flex items-center justify-center">
+                            <img
+                                src={vote}
+                                alt="Voting Power"
+                                className="rounded-lg shadow-lg w-3/4"
+                            />
+                        </div>
+                    </div>
+                    <div className="relative overflow-x-auto shadow-lg sm:rounded-lg mt-10 bg-white dark:bg-gray-800">
+                        <table className="w-full text-sm text-gray-800 dark:text-gray-300">
+                            <thead className="text-xs uppercase bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800">
+                                <tr>
+                                    {["User", "Genesis NFT", "Count", "Total VP"].map((header) => (
+                                        <th
+                                            key={header}
+                                            className="px-6 py-4 text-center font-semibold text-gray-900 dark:text-white"
+                                        >
+                                            {header}
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {[
+                                    { user: "Protector 1", nft: "No", count: 0, vp: 1 },
+                                    { user: "Protector 2", nft: "Yes", count: 1, vp: 3 },
+                                    { user: "Protector 3", nft: "Yes", count: 5, vp: 15 },
+                                    { user: "Protector 4", nft: "Yes", count: 11, vp: 30 },
+                                    { user: "Protector 5", nft: "Yes", count: 15, vp: 30 },
+                                ].map(({ user, nft, count, vp }, index) => (
+                                    <tr
+                                        key={user}
+                                        className={`hover:scale-[1.01] transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${index % 2 === 0
+                                            ? "bg-gray-50 dark:bg-gray-900"
+                                            : "bg-white dark:bg-gray-800"
+                                            }`}
+                                    >
+                                        <td className="px-6 py-4 text-center font-medium">{user}</td>
+                                        <td className="px-6 py-4 text-center">
+                                            {nft === "Yes" ? (
+                                                <span className="inline-block px-2 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full dark:text-green-200 dark:bg-green-800">
+                                                    Yes
+                                                </span>
+                                            ) : (
+                                                <span className="inline-block px-2 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded-full dark:text-red-200 dark:bg-red-800">
+                                                    No
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4 text-center">{count}</td>
+                                        <td className="px-6 py-4 text-center font-bold text-blue-700 dark:text-blue-400">
+                                            {vp}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+            <div className="py-24 sm:py-32 bg-gray-50 dark:bg-gray-900">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                    {/* Section Header */}
+                    <div className="mx-auto max-w-2xl sm:text-center">
+                        <h2 className="text-4xl font-bold tracking-tight flex items-center justify-center gap-2 dark:text-white text-gray-900">
+                            <Star className="w-8 h-8 text-orange-500 dark:text-orange-400" />
+                            Point System
+                        </h2>
+                    </div>
+
+                    {/* Content Section */}
+                    <div className="grid max-w-none grid-cols-1 lg:grid-cols-2 mt-10 gap-10">
+                        <div className="flex flex-col justify-center lg:pr-8">
+                            <div className="lg:max-w-lg">
+                                <ul className="space-y-6 text-lg text-gray-800 dark:text-gray-300">
+                                    <li className="flex items-start gap-3">
+                                        <span className="inline-block p-2 rounded-full bg-orange-200 dark:bg-orange-500">
+                                            <Star className="w-6 h-6 text-orange-600 dark:text-white" />
+                                        </span>
+                                        <span>Each user without an NFT will receive 1 Point for each vote.</span>
+                                    </li>
+                                    <li className="flex items-start gap-3">
+                                        <span className="inline-block p-2 rounded-full bg-orange-200 dark:bg-orange-500">
+                                            <Star className="w-6 h-6 text-orange-600 dark:text-white" />
+                                        </span>
+                                        <span style={{ textAlign:'start' }}>Each user with an NFT will receive 5 Points for each vote.</span>
+                                    </li>
+                                    <li className="flex items-start gap-3">
+                                        <span className="inline-block p-2 rounded-full bg-orange-200 dark:bg-orange-500">
+                                            <Star className="w-6 h-6 text-orange-600 dark:text-white" />
+                                        </span>
+                                        <span style={{ textAlign:'start' }}>
+                                            Proposal creators will receive 2-20 Points depending on their contributions:
+                                            <ol className="list-decimal pl-8 mt-4 space-y-3 text-gray-700 dark:text-gray-400">
+                                                {[
+                                                    "Why a User thinks it's a scam.",
+                                                    "Explanation with detailed reasons.",
+                                                    "Includes potential scam handles.",
+                                                    "Trading-related findings.",
+                                                    "Includes trading history screenshots.",
+                                                    "Potential insider connections.",
+                                                    "Verified scam project wallets.",
+                                                ].map((item, index) => (
+                                                    <li key={index}>
+                                                        <span className="font-bold text-blue-700 dark:text-blue-500">
+                                                            Hint {"+".repeat(index)}:
+                                                        </span>{" "}
+                                                        {item}
+                                                    </li>
+                                                ))}
+                                            </ol>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-center">
+                            <img
+                                src={icpdao3}
+                                alt="DAO System"
+                                className="rounded-lg shadow-lg"
+                                style={{ width: "70%" }}
+                            />
                         </div>
                     </div>
 
-                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-10">
-
-                        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-bordered">
-                            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    {/* Points Table */}
+                    <div className="relative overflow-x-auto shadow-lg sm:rounded-lg mt-16 bg-white dark:bg-gray-800">
+                        <div className="p-4 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 flex items-center gap-2">
+                            <Table className="w-6 h-6 text-gray-800 dark:text-gray-200" />
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Point Allocation Table</h3>
+                        </div>
+                        <table className="w-full text-sm text-gray-800 dark:text-gray-300">
+                            <thead className="text-xs uppercase bg-gray-100 dark:bg-gray-700">
                                 <tr>
-                                    <th scope="col" className="px-6 py-3 text-center dark:text-white">
-                                        User
-                                    </th>
-                                    <th scope="col" className="px-6 py-3 text-center dark:text-white">
-                                        Genesis NFT
-                                    </th>
-                                    <th scope="col" className="px-6 py-3 text-center dark:text-white">
-                                        Count
-                                    </th>
-                                    <th scope="col" className="px-6 py-3 text-center dark:text-white">
-                                        Total VP
-                                    </th>
+                                    {[
+                                        "User",
+                                        "Hint",
+                                        "Hint+Text",
+                                        "H+T+X",
+                                        "H+T+X+W",
+                                        "H+T+X+W+SC",
+                                        "H+T+X+W+SC+PIW",
+                                        "H+T+X+W+SC+PIW+PoS",
+                                        "Points",
+                                    ].map((header) => (
+                                        <th
+                                            key={header}
+                                            className="px-4 py-3 text-center font-semibold text-gray-900 dark:text-white"
+                                        >
+                                            {header}
+                                        </th>
+                                    ))}
                                 </tr>
                             </thead>
-                            <tbody className='mt-2'>
-
-                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td scope="row" className="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        Protector 1
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        No
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        0
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        1
-                                    </td>
-                                </tr>
-                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td scope="row" className="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        Protector 2
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        Yes
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        1
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        3
-                                    </td>
-                                </tr>
-                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td scope="row" className="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        Protector 3
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        Yes
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        5
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        15
-                                    </td>
-                                </tr>
-                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td scope="row" className="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        Protector 4
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        Yes
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        11
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        30
-                                    </td>
-                                </tr>
-                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td scope="row" className="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        Protector 5
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        Yes
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        15
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        30
-                                    </td>
-                                </tr>
-
-
+                            <tbody>
+                                {[
+                                    { user: 1, hint: "X", hintText: "", htx: "", htW: "", htSC: "", piw: "", pos: "", points: 2 },
+                                    { user: 2, hint: "", hintText: "X", htx: "", htW: "", htSC: "", piw: "", pos: "", points: 4 },
+                                    { user: 3, hint: "", hintText: "", htx: "X", htW: "", htSC: "", piw: "", pos: "", points: 6 },
+                                    { user: 4, hint: "", hintText: "", htx: "", htW: "X", htSC: "", piw: "", pos: "", points: 8 },
+                                    { user: 5, hint: "", hintText: "", htx: "", htW: "", htSC: "X", piw: "", pos: "", points: 10 },
+                                    { user: 6, hint: "", hintText: "", htx: "", htW: "", htSC: "", piw: "X", pos: "", points: 15 },
+                                    { user: 7, hint: "", hintText: "", htx: "", htW: "", htSC: "", piw: "", pos: "X", points: 20 },
+                                ].map(({ user, hint, hintText, htx, htW, htSC, piw, pos, points }, index) => (
+                                    <tr
+                                        key={user}
+                                        className={`hover:bg-gray-100 dark:hover:bg-gray-700 ${index % 2 === 0 ? "bg-gray-50 dark:bg-gray-900" : "bg-white dark:bg-gray-800"
+                                            }`}
+                                    >
+                                        <td className="px-4 py-4 text-center">{user}</td>
+                                        <td className="px-4 py-4 text-center">{hint}</td>
+                                        <td className="px-4 py-4 text-center">{hintText}</td>
+                                        <td className="px-4 py-4 text-center">{htx}</td>
+                                        <td className="px-4 py-4 text-center">{htW}</td>
+                                        <td className="px-4 py-4 text-center">{htSC}</td>
+                                        <td className="px-4 py-4 text-center">{piw}</td>
+                                        <td className="px-4 py-4 text-center">{pos}</td>
+                                        <td className="px-4 py-4 text-center font-bold text-blue-700 dark:text-blue-400">
+                                            {points}
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <div className="py-24 sm:py-32">
-                <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <div className="mx-auto max-w-2xl sm:text-center">
-                        <h2 className="text-3xl font-bold tracking-tight dark:text-white text-gray-900 sm:text-4xl">Point System</h2>
-
-                    </div>
-                    <div className="grid max-w-none grid-cols-1 lg:grid-cols-2 mt-5">
-                        <div className="flex flex-col justify-center lg:pr-8 pt-6 lg:pt-4">
-                            <div className="lg:max-w-lg">
-                                <ul className="list-disc pl-5 mt-6 text-lg text-gray-900 dark:text-white">
-                                    <li className='text-left mt-6 text-lg text-gray-900 dark:text-white'>Each User without an NFT will receive 1 Point for each vote.</li>
-                                    <li className='text-left mt-2 text-lg text-gray-900 dark:text-white'>Each User with an NFT will receive 5 Points for each vote.</li>
-                                    <li className='text-left mt-2 text-lg text-gray-900 dark:text-white'>
-                                        Proposal creators will receive 2-20 Points depending on the following list:
-                                        <ol className="list-decimal list-inside text-gray-900 dark:text-white">
-                                            <li className="mb-2">
-                                                <span className="font-bold text-blue-700 dark:text-blue-500">Hint:</span> Why a User thinks it's a scam.
-                                            </li>
-                                            <li className="mb-2">
-                                                <span className="font-bold text-blue-700 dark:text-blue-500">Hint + Text:</span> Why a User thinks it's a scam.
-                                            </li>
-                                            <li className="mb-2">
-                                                <span className="font-bold text-blue-700 dark:text-blue-500">Hint + Text + X handle:</span> Why a User thinks it's a scam + handle of the potential scam.
-                                            </li>
-                                            <li className="mb-2">
-                                                <span className="font-bold text-blue-700 dark:text-blue-500">Hint + Text + X handle + Trading Investigations:</span> Why a User thinks it's a scam + handle of the potential scam + trading investigations.
-                                            </li>
-                                            <li className="mb-2">
-                                                <span className="font-bold text-blue-700 dark:text-blue-500">Hint + Text + X handle + Trading + screenshots of the Trading history:</span> Why a User thinks it's a scam + handle of the potential scam + trading investigations + screenshots of the trading history.
-                                            </li>
-                                            <li className="mb-2">
-                                                <span className="font-bold text-blue-700 dark:text-blue-500">Hint + Text + X handle + Trading + screenshots + Potential Insider Wallet:</span> Why a User thinks it's a scam + handle of the potential scam + trading investigations + screenshots of the trading history + potential insider wallet.
-                                            </li>
-                                            <li className="mb-2">
-                                                <span className="font-bold text-blue-700 dark:text-blue-500">Hint + Text + X handle + Trading + screenshots + P.I Wallet + Proof of Scam Project Wallet:</span> Why a User thinks it's a scam + handle of the potential scam + trading investigations + screenshots of the trading history + potential insider wallet + proof of scam project wallet.
-                                            </li>
-                                        </ol>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-center w-[100%] h-[100%] md:w-full">
-                        
-                        <img src={icpdao3} alt="DAO Image" style={{ width: '70%' }} />
-                        </div>
-                    </div>
-
-                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-10">
-
-                        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-bordered">
-                            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                <tr>
-                                    <th scope="col" className="px-6 py-3 text-center dark:text-white">
-                                        User
-                                    </th>
-                                    <th scope="col" className="px-6 py-3 text-center dark:text-white">
-                                        Hint
-                                    </th>
-                                    <th scope="col" className="px-6 py-3 text-center dark:text-white">
-                                        Hint+Text
-                                    </th>
-                                    <th scope="col" className="px-6 py-3 text-center dark:text-white">
-                                        H+T+X
-                                    </th>
-                                    <th scope="col" className="px-6 py-3 text-center dark:text-white">
-                                        H+T+X+W
-                                    </th>
-                                    <th scope="col" className="px-6 py-3 text-center dark:text-white">
-                                        H+T+X+W+SC
-                                    </th>
-                                    <th scope="col" className="px-6 py-3 text-center dark:text-white">
-                                        H+T+X+W+SC+
-                                        PIW
-                                    </th>
-                                    <th scope="col" className="px-6 py-3 text-center dark:text-white">
-                                        H+T+X+W+SC+
-
-                                        PIW+PoS
-                                    </th>
-                                    <th scope="col" className="px-6 py-3 text-center dark:text-white">
-                                        Points
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className='mt-2'>
-
-                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td scope="row" className="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        1
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                        X
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                        2
-                                    </td>
-                                </tr>
-                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td scope="row" className="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        2
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">X
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                        4
-                                    </td>
-                                </tr>
-                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td scope="row" className="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        3
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">X
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                        6
-                                    </td>
-                                </tr>
-                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td scope="row" className="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        4
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                        X
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                        8
-                                    </td>
-                                </tr>
-                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td scope="row" className="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        5
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                        X
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                        10
-                                    </td>
-                                </tr>
-                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td scope="row" className="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        6
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                        X
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                        15
-                                    </td>
-                                </tr>
-                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td scope="row" className="px-6 py-4 text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        7
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                        X
-                                    </td>
-                                    <td className="px-6 py-4 text-center dark:text-white">
-                                        20
-                                    </td>
-                                </tr>
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </>
     );
 };
