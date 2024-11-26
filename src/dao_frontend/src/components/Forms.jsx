@@ -32,8 +32,8 @@ const Forms = () => {
     setId(generateRandomId());
     // Set end time to three days from the current time
     const currentTime = new Date();
-    const endTime = new Date(currentTime.getTime() +   5 * 60 * 1000); // Add three days in milliseconds
-    // const endTime = new Date(currentTime.getTime() + 3 * 24 * 60 * 60 * 1000); // Add three days in milliseconds
+    // const endTime = new Date(currentTime.getTime() +   5 * 60 * 1000); // Add three days in milliseconds
+    const endTime = new Date(currentTime.getTime() + 3 * 24 * 60 * 60 * 1000); // Add three days in milliseconds
     setEndtime(endTime);
   }, []);
 
