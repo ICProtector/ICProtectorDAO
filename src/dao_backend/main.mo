@@ -203,14 +203,14 @@ actor ProposalManager {
     };
 
     // Filter timestamps and count those within the last 48 hours
-    let validTimestamps = Buffer.fromArray<Int>(
-      Array.filter(Buffer.toArray(timestamps), func(t : Int) : Bool { t >= twoDaysAgo })
-    );
-    if (Array.size(Buffer.toArray(validTimestamps)) >= 1) {
-      return null; // User has already created a proposal in the last 48 hours
-    };
+    // let validTimestamps = Buffer.fromArray<Int>(
+    //   Array.filter(Buffer.toArray(timestamps), func(t : Int) : Bool { t >= twoDaysAgo })
+    // );
+    // if (Array.size(Buffer.toArray(validTimestamps)) >= 1) {
+    //   return null; // User has already created a proposal in the last 48 hours
+    // };
 
-    timestamps.add(currentTime); // Add current timestamp to track proposal creation
+    // timestamps.add(currentTime); // Add current timestamp to track proposal creation
 
     // Automatically approve the proposal and set the approval status to "approved"
     let newProposal : Proposal = {
